@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+package usuario;
+
+option java_multiple_files = true;
+option java_package = "com.examples.Grupo_TN_G";
+
+import "google/protobuf/empty.proto";
+
+//Definicion de roles
+enum Rol{
+	PRESIDENTE = 0;
+	VOCAL = 1;
+	COORDINADOR = 2;
+	VOLUNTARIO = 4;
+}
+
+//Definicion del mensaje Usuario
+message Usuario {
+	int64 id = 1;
+	string nombreUsuario = 2;
+	string nombre = 3;
+	string apellido = 4;
+	string telefono = 5;
+	string clave = 6;
+	string email = 7;
+	Rol rol = 8;
+	bool activo = 9;
+}
+
+//Request y Responses
+
+//Alta de un Usuario
+message UsuarioRequest{
+	string nombreUsuario = 1;
+	string nombre = 2;
+	string apellido = 3;
+	string telefono = 4;
+	string email = 5;
+	Rol rol = 6;
+}
+
+message UsuarioResponse {
+	Usuario usuario = 1;
+}
+
+//Obtener el usuario por id
+message UsuarioIdRequest {
+	int64 id = 1;
+}
+
+message UsuarioIdResponse {
+	Usuario usuario = 1;
+}
+//Login de un usuario
+message UsuarioLoginRequest {
+	string nombreUsuario = 1;
+	string clave = 2;
+}
+
+message UsuarioBusquedaRequest {
+	string nombre = 1;
+	string clave = 2;
+}
+
+//Lista de usuarios
+
+message UsuarioList{
+	repeated Usuario usuarios = 1;
+}
+
+
+//Agregar mas entidades
+
+//Servicio gRPC
+service UsuarioService {
+	rpc add(Usuario) returns (Usuario);
+	rpc getOneById (UsuarioIdRequest) returns (Usuario);
+	rpc getAll (google.protobuf.Empty) returns (UsuarioList);
+	rpc update (Usuario) returns (Usuario);
+	rpc login (UsuarioLoginRequest) returns (Usuario);
+}
