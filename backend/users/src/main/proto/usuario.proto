@@ -3,7 +3,7 @@ syntax = "proto3";
 package usuario;
 
 option java_multiple_files = true;
-option java_package = "com.examples.Grupo_TN_G";
+option java_package = "com.examples.grupog";
 
 import "google/protobuf/empty.proto";
 
