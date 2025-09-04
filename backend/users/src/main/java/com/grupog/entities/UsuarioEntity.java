@@ -1,19 +1,24 @@
 package com.grupog.entities;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 //import lombok.Data;
 
@@ -50,6 +55,12 @@ public class UsuarioEntity implements UserDetails {
 	
 	@Column(name = "activo", nullable = false)
 	public boolean activo;
+	
+	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	public Set<DonacionEntity> donaciones = new HashSet<>();
+	
+	@OneToMany(mappedBy = "usuario")
+	private Set<EventoEntity> eventos = new HashSet<>();
 	
 	 public Long getIdUsuario() {
 		return idUsuario;
@@ -121,6 +132,14 @@ public class UsuarioEntity implements UserDetails {
 
 	public void setActivo(boolean activo) {
 		this.activo = activo;
+	}
+	
+	public Set<DonacionEntity> getDonaciones() {
+		return donaciones;
+	}
+
+	public void setDonaciones(Set<DonacionEntity> donaciones) {
+		this.donaciones = donaciones;
 	}
 
 	@Override

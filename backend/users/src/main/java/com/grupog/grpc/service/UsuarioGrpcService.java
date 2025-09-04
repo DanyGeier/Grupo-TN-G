@@ -1,6 +1,6 @@
 package com.grupog.grpc.service;
 
-import com.examples.Grupo_TN_G.Usuario;
+import com.example.grupog.Usuario;
 import com.grupog.entities.UsuarioEntity;
 
 //import lombok.RequiredArgsConstructor;
