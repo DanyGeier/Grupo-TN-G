@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+package com.grupog;
+
 //Definicion de roles
 enum Rol {
 	PRESIDENTE = 0;
