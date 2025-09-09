@@ -56,13 +56,7 @@ public class UsuarioEntity implements UserDetails {
 	@Column(name = "activo", nullable = false)
 	public boolean activo;
 	
-	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	public Set<DonacionEntity> donaciones = new HashSet<>();
-	
-	@OneToMany(mappedBy = "usuario")
-	private Set<EventoEntity> eventos = new HashSet<>();
-	
-	 public Long getIdUsuario() {
+	public Long getIdUsuario() {
 		return idUsuario;
 	}
 
@@ -134,14 +128,6 @@ public class UsuarioEntity implements UserDetails {
 		this.activo = activo;
 	}
 	
-	public Set<DonacionEntity> getDonaciones() {
-		return donaciones;
-	}
-
-	public void setDonaciones(Set<DonacionEntity> donaciones) {
-		this.donaciones = donaciones;
-	}
-
 	@Override
 	    public Collection<? extends GrantedAuthority> getAuthorities() {
 	        return List.of(new SimpleGrantedAuthority("ROLE_" + rol.getAuthority()));

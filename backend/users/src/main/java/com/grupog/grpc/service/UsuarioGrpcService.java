@@ -23,7 +23,7 @@ public class UsuarioGrpcService extends UsuarioServiceImplBase{
 	
 	@Override
 	public void listarUsuarios(ListarUsuariosRequest request, StreamObserver<ListaUsuariosResponse> responseObserver) {
-		ListaUsuariosResponse response = ListaUsuariosResponse.newBuilder().build();
+		ListaUsuariosResponse response = ListaUsuariosResponse.newBuilder().addUsuarios(Usuario.newBuilder().setEmail("test@test.com").build()).build();
 		responseObserver.onNext(response);
 		responseObserver.onCompleted();
 	}
