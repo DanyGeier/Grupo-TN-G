@@ -12,6 +12,16 @@ Esta guía permite levantar el backend de usuarios (Spring Boot + gRPC) y la bas
   - gRPC: 9095
 - MySQL: 3306
 
+### Cliente (Flask + gRPC client)
+- REST expuesto: 5000
+- Conexión al backend gRPC: configurable por variables de entorno
+  - `GRPC_SERVER_HOST` (por defecto: `localhost` fuera de Docker, `server` dentro de Docker Compose)
+  - `GRPC_SERVER_PORT` (por defecto: `9095`)
+  
+Endpoints útiles del cliente:
+- `GET /health` → chequeo simple
+- `GET /` → prueba que consulta `listarUsuarios` por gRPC y devuelve el resultado
+
 ## Estructura relevante del repo
 ```
 Grupo-TN-G/
@@ -35,6 +45,17 @@ Usamos MySQL 8.0 (estable) y exponemos 8081/9095 para el backend.
 version: '3.8'
 
 services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    environment:
+      - GRPC_SERVER_HOST=server
+      - GRPC_SERVER_PORT=9095
+    ports:
+      - "5000:5000"
+    depends_on:
+      - backend-users
   db:
     image: mysql:8.0
     container_name: grupo-tn-g-mysql
@@ -103,11 +124,19 @@ docker compose up --build
   - “HikariPool-1 - Start completed.” (conectado a DB)
   - “Registered gRPC service: com.grupog.UsuarioService”
   - “gRPC Server started … port: 9095”
+ - Cliente:
+   - Flask running on http://0.0.0.0:5000 (Press CTRL+C to quit)
 
 4) Verificar salud HTTP (opcional si tenés actuator):
 ```bash
 curl http://localhost:8081/actuator/health
 # Esperado: {"status":"UP"}
+```
+
+5) Probar cliente REST:
+```bash
+curl http://localhost:5000/health
+curl http://localhost:5000/
 ```
 
 ## Insertar datos de prueba (manual)
@@ -138,6 +167,14 @@ Como el servidor gRPC registra Server Reflection, podés llamar servicios con `g
 # Instalar grpcurl (según SO) y luego:
 grpcurl -plaintext localhost:9095 list
 grpcurl -plaintext localhost:9095 com.grupog.UsuarioService/listarUsuarios -d '{}'
+```
+
+## Ejecutar cliente fuera de Docker (opcional)
+Si preferís correr el cliente localmente, exportá las variables para apuntar al backend publicado en 9095 y ejecutá Flask:
+```bash
+export GRPC_SERVER_HOST=localhost
+export GRPC_SERVER_PORT=9095
+python client/app.py
 ```
 
 ## Cambios clave en el backend (resumen)
