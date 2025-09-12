@@ -10,7 +10,7 @@ class UsuarioClient(object):
 
     def __init__(self):
         self.host = "localhost"
-        self.server_port = "9090"
+        self.server_port = "9095"
 
         #Crear un canal
         self.channel = grpc.insecure_channel(f"{self.host}:{self.server_port}")
