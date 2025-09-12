@@ -1,8 +1,14 @@
-from flask import Flask
+from flask import Flask, jsonify
 
 from grpcClient import UsuarioClient
 
 app = Flask(__name__)
+
+
+
+@app.route('/health')
+def health_check():
+    return jsonify({"status": "healthy"}), 200
 
 @app.route('/')
 def hola():

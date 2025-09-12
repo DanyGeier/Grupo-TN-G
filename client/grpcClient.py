@@ -1,5 +1,6 @@
 
 
+import os
 import grpc
 from proto import usuario_pb2
 from proto import usuario_pb2_grpc
@@ -9,8 +10,8 @@ from google.protobuf.json_format import MessageToJson
 class UsuarioClient(object):
 
     def __init__(self):
-        self.host = "localhost"
-        self.server_port = "9095"
+        self.host = os.getenv("GRPC_SERVER_HOST", "localhost")
+        self.server_port = os.getenv("GRPC_SERVER_PORT", "9095")
 
         #Crear un canal
         self.channel = grpc.insecure_channel(f"{self.host}:{self.server_port}")
