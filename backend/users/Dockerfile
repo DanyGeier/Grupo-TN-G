@@ -11,6 +11,9 @@
 # Create a stage for resolving and downloading dependencies.
 FROM eclipse-temurin:21-jdk-jammy as deps
 
+# Install maven
+RUN apt-get update && apt-get install -y maven
+
 WORKDIR /build
 
 # Copy the mvnw wrapper with executable permissions.
