@@ -1,5 +1,6 @@
 package com.grupog.entities;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -24,38 +25,41 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "usuarios")
-//@Data
+// @Data
 public class UsuarioEntity implements UserDetails {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long idUsuario;
-	
+
 	@Column(name = "nombreUsuario", unique = true)
 	private String nombreUsuario;
-	
+
 	@Column(name = "nombre", nullable = false)
 	private String nombre;
-	
+
 	@Column(name = "apellido", nullable = false)
 	private String apellido;
-	
+
 	@Column(name = "telefono")
 	private String telefono;
-	
+
 	@Column(name = "contrasenia", nullable = false)
 	private String clave;
-	
-	@Column(name = "email",nullable = false, unique = true)
+
+	@Column(name = "email", nullable = false, unique = true)
 	private String email;
 
 	@ManyToOne
 	@JoinColumn(name = "rol_id", nullable = false)
 	private RolEntity rol;
-	
+
 	@Column(name = "activo", nullable = false)
 	public boolean activo;
-	
+
+	@Column(name = "fecha_creacion", updatable = false, insertable = false)
+	private Instant fechaCreacion;
+
 	public Long getIdUsuario() {
 		return idUsuario;
 	}
@@ -127,39 +131,47 @@ public class UsuarioEntity implements UserDetails {
 	public void setActivo(boolean activo) {
 		this.activo = activo;
 	}
-	
+
+	public Instant getFechaCreacion() {
+		return fechaCreacion;
+	}
+
+	public void setFechaCreacion(Instant fechaCreacion) {
+		this.fechaCreacion = fechaCreacion;
+	}
+
 	@Override
-	    public Collection<? extends GrantedAuthority> getAuthorities() {
-	        return List.of(new SimpleGrantedAuthority("ROLE_" + rol.getAuthority()));
-	    }
-	 
-	 @Override
-	    public String getUsername() {
-	        return nombreUsuario;
-	    }
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return List.of(new SimpleGrantedAuthority("ROLE_" + rol.getAuthority()));
+	}
 
-	    @Override
-	    public String getPassword() {
-	        return clave;
-	    }
+	@Override
+	public String getUsername() {
+		return nombreUsuario;
+	}
 
-	    @Override
-	    public boolean isAccountNonExpired() {
-	        return true;
-	    }
+	@Override
+	public String getPassword() {
+		return clave;
+	}
 
-	    @Override
-	    public boolean isAccountNonLocked() {
-	        return true;
-	    }
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
 
-	    @Override
-	    public boolean isCredentialsNonExpired() {
-	        return true;
-	    }
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
 
-	    @Override
-	    public boolean isEnabled() {
-	        return activo;
-	    }
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return activo;
+	}
 }

@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @EntityScan("com.grupog.entities")
-@ComponentScan(basePackages = {"com.grupog", "com.grupog.grpc.service"})
+@ComponentScan(basePackages = { "com.grupog", "com.grupog.grpc.service" })
 public class GrupoGApplication {
 
 	public static void main(String[] args) {

@@ -10,11 +10,20 @@ import com.grupog.entities.UsuarioEntity;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Long> {
-	
+
+	boolean existsByNombreUsuario(String nombreUsuario);
+
+	boolean existsByEmail(String email);
+
 	Optional<UsuarioEntity> findByEmail(String email);
-	Optional<UsuarioEntity> findByIdUsuarioAndActivoTrue(Long idUsuario); 
+
+	Optional<UsuarioEntity> findByIdUsuarioAndActivoTrue(Long idUsuario);
+
 	Optional<UsuarioEntity> findByNombreUsuarioAndActivoTrue(String nombreUsuario);
+
 	Optional<UsuarioEntity> findByEmailAndActivoTrue(String email);
+
 	List<UsuarioEntity> findByActivoTrue();
+
 	List<UsuarioEntity> findByRol_IdRolAndActivoTrue(Long idRol);
 }

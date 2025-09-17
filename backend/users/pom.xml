@@ -132,7 +132,8 @@
 				<groupId>org.xolstice.maven.plugins</groupId>
 				<artifactId>protobuf-maven-plugin</artifactId>
 				<version>0.6.1</version>
-				<configuration>
+				<configuration> 
+					<!-- Alternative osx-x86_64 -->		
 					<protocArtifact>com.google.protobuf:protoc:3.25.1:exe:linux-x86_64</protocArtifact>
 					<pluginId>grpc-java</pluginId>
 					<pluginArtifact>io.grpc:protoc-gen-grpc-java:1.64.0:exe:linux-x86_64</pluginArtifact>

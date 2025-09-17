@@ -19,21 +19,58 @@ class UsuarioClient(object):
         #Crear un stub
         self.stub = usuario_pb2_grpc.UsuarioServiceStub(self.channel)
     
-    def registrarUsuario(self, usuario):
+    def registrarUsuario(self, nombreUsuario, nombre, apellido, telefono, email, rol):
         request = usuario_pb2.CrearUsuarioRequest(
-            nombreUsuario=usuario.nombreUsuario,
-            nombre=usuario.nombre,
-            apellido=usuario.apellido,
-            telefono=usuario.telefono,
-            email=usuario.email,
-            rol=usuario.rol
+            nombreUsuario=nombreUsuario,
+            nombre=nombre,
+            apellido=apellido,
+            telefono=telefono,
+            email=email,
+            rol=rol
         )
         response = self.stub.registrarUsuario(request)
         return response
 
-    def listar_usuarios(self):
-        """Listar todos los usuarios"""
-        return self.stub.listarUsuarios(usuario_pb2.ListarUsuariosRequest())
+    def actualizarUsuario(self, id, nombreUsuario, nombre, apellido, telefono, email, rol, estado):
+        request = usuario_pb2.ActualizarUsuarioRequest(
+            id=id,
+            nombreUsuario=nombreUsuario,
+            nombre=nombre,
+            apellido=apellido,
+            telefono=telefono,
+            email=email,
+            rol=rol,
+            estado=estado
+        )
+        response = self.stub.actualizarUsuario(request)
+        return response
+
+    def desactivarUsuario(self, id_usuario):
+        request = usuario_pb2.BuscarUsuarioPorIdRequest(id=id_usuario)
+        response = self.stub.desactivarUsuario(request)
+        return response
+
+    def buscarUsuarioPorId(self, id_usuario):
+        request = usuario_pb2.BuscarUsuarioPorIdRequest(id=id_usuario)
+        response = self.stub.buscarUsuarioPorId(request)
+        return response
+
+    def listarUsuarios(self, estado=None):
+        if estado is not None:
+            request = usuario_pb2.ListarUsuariosRequest(estadoUsuario=estado)
+        else:
+            request = usuario_pb2.ListarUsuariosRequest()
+        response = self.stub.listarUsuarios(request)
+        return response
+
+    def autenticarUsuario(self, nombreUsuario, clave):
+        request = usuario_pb2.LoginData(
+            nombreUsuario=nombreUsuario,
+            clave=clave
+        )
+        response = self.stub.autenticarUsuario(request)
+        return response
+
 
 
 if __name__ == '__main__':

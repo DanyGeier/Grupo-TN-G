@@ -63,12 +63,23 @@ message ListarUsuariosRequest {
    EstadoUsuario estadoUsuario = 1;
 }
 
+message ActualizarUsuarioRequest {
+  int64 id = 1;
+  string nombreUsuario = 2;
+  string nombre = 3;
+  string apellido = 4;
+  string telefono = 5;
+  string email = 6;
+  Rol rol = 7;
+  EstadoUsuario estado = 8; // ACTIVO/INACTIVO
+}
+
 //Agregar mas entidades
 
 //Servicio gRPC
 service UsuarioService {
 	rpc registrarUsuario(CrearUsuarioRequest) returns (Usuario);
-	rpc actualizarUsuario(CrearUsuarioRequest) returns (Usuario);
+	rpc actualizarUsuario(ActualizarUsuarioRequest) returns (Usuario);
 	rpc desactivarUsuario(BuscarUsuarioPorIdRequest) returns (RespuestaExito);
 	
 	rpc buscarUsuarioPorId(BuscarUsuarioPorIdRequest) returns (Usuario);

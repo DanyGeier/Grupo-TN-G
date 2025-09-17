@@ -3,9 +3,9 @@
 import grpc
 import warnings
 
-from proto import usuario_pb2 as proto_dot_usuario__pb2
+import usuario_pb2 as usuario__pb2
 
-GRPC_GENERATED_VERSION = '1.74.0'
+GRPC_GENERATED_VERSION = '1.75.0'
 GRPC_VERSION = grpc.__version__
 _version_not_supported = False
 
@@ -18,7 +18,7 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in proto/usuario_pb2_grpc.py depends on'
+        + f' but the generated code in usuario_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
@@ -39,33 +39,33 @@ class UsuarioServiceStub(object):
         """
         self.registrarUsuario = channel.unary_unary(
                 '/com.grupog.UsuarioService/registrarUsuario',
-                request_serializer=proto_dot_usuario__pb2.CrearUsuarioRequest.SerializeToString,
-                response_deserializer=proto_dot_usuario__pb2.Usuario.FromString,
+                request_serializer=usuario__pb2.CrearUsuarioRequest.SerializeToString,
+                response_deserializer=usuario__pb2.Usuario.FromString,
                 _registered_method=True)
         self.actualizarUsuario = channel.unary_unary(
                 '/com.grupog.UsuarioService/actualizarUsuario',
-                request_serializer=proto_dot_usuario__pb2.CrearUsuarioRequest.SerializeToString,
-                response_deserializer=proto_dot_usuario__pb2.Usuario.FromString,
+                request_serializer=usuario__pb2.ActualizarUsuarioRequest.SerializeToString,
+                response_deserializer=usuario__pb2.Usuario.FromString,
                 _registered_method=True)
         self.desactivarUsuario = channel.unary_unary(
                 '/com.grupog.UsuarioService/desactivarUsuario',
-                request_serializer=proto_dot_usuario__pb2.BuscarUsuarioPorIdRequest.SerializeToString,
-                response_deserializer=proto_dot_usuario__pb2.RespuestaExito.FromString,
+                request_serializer=usuario__pb2.BuscarUsuarioPorIdRequest.SerializeToString,
+                response_deserializer=usuario__pb2.RespuestaExito.FromString,
                 _registered_method=True)
         self.buscarUsuarioPorId = channel.unary_unary(
                 '/com.grupog.UsuarioService/buscarUsuarioPorId',
-                request_serializer=proto_dot_usuario__pb2.BuscarUsuarioPorIdRequest.SerializeToString,
-                response_deserializer=proto_dot_usuario__pb2.Usuario.FromString,
+                request_serializer=usuario__pb2.BuscarUsuarioPorIdRequest.SerializeToString,
+                response_deserializer=usuario__pb2.Usuario.FromString,
                 _registered_method=True)
         self.listarUsuarios = channel.unary_unary(
                 '/com.grupog.UsuarioService/listarUsuarios',
-                request_serializer=proto_dot_usuario__pb2.ListarUsuariosRequest.SerializeToString,
-                response_deserializer=proto_dot_usuario__pb2.ListaUsuariosResponse.FromString,
+                request_serializer=usuario__pb2.ListarUsuariosRequest.SerializeToString,
+                response_deserializer=usuario__pb2.ListaUsuariosResponse.FromString,
                 _registered_method=True)
         self.autenticarUsuario = channel.unary_unary(
                 '/com.grupog.UsuarioService/autenticarUsuario',
-                request_serializer=proto_dot_usuario__pb2.LoginData.SerializeToString,
-                response_deserializer=proto_dot_usuario__pb2.Usuario.FromString,
+                request_serializer=usuario__pb2.LoginData.SerializeToString,
+                response_deserializer=usuario__pb2.Usuario.FromString,
                 _registered_method=True)
 
 
@@ -116,33 +116,33 @@ def add_UsuarioServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'registrarUsuario': grpc.unary_unary_rpc_method_handler(
                     servicer.registrarUsuario,
-                    request_deserializer=proto_dot_usuario__pb2.CrearUsuarioRequest.FromString,
-                    response_serializer=proto_dot_usuario__pb2.Usuario.SerializeToString,
+                    request_deserializer=usuario__pb2.CrearUsuarioRequest.FromString,
+                    response_serializer=usuario__pb2.Usuario.SerializeToString,
             ),
             'actualizarUsuario': grpc.unary_unary_rpc_method_handler(
                     servicer.actualizarUsuario,
-                    request_deserializer=proto_dot_usuario__pb2.CrearUsuarioRequest.FromString,
-                    response_serializer=proto_dot_usuario__pb2.Usuario.SerializeToString,
+                    request_deserializer=usuario__pb2.ActualizarUsuarioRequest.FromString,
+                    response_serializer=usuario__pb2.Usuario.SerializeToString,
             ),
             'desactivarUsuario': grpc.unary_unary_rpc_method_handler(
                     servicer.desactivarUsuario,
-                    request_deserializer=proto_dot_usuario__pb2.BuscarUsuarioPorIdRequest.FromString,
-                    response_serializer=proto_dot_usuario__pb2.RespuestaExito.SerializeToString,
+                    request_deserializer=usuario__pb2.BuscarUsuarioPorIdRequest.FromString,
+                    response_serializer=usuario__pb2.RespuestaExito.SerializeToString,
             ),
             'buscarUsuarioPorId': grpc.unary_unary_rpc_method_handler(
                     servicer.buscarUsuarioPorId,
-                    request_deserializer=proto_dot_usuario__pb2.BuscarUsuarioPorIdRequest.FromString,
-                    response_serializer=proto_dot_usuario__pb2.Usuario.SerializeToString,
+                    request_deserializer=usuario__pb2.BuscarUsuarioPorIdRequest.FromString,
+                    response_serializer=usuario__pb2.Usuario.SerializeToString,
             ),
             'listarUsuarios': grpc.unary_unary_rpc_method_handler(
                     servicer.listarUsuarios,
-                    request_deserializer=proto_dot_usuario__pb2.ListarUsuariosRequest.FromString,
-                    response_serializer=proto_dot_usuario__pb2.ListaUsuariosResponse.SerializeToString,
+                    request_deserializer=usuario__pb2.ListarUsuariosRequest.FromString,
+                    response_serializer=usuario__pb2.ListaUsuariosResponse.SerializeToString,
             ),
             'autenticarUsuario': grpc.unary_unary_rpc_method_handler(
                     servicer.autenticarUsuario,
-                    request_deserializer=proto_dot_usuario__pb2.LoginData.FromString,
-                    response_serializer=proto_dot_usuario__pb2.Usuario.SerializeToString,
+                    request_deserializer=usuario__pb2.LoginData.FromString,
+                    response_serializer=usuario__pb2.Usuario.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -173,8 +173,8 @@ class UsuarioService(object):
             request,
             target,
             '/com.grupog.UsuarioService/registrarUsuario',
-            proto_dot_usuario__pb2.CrearUsuarioRequest.SerializeToString,
-            proto_dot_usuario__pb2.Usuario.FromString,
+            usuario__pb2.CrearUsuarioRequest.SerializeToString,
+            usuario__pb2.Usuario.FromString,
             options,
             channel_credentials,
             insecure,
@@ -200,8 +200,8 @@ class UsuarioService(object):
             request,
             target,
             '/com.grupog.UsuarioService/actualizarUsuario',
-            proto_dot_usuario__pb2.CrearUsuarioRequest.SerializeToString,
-            proto_dot_usuario__pb2.Usuario.FromString,
+            usuario__pb2.ActualizarUsuarioRequest.SerializeToString,
+            usuario__pb2.Usuario.FromString,
             options,
             channel_credentials,
             insecure,
@@ -227,8 +227,8 @@ class UsuarioService(object):
             request,
             target,
             '/com.grupog.UsuarioService/desactivarUsuario',
-            proto_dot_usuario__pb2.BuscarUsuarioPorIdRequest.SerializeToString,
-            proto_dot_usuario__pb2.RespuestaExito.FromString,
+            usuario__pb2.BuscarUsuarioPorIdRequest.SerializeToString,
+            usuario__pb2.RespuestaExito.FromString,
             options,
             channel_credentials,
             insecure,
@@ -254,8 +254,8 @@ class UsuarioService(object):
             request,
             target,
             '/com.grupog.UsuarioService/buscarUsuarioPorId',
-            proto_dot_usuario__pb2.BuscarUsuarioPorIdRequest.SerializeToString,
-            proto_dot_usuario__pb2.Usuario.FromString,
+            usuario__pb2.BuscarUsuarioPorIdRequest.SerializeToString,
+            usuario__pb2.Usuario.FromString,
             options,
             channel_credentials,
             insecure,
@@ -281,8 +281,8 @@ class UsuarioService(object):
             request,
             target,
             '/com.grupog.UsuarioService/listarUsuarios',
-            proto_dot_usuario__pb2.ListarUsuariosRequest.SerializeToString,
-            proto_dot_usuario__pb2.ListaUsuariosResponse.FromString,
+            usuario__pb2.ListarUsuariosRequest.SerializeToString,
+            usuario__pb2.ListaUsuariosResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -308,8 +308,8 @@ class UsuarioService(object):
             request,
             target,
             '/com.grupog.UsuarioService/autenticarUsuario',
-            proto_dot_usuario__pb2.LoginData.SerializeToString,
-            proto_dot_usuario__pb2.Usuario.FromString,
+            usuario__pb2.LoginData.SerializeToString,
+            usuario__pb2.Usuario.FromString,
             options,
             channel_credentials,
             insecure,
