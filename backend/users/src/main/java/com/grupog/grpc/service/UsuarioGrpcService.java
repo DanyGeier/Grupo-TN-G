@@ -25,6 +25,7 @@ import com.grupog.repositories.RolRepository;
 import com.grupog.repositories.UsuarioRepository;
 import com.grupog.utils.PasswordGenerator;
 
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 //import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -57,24 +58,32 @@ public class UsuarioGrpcService extends UsuarioServiceImplBase {
 
 	@Override
 	public void registrarUsuario(CrearUsuarioRequest request, StreamObserver<Usuario> responseObserver) {
+		System.out.println("Registrando usuario: " + request.getNombreUsuario());
 
 		if (usuarioRepository.existsByNombreUsuario(request.getNombreUsuario())) {
-			responseObserver.onError(new IllegalStateException("El nombre de usuario ya existe"));
+			responseObserver.onError(Status.ALREADY_EXISTS
+					.withDescription("El nombre de usuario '" + request.getNombreUsuario() + "' ya existe")
+					.asRuntimeException());
+
 			return;
 		}
 		if (usuarioRepository.existsByEmail(request.getEmail())) {
-			responseObserver.onError(new IllegalStateException("El email ya existe"));
+			responseObserver.onError(Status.ALREADY_EXISTS
+					.withDescription("El email '" + request.getEmail() + "' ya existe")
+					.asRuntimeException());
+
 			return;
 		}
 
 		UsuarioEntity entity = usuarioMapper.toEntity(request);
 
-		String password = PasswordGenerator.generarPassword();
+		String password = "changeme";// PasswordGenerator.generarPassword();
 
 		entity.setClave(passwordEncoder.encode(password));
+		System.out.println("Guardando usuario: " + entity.getNombreUsuario());
 		UsuarioEntity guardado = usuarioRepository.save(entity);
 		Usuario usuario = usuarioMapper.toProto(guardado);
-
+		System.out.println("Usuario guardado: " + usuario.getNombreUsuario());
 		// Envio de email con el password
 		responseObserver.onNext(usuario);
 		responseObserver.onCompleted();

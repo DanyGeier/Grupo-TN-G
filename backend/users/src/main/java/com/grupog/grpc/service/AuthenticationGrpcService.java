@@ -45,15 +45,28 @@ public class AuthenticationGrpcService extends AuthenticationServiceImplBase {
 
     @Override
     public void login(LoginRequest request, StreamObserver<LoginResponse> responseObserver) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getNombreUsuario(), request.getClave()));
+        System.out.println("Login: " + request.getNombreUsuario());
+        // Authentication authentication = authenticationManager.authenticate(
+        // new UsernamePasswordAuthenticationToken(request.getNombreUsuario(),
+        // passwordEncoder.encode(request.getClave())));
 
-        if (!authentication.isAuthenticated()) {
-            responseObserver.onError(new StatusRuntimeException(Status.UNAUTHENTICATED));
-            return;
-        }
+        // System.out.println("Authentication: " + authentication.isAuthenticated());
+        // if (!authentication.isAuthenticated()) {
+        // responseObserver.onError(new StatusRuntimeException(Status.UNAUTHENTICATED));
+        // return;
+        // }
+
         Optional<UsuarioEntity> usuario = usuarioRepository
                 .findByNombreUsuarioAndActivoTrue(request.getNombreUsuario());
+
+        if (!passwordEncoder.matches(request.getClave(), usuario.get().getClave())) {
+            responseObserver.onError(Status.UNAUTHENTICATED
+                    .withDescription("Credenciales incorrectas")
+                    .asRuntimeException());
+            return;
+        }
+
+        System.out.println("Usuario: " + usuario.get().getNombreUsuario());
 
         String jwtToken = jwtService.generateToken(usuario.get());
 
