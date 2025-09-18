@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.grupog.ActualizarUsuarioRequest;
@@ -23,6 +24,7 @@ import com.grupog.mappers.UsuarioMapper;
 import com.grupog.RespuestaExito;
 import com.grupog.repositories.RolRepository;
 import com.grupog.repositories.UsuarioRepository;
+import com.grupog.service.EmailService;
 import com.grupog.utils.PasswordGenerator;
 
 import io.grpc.Status;
@@ -37,6 +39,9 @@ public class UsuarioGrpcService extends UsuarioServiceImplBase {
 	private final RolRepository rolRepository;
 	private final UsuarioMapper usuarioMapper;
 	private final PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private EmailService emailService;
 
 	public UsuarioGrpcService(UsuarioRepository usuarioRepository, RolRepository rolRepository,
 			PasswordEncoder passwordEncoder) {
@@ -77,7 +82,7 @@ public class UsuarioGrpcService extends UsuarioServiceImplBase {
 
 		UsuarioEntity entity = usuarioMapper.toEntity(request);
 
-		String password = "changeme";// PasswordGenerator.generarPassword();
+		String password = PasswordGenerator.generarPassword();
 
 		entity.setClave(passwordEncoder.encode(password));
 		System.out.println("Guardando usuario: " + entity.getNombreUsuario());
@@ -85,6 +90,17 @@ public class UsuarioGrpcService extends UsuarioServiceImplBase {
 		Usuario usuario = usuarioMapper.toProto(guardado);
 		System.out.println("Usuario guardado: " + usuario.getNombreUsuario());
 		// Envio de email con el password
+
+		try {
+			emailService.sendWelcomeEmail(
+					request.getEmail(),
+					request.getNombreUsuario(),
+					request.getNombre(),
+					password);
+		} catch (Exception e) {
+			System.err.println("Error enviando email de bienvenida: " + e.getMessage());
+			// Continuamos aunque falle el email
+		}
 		responseObserver.onNext(usuario);
 		responseObserver.onCompleted();
 	}

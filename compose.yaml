@@ -8,7 +8,6 @@
 # database or a cache. For examples, see the Awesome Compose repository:
 # https://github.com/docker/awesome-compose
 services:
-
   client:
     build:
       context: ./client
@@ -31,6 +30,12 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/bd_empuje_comunitario?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: grupog
       SPRING_DATASOURCE_PASSWORD: grupog123
+      SPRING_MAIL_HOST: mailpit
+      SPRING_MAIL_PORT: 1025
+      SPRING_MAIL_USERNAME: "user123"
+      SPRING_MAIL_PASSWORD: "admin"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: false
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: false
     depends_on:
       db:
         condition: service_healthy
@@ -63,6 +68,15 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+  mailpit:
+    image: axllent/mailpit
+    container_name: mailpit
+    ports:
+      - 1025:1025
+      - 8025:8025
+    environment:
+      - MP_SMTP_AUTH_ACCEPT_ANY=1
+      - MP_SMTP_AUTH_ALLOW_INSECURE=1
 #     user: postgres
 #     secrets:
 #       - db-password
