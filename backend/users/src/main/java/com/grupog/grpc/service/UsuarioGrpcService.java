@@ -92,7 +92,7 @@ public class UsuarioGrpcService extends UsuarioServiceImplBase {
 		// Envio de email con el password
 
 		try {
-			emailService.sendWelcomeEmail(
+			emailService.envioEmailRegistro(
 					request.getEmail(),
 					request.getNombreUsuario(),
 					request.getNombre(),

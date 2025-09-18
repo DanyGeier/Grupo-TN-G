@@ -31,7 +31,7 @@ public class EmailService {
     /**
      * Envía email de bienvenida a un nuevo usuario
      */
-    public void sendWelcomeEmail(String to, String nombreUsuario, String nombre, String password) {
+    public void envioEmailRegistro(String to, String nombreUsuario, String nombre, String password) {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
