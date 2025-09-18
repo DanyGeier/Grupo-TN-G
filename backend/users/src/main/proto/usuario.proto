@@ -19,7 +19,6 @@ enum EstadoUsuario {
     SUSPENDIDO = 2;
 }
 
-//Definicion del Usuario
 message Usuario {
     int64 id = 1;
     string nombreUsuario = 2;
@@ -32,7 +31,6 @@ message Usuario {
     EstadoUsuario estado  = 9;
 }
 
-//Alta de un Usuario
 message CrearUsuarioRequest {
 	string nombreUsuario = 1;
 	string nombre = 2;
@@ -47,15 +45,8 @@ message RespuestaExito {
     bool exito = 2;
 }
 
-//Obtener el usuario por id
 message BuscarUsuarioPorIdRequest {
 	int64 id = 1;
-}
-
-//Login de un usuario
-message LoginData {
-	string nombreUsuario = 1;
-	string clave = 2;
 }
 
 message ListaUsuariosResponse {
@@ -77,15 +68,10 @@ message ActualizarUsuarioRequest {
   EstadoUsuario estado = 8; // ACTIVO/INACTIVO
 }
 
-//Agregar mas entidades
-
-//Servicio gRPC
 service UsuarioService {
 	rpc registrarUsuario(CrearUsuarioRequest) returns (Usuario);
 	rpc actualizarUsuario(ActualizarUsuarioRequest) returns (Usuario);
 	rpc desactivarUsuario(BuscarUsuarioPorIdRequest) returns (RespuestaExito);
-	
 	rpc buscarUsuarioPorId(BuscarUsuarioPorIdRequest) returns (Usuario);
     rpc listarUsuarios(ListarUsuariosRequest) returns (ListaUsuariosResponse);
-	rpc autenticarUsuario (LoginData) returns (Usuario);
 }

@@ -47,6 +47,7 @@ COPY . .
 
 # Generate proto files BEFORE switching to appuser
 RUN python -m grpc_tools.protoc -I proto --python_out=proto --grpc_python_out=proto proto/usuario.proto
+RUN python -m grpc_tools.protoc -I proto --python_out=proto --grpc_python_out=proto proto/autenticacion.proto
 
 # Create __init__.py in proto directory
 RUN touch proto/__init__.py

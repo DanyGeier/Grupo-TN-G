@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package com.grupog;
+
+import "usuario.proto";
+
+//Login de un usuario
+message LoginRequest {
+	string nombreUsuario = 1;
+	string clave = 2;
+}
+
+message LoginResponse {
+    Usuario usuario = 1;
+    string token = 2;
+}
+
+message LogoutRequest {
+    string token = 1;
+}
+
+message LogoutResponse {
+    bool exito = 1;
+}
+
+
+service AuthenticationService {
+    rpc login (LoginRequest) returns (LoginResponse);
+    rpc logout (LogoutRequest) returns (LogoutResponse);
+}
