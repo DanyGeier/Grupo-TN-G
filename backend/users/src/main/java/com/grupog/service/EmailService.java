@@ -46,7 +46,7 @@ public class EmailService {
             context.setVariable("nombre", nombre);
             context.setVariable("password", password);
 
-            String htmlContent = templateEngine.process("mail-template", context);
+            // String htmlContent = templateEngine.process("mail-template", context);
             helper.setText("Te mando la password por ahora: " + password, true);
 
             mailSender.send(mimeMessage);
