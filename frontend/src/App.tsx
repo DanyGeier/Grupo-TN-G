@@ -12,7 +12,7 @@ import { HomePage } from "./components/HomePage";
 function App() {
   const usuarioSimulado: Usuario = {
     id: 1,
-    username: "jdoe",
+    nombreUsuario: "jdoe",
     nombre: "Juan",
     apellido: "Doe",
     email: "jdoe@example.com",

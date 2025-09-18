@@ -1,9 +1,10 @@
 import type { Usuario } from "../../../models/usuario";
 
-const BASE_URL = "http://localhost:8080/usuarios";
+const BASE_URL = "http://localhost:5000/usuarios";
 
 export const obtenerUsuario = async (id: string) => {
   const res = await fetch(`${BASE_URL}/${id}`);
+
   if (!res.ok) throw new Error("Error al obtener usuario");
   return res.json();
 };
@@ -23,11 +24,12 @@ export const actualizarUsuario = async (id: string, data: any) =>
   });
 
 
-  export const obtenerUsuarios = async (): Promise<Usuario[]> => {
+export const obtenerUsuarios = async (): Promise<any[]> => {
   try {
-    const response = await fetch("http://localhost:8080/usuarios");
+    const response = await fetch("http://localhost:5000/usuarios");
     if (!response.ok) throw new Error("Error al cargar usuarios");
-    return await response.json();
+    const data = await response.json();
+    return data.usuarios; // porque Flask devuelve { usuarios: [...] }
   } catch (error) {
     throw new Error("Error al cargar usuarios: " + error);
   }

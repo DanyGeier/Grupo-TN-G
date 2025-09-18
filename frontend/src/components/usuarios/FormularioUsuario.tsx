@@ -30,7 +30,7 @@ export const FormularioUsuario = () => {
 
 
 const handleChange = (
-  e: React.ChangeEvent<any> // no se si esto está bien xd
+  e: React.ChangeEvent<any> // 
 ) => {
   const { name, type, value, checked } = e.target;
   setFormData((prev) => ({

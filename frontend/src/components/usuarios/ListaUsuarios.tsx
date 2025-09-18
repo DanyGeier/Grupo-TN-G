@@ -103,7 +103,7 @@ export const ListaUsuarios = () => {
                   key={user.id}
                   className="hover:bg-gray-50 transition-colors duration-150 text-gray-700"
                 >
-                  <td className="px-4 py-3 text-left">{user.username}</td>
+                  <td className="px-4 py-3 text-left">{user.nombreUsuario}</td>
                   <td className="px-4 py-3 text-left">{user.nombre}</td>
                   <td className="px-4 py-3 text-left">{user.apellido}</td>
                   <td className="px-4 py-3 text-left">
