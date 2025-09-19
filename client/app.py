@@ -1,10 +1,12 @@
 from flask import Flask, request, jsonify
 from service.grpcClient import UsuarioClient
 from proto import usuario_pb2
+from flask_cors import CORS
+
 
 app = Flask(__name__)
 client = UsuarioClient()
-
+CORS(app, origins="http://localhost:5173")  # Permite CORS desde React
 
 @app.route("/")
 def home():
@@ -70,6 +72,7 @@ def registrar_usuario():
             data.get("telefono", ""),
             data["email"],
             rol_map[data["rol"]],
+
         )
 
         return jsonify(
