@@ -72,6 +72,7 @@ def registrar_usuario():
             data.get("telefono", ""),
             data["email"],
             rol_map[data["rol"]],
+
         )
 
         return jsonify(

@@ -1,10 +1,14 @@
-import { useContext } from "react";
-import { Link } from "react-router-dom";
-import { UserContext } from "../context/UserContext";
+import { Link, useNavigate } from "react-router-dom";
+import { useUser } from "../context/UserContext";
 
 export const Header = () => {
-  const usuario = useContext(UserContext);
+  const { usuario, logoutUser } = useUser();
+  const navigate = useNavigate();
 
+  const handleLogout = () => {
+    logoutUser();
+    navigate("/login");
+  };
   return (
     <header className="w-full bg-blue-600 text-white shadow-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
@@ -24,8 +28,18 @@ export const Header = () => {
           </Link>
         </nav>
 
+        {usuario && (
+          <button
+            onClick={handleLogout}
+            className="cursor-pointer rounded-lg bg-red-500 px-4 py-2 text-sm font-medium text-white shadow hover:bg-red-600"
+          >
+            Logout
+          </button>
+        )}
+
         <div>
-          {usuario?.rol === "PRESIDENTE" && (
+          {/* Botón visible solo para PRESIDENTE  -- USAR MAPPER MEJOR*/}
+          {usuario?.rol === 0 && (
             <Link
               to="/registro"
               className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-blue-600 shadow hover:bg-gray-100"

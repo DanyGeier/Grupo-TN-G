@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import type { Usuario } from "../../models/usuario";
 import { Header } from "../Header";
 import { obtenerUsuarios } from "./api/usuarios";
+import { rolesMap } from "../../models/rol";
 
 export const ListaUsuarios = () => {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
@@ -34,29 +35,31 @@ export const ListaUsuarios = () => {
   };
 
   const handleDarDeBaja = async (id: number) => {
-    try {
-      const response = await fetch(
-        `http://localhost:8080/usuarios/eliminar/${id}`,
-        {
-          method: "PUT",
-        }
-      );
+  try {
+    const response = await fetch(`http://localhost:5000/usuarios/${id}`, {
+      method: "DELETE",
+    });
 
-      if (response.ok) {
-        const usuarioActualizado: Usuario = await response.json();
-
-        setUsuarios((prev) =>
-          prev.map((u) =>
-            u.id === usuarioActualizado.id ? usuarioActualizado : u
-          )
-        );
-      } else {
-        console.error("Error al dar de baja al usuario");
-      }
-    } catch (error) {
-      console.error("Error en la petición:", error);
+    if (!response.ok) {
+      throw new Error("Error al dar de baja al usuario");
     }
-  };
+
+    const data = await response.json();
+    console.log("Respuesta:", data);
+
+    // Actualizamos el estado local marcando al usuario como inactivo
+    setUsuarios((prev) =>
+      prev.map((u) =>
+        u.id === id ? { ...u, activo: false } : u
+      )
+    );
+
+    alert(data.message);
+  } catch (error) {
+    console.error("Error en la petición:", error);
+    alert("No se pudo dar de baja al usuario");
+  }
+};
 
   return (
     <>
@@ -79,9 +82,7 @@ export const ListaUsuarios = () => {
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">
                   Apellido
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">
-                  Teléfono
-                </th>
+             
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">
                   Email
                 </th>
@@ -106,17 +107,15 @@ export const ListaUsuarios = () => {
                   <td className="px-4 py-3 text-left">{user.nombreUsuario}</td>
                   <td className="px-4 py-3 text-left">{user.nombre}</td>
                   <td className="px-4 py-3 text-left">{user.apellido}</td>
-                  <td className="px-4 py-3 text-left">
-                    {user.telefono ?? "-"}
-                  </td>
+            
                   <td className="px-4 py-3 text-left">{user.email}</td>
-                  <td className="px-4 py-3 text-left">{user.rol}</td>
+                  <td className="px-4 py-3 text-left"> {rolesMap[user.rol]}</td>
                   <td
                     className={`px-4 py-3 font-semibold ${
-                      user.activo ? "text-green-600" : "text-red-600"
+                      user.estado ? "text-green-600" : "text-red-600"
                     }`}
                   >
-                    {user.activo ? "Activo" : "Inactivo"}
+                    {user.estado ? "Activo" : "Inactivo"}
                   </td>
 
                   <td className="px-4 py-3 flex justify-center space-x-4">

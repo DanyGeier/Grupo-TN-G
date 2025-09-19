@@ -1,15 +1,19 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { login } from "./api/auth";
+import { useUser } from "../../context/UserContext";
+import type { Usuario } from "../../models/usuario";
 
 interface LoginRequest {
-  username: string;
-  password: string;
+  nombreUsuario: string;
+  clave: string;
 }
 
 export const LoginForm = () => {
+  const { loginUser } = useUser();
   const [loginRequest, setLoginRequest] = useState<LoginRequest>({
-    username: "",
-    password: "",
+    nombreUsuario: "",
+    clave: "",
   });
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -19,50 +23,67 @@ export const LoginForm = () => {
       ...loginRequest,
       [e.target.name]: e.target.value,
     });
+    setErrorMessage(null); // limpiar error cuando el usuario escribe
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
 
-    if (!loginRequest.username.trim() || !loginRequest.password.trim()) {
-      setErrorMessage("⚠️ Complete todos los campos antes de continuar.");
-      return;
-    }
+  try {
+    // Usuario hardcodeado para pruebas
+    if (
+      loginRequest.nombreUsuario === "admin" &&
+      loginRequest.clave === "1234"
+    ) {
+      // Creamos el usuario hardcodeado siguiendo tu interface
+      const fakeUser: Usuario = {
+        id: 0,
+        nombreUsuario: "admin",
+        nombre: "Administrador",
+        apellido: "Sistema",
+        telefono: "0000000000",
+        email: "admin@example.com",
+        rol: 0,       // por ejemplo 1 = ADMIN
+        estado: true, // activo
+      };
 
-    // ✅ Simulación de login correcto
-    if (loginRequest.username === "admin" && loginRequest.password === "1234") {
-      setErrorMessage("");
-      console.log("✅ Login exitoso!");
+      const fakeToken = "fake-jwt-token";
 
-      // Redirige al dashboard (o a la ruta que quieras)
+      loginUser(fakeUser, fakeToken); // guardamos en contexto
       navigate("/home");
       return;
     }
 
-    // ❌ Simulación de login incorrecto
-    setErrorMessage(
-      "❌ El correo electrónico o nombre de usuario que has introducido no está conectado a una cuenta."
-    );
-  };
-  const isFormValid = loginRequest.username && loginRequest.password;
+    // Login normal para usuarios reales
+    const data = await login(loginRequest);
+
+    // Guardar en contexto
+    loginUser(data.usuario, data.token);
+
+    navigate("/home");
+  } catch (err: any) {
+    setErrorMessage(err.message);
+  }
+};
+  const isFormValid = loginRequest.nombreUsuario && loginRequest.clave;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <h1 className="text-3xl font-bold text-gray-800">Bienvenido</h1>
 
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleLogin}
         className="bg-white px-10 py-8 rounded-2xl mt-8 shadow-lg w-96"
       >
         {/* Usuario */}
         <div>
-          <label htmlFor="username" className="text-lg font-medium">
+          <label htmlFor="nombreUsuario" className="text-lg font-medium">
             Nombre de usuario
           </label>
           <input
-            id="username"
-            name="username"
-            value={loginRequest.username}
+            id="nombreUsuario"
+            name="nombreUsuario"
+            value={loginRequest.nombreUsuario}
             onChange={handleChange}
             className="w-full border-2 border-gray-200 rounded-2xl p-3 mt-1 outline-none focus:border-blue-500"
             placeholder="Ingresar nombre de usuario"
@@ -71,14 +92,14 @@ export const LoginForm = () => {
 
         {/* Contraseña */}
         <div className="mt-4">
-          <label htmlFor="password" className="text-lg font-medium">
+          <label htmlFor="clave" className="text-lg font-medium">
             Contraseña
           </label>
           <input
-            id="password"
-            name="password"
+            id="clave"
+            name="clave"
             type="password"
-            value={loginRequest.password}
+            value={loginRequest.clave}
             onChange={handleChange}
             className="w-full border-2 border-gray-200 rounded-2xl p-3 mt-1 outline-none focus:border-blue-500"
             placeholder="Ingrese su contraseña"

@@ -1,68 +1,59 @@
 import { useEffect, useState } from "react";
 import { Header } from "../Header";
 import { useNavigate, useParams } from "react-router-dom";
-import { obtenerUsuario } from "./api/usuarios";
+import {
+  actualizarUsuario,
+  obtenerUsuario,
+  registrarUsuario,
+} from "./api/usuarios";
 
 export const FormularioUsuario = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    username: "",
+    nombreUsuario: "",
     nombre: "",
     apellido: "",
     telefono: "",
     email: "",
-    rol: "VOLUNTARIO",
-    activo: true,
+    rol: "",
+    //estado: ""
   });
-
-
 
   // Precargar datos si es edición
   useEffect(() => {
-  if (id) {
-    obtenerUsuario(id)
-      .then(setFormData)
-      .catch((err) => console.error("Error:", err));
-  }
-}, [id]);
+    if (id) {
+      obtenerUsuario(id)
+        .then(setFormData)
+        .catch((err) => console.error("Error:", err));
+    }
+  }, [id]);
 
-
-const handleChange = (
-  e: React.ChangeEvent<any> // 
-) => {
-  const { name, type, value, checked } = e.target;
-  setFormData((prev) => ({
-    ...prev,
-    [name]: type === "checkbox" ? checked : value,
-  }));
-};
+  const handleChange = (e: React.ChangeEvent<any>) => {
+    const { name, type, value, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const url = id
-      ? `http://localhost:8080/usuarios/actualizar/${id}`
-      : "http://localhost:8080/usuarios";
-    const method = id ? "PUT" : "POST";
-
     try {
-      const response = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        alert(id ? "Usuario actualizado" : "Usuario creado");
-        navigate("/usuarios");
+      if (id) {
+        await actualizarUsuario(id, formData);
+        alert("Usuario actualizado");
       } else {
-        const error = await response.text();
-        alert("Error: " + error);
+        await registrarUsuario(formData);
+        alert("Usuario creado");
       }
+
+      navigate("/usuarios");
     } catch (error) {
-      alert("Error de conexión: " + error);
+      console.error("Error en handleSubmit:", error);
+      alert("Error al procesar el usuario");
     }
   };
 
@@ -74,12 +65,11 @@ const handleChange = (
           onSubmit={handleSubmit}
           className="bg-white px-10 py-14 rounded-2xl mt-4"
         >
-
           <div className="text-left">
             <label className="text-lg font-medium">Nombre de usuario</label>
             <input
-              name="username"
-              value={formData.username}
+              name="nombreUsuario"
+              value={formData.nombreUsuario}
               onChange={handleChange}
               className="w-full border-2 border-gray-200 rounded-2xl p-3 mt-1"
               placeholder="Ingrese su nombre de usuario"
@@ -87,7 +77,6 @@ const handleChange = (
             />
           </div>
 
-  
           <div className="mt-4 text-left">
             <label className="text-lg font-medium">Nombre</label>
             <input
@@ -100,7 +89,6 @@ const handleChange = (
             />
           </div>
 
- 
           <div className="mt-4 text-left">
             <label className="text-lg font-medium">Apellido</label>
             <input
@@ -112,7 +100,6 @@ const handleChange = (
               required
             />
           </div>
-
 
           <div className="mt-4 text-left">
             <label className="text-lg font-medium">Teléfono</label>
@@ -138,7 +125,6 @@ const handleChange = (
             />
           </div>
 
-    
           <div className="mt-4 text-left">
             <label className="text-lg font-medium">Rol</label>
             <select
@@ -151,8 +137,28 @@ const handleChange = (
               <option value="PRESIDENTE">Presidente</option>
               <option value="VOLUNTARIO">Voluntario</option>
               <option value="COORDINADOR">Coordinador</option>
+              <option value="VOCAL">Vocal</option>
             </select>
           </div>
+
+      
+          
+          {/* {id && (
+            <div className="mt-4 text-left">
+              <label className="text-lg font-medium">Estado</label>
+              <select
+                name="estado"
+                value={formData.estado}
+                onChange={handleChange}
+                className="w-full border-2 border-gray-200 rounded-2xl p-3 mt-1"
+                required
+              >
+                <option value="ACTIVO">Activo</option>
+                <option value="INACTIVO">Inactivo</option>
+                <option value="SUSPENDIDO">Suspendido</option>
+              </select>
+            </div>
+          )} */}
 
           <div className="mt-8 flex flex-col">
             <button
