@@ -44,7 +44,7 @@ export const LoginForm = () => {
         telefono: "0000000000",
         email: "admin@example.com",
         rol: 0,       // por ejemplo 1 = ADMIN
-        estado: true, // activo
+        estado: 0, // activo
       };
 
       const fakeToken = "fake-jwt-token";
