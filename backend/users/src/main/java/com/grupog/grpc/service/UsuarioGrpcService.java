@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.grupog.ActualizarUsuarioRequest;
 import com.grupog.BuscarUsuarioPorIdRequest;
+import com.grupog.BuscarUsuarioPorNombreUsuarioRequest;
 import com.grupog.CrearUsuarioRequest;
 import com.grupog.EstadoUsuario;
 import com.grupog.ListaUsuariosResponse;
@@ -141,6 +142,23 @@ public class UsuarioGrpcService extends UsuarioServiceImplBase {
 		Usuario usuario = usuarioMapper.toProto(guardado);
 		responseObserver.onNext(usuario);
 		responseObserver.onCompleted();
+	}
+
+	@Override
+	public void buscarUsuarioPorNombreUsuario(BuscarUsuarioPorNombreUsuarioRequest request,
+			StreamObserver<Usuario> responseObserver) {
+		try {
+			UsuarioEntity entity = usuarioRepository.findByNombreUsuarioAndActivoTrue(request.getNombreUsuario())
+					.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+			Usuario usuario = usuarioMapper.toProto(entity);
+			responseObserver.onNext(usuario);
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			responseObserver.onError(Status.NOT_FOUND
+					.withDescription("Usuario no encontrado: " + e.getMessage())
+					.asRuntimeException());
+		}
 	}
 
 }

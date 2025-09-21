@@ -19,10 +19,6 @@ enum EstadoUsuario {
     SUSPENDIDO = 2;
 }
 
-message ListaUsuariosResponse {
-    repeated Usuario usuarios = 1;
-}
-
 message Usuario {
     int64 id = 1;
     string nombreUsuario = 2;
@@ -33,4 +29,54 @@ message Usuario {
     Rol rol = 7;
 	int64 fechaCreacion = 8;
     EstadoUsuario estado  = 9;
+}
+
+message CrearUsuarioRequest {
+	string nombreUsuario = 1;
+	string nombre = 2;
+	string apellido = 3;
+	string telefono = 4;
+	string email = 5;
+	Rol rol = 6;
+}
+
+message RespuestaExito {
+    string mensaje = 1;
+    bool exito = 2;
+}
+
+message BuscarUsuarioPorIdRequest {
+	int64 id = 1;
+}
+
+message BuscarUsuarioPorNombreUsuarioRequest {
+	string nombreUsuario = 1;
+}
+
+message ListaUsuariosResponse {
+    repeated Usuario usuarios = 1;
+}
+
+message ListarUsuariosRequest {
+   EstadoUsuario estadoUsuario = 1;
+}
+
+message ActualizarUsuarioRequest {
+  int64 id = 1;
+  string nombreUsuario = 2;
+  string nombre = 3;
+  string apellido = 4;
+  string telefono = 5;
+  string email = 6;
+  Rol rol = 7;
+  EstadoUsuario estado = 8; // ACTIVO/INACTIVO
+}
+
+service UsuarioService {
+	rpc registrarUsuario(CrearUsuarioRequest) returns (Usuario);
+	rpc actualizarUsuario(ActualizarUsuarioRequest) returns (Usuario);
+	rpc desactivarUsuario(BuscarUsuarioPorIdRequest) returns (RespuestaExito);
+	rpc buscarUsuarioPorId(BuscarUsuarioPorIdRequest) returns (Usuario);
+	rpc buscarUsuarioPorNombreUsuario(BuscarUsuarioPorNombreUsuarioRequest) returns (Usuario);
+    rpc listarUsuarios(ListarUsuariosRequest) returns (ListaUsuariosResponse);
 }

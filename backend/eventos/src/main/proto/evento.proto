@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package com.grupog;
 
+import "usuario.proto";
+
 option java_multiple_files = true;
 option java_package = "com.grupog";
 
@@ -66,11 +68,6 @@ message ListaEventosResponse {
 
 message ListarEventosRequest {
     bool soloFuturos = 1;
-}
-
-message RespuestaExito {
-    string mensaje = 1;
-    bool exito = 2;
 }
 
 service EventoService {

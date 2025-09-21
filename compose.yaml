@@ -42,6 +42,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8081/actuator/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   # The commented out section below is an example of how to define a PostgreSQL
   # database that your application can use. `depends_on` tells Docker Compose to
@@ -89,7 +95,7 @@ services:
       mongodb:
         condition: service_healthy
       server:
-        condition: service_started
+        condition: service_healthy
 
   mongodb:
     image: mongo:7.0

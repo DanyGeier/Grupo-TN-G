@@ -12,7 +12,13 @@ def extract_token():
     """Función auxiliar para extraer token JWT"""
     auth_header = request.headers.get("Authorization")
     if auth_header and auth_header.startswith("Bearer "):
-        return auth_header[7:]  # Remover 'Bearer '
+        token = auth_header[7:]  # Remover 'Bearer '
+        print(
+            f"[JWT EXTRACTION] Token extraído del header Authorization - Longitud: {len(token)}"
+        )
+        print(f"[JWT EXTRACTION] Token (primeros 50 chars): {token[:50]}...")
+        return token
+    print("[JWT EXTRACTION] WARNING: No se encontró token en header Authorization")
     return None
 
 
@@ -20,8 +26,10 @@ def extract_token():
 def listar_eventos():
     """Listar eventos, opcionalmente solo los futuros"""
     try:
+        print("[FLASK ROUTE] Iniciando listado de eventos")
         token = extract_token()
         solo_futuros = request.args.get("soloFuturos", "false").lower() == "true"
+        print(f"[FLASK ROUTE] Parámetros - Solo futuros: {solo_futuros}")
 
         eventos = evento_client.listar_eventos(solo_futuros, token)
         eventos_list = []
@@ -60,11 +68,14 @@ def listar_eventos():
 def crear_evento():
     """Crear nuevo evento"""
     try:
+        print("[FLASK ROUTE] Iniciando creación de evento")
         token = extract_token()
         if not token:
+            print("[FLASK ROUTE] ERROR: Token de autorización requerido")
             return jsonify({"error": "Token de autorización requerido"}), 401
 
         data = request.get_json()
+        print(f"[FLASK ROUTE] Datos del evento - Nombre: {data.get('nombreEvento')}")
 
         evento = evento_client.crear_evento(
             data["nombreEvento"], data["descripcion"], data["fechaHoraEvento"], token
