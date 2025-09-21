@@ -30,9 +30,9 @@ class EventoClient(object):
 
         if token:
             metadata = [("authorization", token)]
-            response = self.stub.crearEvento(request, metadata=metadata)
+            response, call = self.stub.crearEvento.with_call(request, metadata=metadata)
         else:
-            response = self.stub.crearEvento(request)
+            response, call = self.stub.crearEvento.with_call(request)
         return response
 
     def listar_eventos(self, solo_futuros=False, token=None):
@@ -43,9 +43,11 @@ class EventoClient(object):
 
         if token:
             metadata = [("authorization", token)]
-            response = self.stub.listarEventos(request, metadata=metadata)
+            response, call = self.stub.listarEventos.with_call(
+                request, metadata=metadata
+            )
         else:
-            response = self.stub.listarEventos(request)
+            response, call = self.stub.listarEventos.with_call(request)
         return response
 
     def buscar_evento_por_id(self, evento_id, token):

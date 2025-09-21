@@ -1,153 +1,54 @@
-# Servicio de Eventos
+# Backend Eventos - API Endpoints
 
-Servicio de gestión de eventos solidarios para la ONG "Empuje Comunitario".
+## Autenticación
 
-## Características
-
-- **Base de datos**: MongoDB
-- **Comunicación**: gRPC
-- **Puerto gRPC**: 9096
-- **Puerto Web**: 8082
-- **Autenticación**: JWT via metadatos gRPC
-
-## Funcionalidades
-
-### Gestión de Eventos
-- ✅ Crear eventos (solo fechas futuras)
-- ✅ Modificar eventos
-- ✅ Eliminar eventos (solo futuros, eliminación física)
-- ✅ Listar eventos (con filtros)
-- ✅ Buscar evento por ID
-
-### Gestión de Participantes
-- ✅ Asignar participantes según rol
-- ✅ Quitar participantes según rol
-- ✅ Validación de permisos por rol
-
-### Registro de Donaciones
-- ✅ Registrar donaciones repartidas en eventos pasados
-- ✅ Descontar del inventario (via gRPC)
-- ✅ Auditoría de donaciones
-
-## Roles y Permisos
-
-- **PRESIDENTE**: Puede hacer todo
-- **COORDINADOR**: Puede crear/modificar/asignar participantes
-- **VOLUNTARIO**: Solo puede asignarse/quitarse a sí mismo
-- **VOCAL**: Solo lectura de eventos
-
-## Estructura del Proyecto
-
-```
-backend/eventos/
-├── src/main/java/com/grupog/
-│   ├── configs/           # Configuraciones (JWT, gRPC)
-│   ├── documents/         # Entidades MongoDB
-│   ├── grpc/service/      # Servicios gRPC
-│   ├── mappers/          # Conversores Entity ↔ Proto
-│   ├── repositories/     # Repositorios MongoDB
-│   ├── service/          # Clientes gRPC y servicios
-│   └── EventosApplication.java
-├── src/main/proto/       # Archivos Protocol Buffers
-├── src/main/resources/   # Configuración de aplicación
-├── Dockerfile
-├── pom.xml
-└── mongo-init.js        # Script de inicialización MongoDB
-```
-
-## Configuración
-
-### Variables de Entorno
-- `SPRING_DATA_MONGODB_HOST`: Host de MongoDB
-- `SPRING_DATA_MONGODB_PORT`: Puerto de MongoDB (27017)
-- `SPRING_DATA_MONGODB_DATABASE`: Base de datos (eventos_db)
-- `SPRING_DATA_MONGODB_USERNAME`: Usuario de MongoDB
-- `SPRING_DATA_MONGODB_PASSWORD`: Contraseña de MongoDB
-
-### Clientes gRPC
-- **usuarios-service**: Puerto 9095
-- **inventario-service**: Puerto 9097 (pendiente de implementación)
-
-## Desarrollo
-
-### Compilar
+### 1. Login para obtener token
 ```bash
-./mvnw clean compile
+curl -X POST http://localhost:5000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nombreUsuario": "admin",
+    "clave": "dmPeW3oC"
+  }'
 ```
 
-### Generar código gRPC
+### 2. Extraer token de la respuesta
+El token viene en el campo `token` de la respuesta JSON.
+
+## Crear Evento
+
+### Generar timestamp para fecha futura
 ```bash
-./mvnw protobuf:compile
+TIMESTAMP=$(date -j -f "%Y-%m-%d %H:%M:%S" "2025-12-20 15:30:00" +%s)000
 ```
 
-### Ejecutar tests
+### Crear evento
 ```bash
-./mvnw test
+curl -X POST http://localhost:5000/eventos \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer TU_TOKEN_AQUI" \
+  -d "{
+    \"nombreEvento\": \"Evento de Prueba\",
+    \"descripcion\": \"Este es un evento de prueba creado via CURL\",
+    \"fechaHoraEvento\": $TIMESTAMP
+  }"
 ```
 
-### Construir imagen Docker
+## Obtener Eventos
+
+### Listar todos los eventos
 ```bash
-docker build -t eventos-service .
+curl -X GET http://localhost:5000/eventos \
+  -H "Authorization: Bearer TU_TOKEN_AQUI"
 ```
 
-## Despliegue
-
-El servicio se despliega automáticamente con Docker Compose:
-
+### Obtener evento específico
 ```bash
-docker-compose up eventos
+curl -X GET http://localhost:5000/eventos/ID_DEL_EVENTO \
+  -H "Authorization: Bearer TU_TOKEN_AQUI"
 ```
 
-## API gRPC
-
-### Métodos Disponibles
-
-1. **crearEvento** - Crear nuevo evento
-2. **modificarEvento** - Modificar evento existente
-3. **eliminarEvento** - Eliminar evento (solo futuros)
-4. **listarEventos** - Listar eventos con filtros
-5. **buscarEventoPorId** - Buscar evento específico
-6. **asignarParticipante** - Asignar participante
-7. **quitarParticipante** - Quitar participante
-8. **registrarDonacionRepartida** - Registrar donación repartida
-
-### Autenticación
-
-Todos los métodos requieren token JWT en los metadatos gRPC:
-
-```
-Authorization: Bearer <token>
-```
-
-## Base de Datos
-
-### Colección: eventos
-
-```javascript
-{
-  "_id": "ObjectId",
-  "nombre_evento": "string",
-  "descripcion": "string",
-  "fecha_hora_evento": "ISODate",
-  "participantes_ids": ["Long"],
-  "donaciones_repartidas": [
-    {
-      "categoria": "string",
-      "descripcion": "string", 
-      "cantidad_repartida": "int",
-      "fecha_repartida": "ISODate",
-      "usuario_repartida_id": "Long",
-      "nombre_usuario_repartida": "string"
-    }
-  ],
-  "fecha_creacion": "ISODate",
-  "usuario_creacion": "Long",
-  "activo": "boolean"
-}
-```
-
-### Índices
-- `{ "fecha_hora_evento": 1, "activo": 1 }`
-- `{ "participantes_ids": 1 }`
-- `{ "usuario_creacion": 1 }`
-- `{ "activo": 1 }`
+## Notas
+- Los tokens JWT tienen expiración, si falla la autenticación, hacer login nuevamente
+- La fecha debe ser un timestamp Unix en milisegundos
+- El endpoint base es `http://localhost:5000`
