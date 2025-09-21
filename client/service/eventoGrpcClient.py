@@ -30,9 +30,9 @@ class EventoClient(object):
 
         if token:
             metadata = [("authorization", token)]
-            response = self.stub.crearEvento(request, metadata=metadata)
+            response, call = self.stub.crearEvento.with_call(request, metadata=metadata)
         else:
-            response = self.stub.crearEvento(request)
+            response, call = self.stub.crearEvento.with_call(request)
         return response
 
     def listar_eventos(self, solo_futuros=False, token=None):
@@ -43,9 +43,11 @@ class EventoClient(object):
 
         if token:
             metadata = [("authorization", token)]
-            response = self.stub.listarEventos(request, metadata=metadata)
+            response, call = self.stub.listarEventos.with_call(
+                request, metadata=metadata
+            )
         else:
-            response = self.stub.listarEventos(request)
+            response, call = self.stub.listarEventos.with_call(request)
         return response
 
     def buscar_evento_por_id(self, evento_id, token):
@@ -55,7 +57,9 @@ class EventoClient(object):
         metadata = [("authorization", token)]
 
         request = evento_pb2.BuscarEventoPorIdRequest(id=evento_id)
-        response = self.stub.buscarEventoPorId(request, metadata=metadata)
+        response, call = self.stub.buscarEventoPorId.with_call(
+            request, metadata=metadata
+        )
         return response
 
     def asignar_participante(self, evento_id, usuario_id, token):
@@ -68,7 +72,9 @@ class EventoClient(object):
             eventoId=evento_id, usuarioId=usuario_id
         )
 
-        response = self.stub.asignarParticipante(request, metadata=metadata)
+        response, call = self.stub.asignarParticipante.with_call(
+            request, metadata=metadata
+        )
         return response
 
     def quitar_participante(self, evento_id, usuario_id, token):
@@ -81,7 +87,9 @@ class EventoClient(object):
             eventoId=evento_id, usuarioId=usuario_id
         )
 
-        response = self.stub.quitarParticipante(request, metadata=metadata)
+        response, call = self.stub.quitarParticipante.with_call(
+            request, metadata=metadata
+        )
         return response
 
     def registrar_donacion_repartida(
@@ -107,7 +115,9 @@ class EventoClient(object):
             cantidad=cantidad,
         )
 
-        response = self.stub.registrarDonacionRepartida(request, metadata=metadata)
+        response, call = self.stub.registrarDonacionRepartida.with_call(
+            request, metadata=metadata
+        )
         return response
 
     def eliminar_evento(self, evento_id, token):
@@ -117,7 +127,7 @@ class EventoClient(object):
         metadata = [("authorization", token)]
 
         request = evento_pb2.BuscarEventoPorIdRequest(id=evento_id)
-        response = self.stub.eliminarEvento(request, metadata=metadata)
+        response, call = self.stub.eliminarEvento.with_call(request, metadata=metadata)
         return response
 
     def modificar_evento(self, evento_data, token):
@@ -137,7 +147,7 @@ class EventoClient(object):
             activo=evento_data.get("activo", True),
         )
 
-        response = self.stub.modificarEvento(request, metadata=metadata)
+        response, call = self.stub.modificarEvento.with_call(request, metadata=metadata)
         return response
 
 
