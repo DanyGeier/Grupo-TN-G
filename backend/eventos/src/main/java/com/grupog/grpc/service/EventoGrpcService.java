@@ -7,6 +7,7 @@ import com.grupog.service.JwtService;
 import com.grupog.service.UsuarioGrpcClient;
 import com.grupog.service.InventarioGrpcClient;
 import com.grupog.mappers.EventoMapper;
+import com.grupog.configs.ContextKeys;
 
 import io.grpc.Context;
 import io.grpc.Status;
@@ -39,19 +40,22 @@ public class EventoGrpcService extends EventoServiceGrpc.EventoServiceImplBase {
     @Autowired
     private EventoMapper eventoMapper;
 
-    // Clave para el contexto gRPC
-    private static final Context.Key<String> TOKEN_KEY = Context.key("token");
+    // Usar la clave compartida del contexto gRPC
 
     @Override
     public void crearEvento(CrearEventoRequest request, StreamObserver<Evento> responseObserver) {
         try {
+            System.out.println("[EVENTO SERVICE] Iniciando creación de evento: " + request.getNombreEvento());
+
             // Extraer token desde el contexto
-            String token = TOKEN_KEY.get();
-            System.out.println("DEBUG Service: Token extraído del contexto: "
-                    + (token != null ? token.substring(0, Math.min(token.length(), 50)) + "..." : "null"));
+            String token = ContextKeys.TOKEN_KEY.get();
+            System.out.println("[EVENTO SERVICE] Token extraído del contexto: " +
+                    (token != null ? "Token presente (longitud: " + token.length() + ")" : "Token NULL"));
 
             // Validar JWT y obtener usuario
             Usuario usuario = validarTokenYUsuario(token);
+            System.out.println("[EVENTO SERVICE] Usuario validado: " + usuario.getNombreUsuario() + " (ID: "
+                    + usuario.getId() + ")");
 
             // Validar rol (PRESIDENTE o COORDINADOR)
             if (!esPresidenteOCoordinador(usuario)) {
@@ -94,9 +98,9 @@ public class EventoGrpcService extends EventoServiceGrpc.EventoServiceImplBase {
             StreamObserver<RespuestaExito> responseObserver) {
         try {
             // Extraer token desde el contexto
-            String token = TOKEN_KEY.get();
-            System.out.println("DEBUG Service: Token extraído del contexto: "
-                    + (token != null ? token.substring(0, Math.min(token.length(), 50)) + "..." : "null"));
+            String token = ContextKeys.TOKEN_KEY.get();
+            System.out.println("[EVENTO SERVICE] Token extraído del contexto: "
+                    + (token != null ? "Token presente (longitud: " + token.length() + ")" : "Token NULL"));
 
             // Validar JWT y obtener usuario actual
             Usuario usuarioActual = validarTokenYUsuario(token);
@@ -152,9 +156,9 @@ public class EventoGrpcService extends EventoServiceGrpc.EventoServiceImplBase {
     public void quitarParticipante(QuitarParticipanteRequest request, StreamObserver<RespuestaExito> responseObserver) {
         try {
             // Extraer token desde el contexto
-            String token = TOKEN_KEY.get();
-            System.out.println("DEBUG Service: Token extraído del contexto: "
-                    + (token != null ? token.substring(0, Math.min(token.length(), 50)) + "..." : "null"));
+            String token = ContextKeys.TOKEN_KEY.get();
+            System.out.println("[EVENTO SERVICE] Token extraído del contexto: "
+                    + (token != null ? "Token presente (longitud: " + token.length() + ")" : "Token NULL"));
 
             // Validar JWT y obtener usuario actual
             Usuario usuarioActual = validarTokenYUsuario(token);
@@ -201,9 +205,9 @@ public class EventoGrpcService extends EventoServiceGrpc.EventoServiceImplBase {
             StreamObserver<RespuestaExito> responseObserver) {
         try {
             // Extraer token desde el contexto
-            String token = TOKEN_KEY.get();
-            System.out.println("DEBUG Service: Token extraído del contexto: "
-                    + (token != null ? token.substring(0, Math.min(token.length(), 50)) + "..." : "null"));
+            String token = ContextKeys.TOKEN_KEY.get();
+            System.out.println("[EVENTO SERVICE] Token extraído del contexto: "
+                    + (token != null ? "Token presente (longitud: " + token.length() + ")" : "Token NULL"));
 
             // Validar JWT
             Usuario usuario = validarTokenYUsuario(token);
@@ -261,9 +265,9 @@ public class EventoGrpcService extends EventoServiceGrpc.EventoServiceImplBase {
     public void listarEventos(ListarEventosRequest request, StreamObserver<ListaEventosResponse> responseObserver) {
         try {
             // Extraer token desde el contexto
-            String token = TOKEN_KEY.get();
-            System.out.println("DEBUG Service: Token extraído del contexto: "
-                    + (token != null ? token.substring(0, Math.min(token.length(), 50)) + "..." : "null"));
+            String token = ContextKeys.TOKEN_KEY.get();
+            System.out.println("[EVENTO SERVICE] Token extraído del contexto: "
+                    + (token != null ? "Token presente (longitud: " + token.length() + ")" : "Token NULL"));
 
             // Validar JWT (solo verificar que sea válido, no necesitamos el usuario
             // completo)
@@ -302,9 +306,9 @@ public class EventoGrpcService extends EventoServiceGrpc.EventoServiceImplBase {
     public void buscarEventoPorId(BuscarEventoPorIdRequest request, StreamObserver<Evento> responseObserver) {
         try {
             // Extraer token desde el contexto
-            String token = TOKEN_KEY.get();
-            System.out.println("DEBUG Service: Token extraído del contexto: "
-                    + (token != null ? token.substring(0, Math.min(token.length(), 50)) + "..." : "null"));
+            String token = ContextKeys.TOKEN_KEY.get();
+            System.out.println("[EVENTO SERVICE] Token extraído del contexto: "
+                    + (token != null ? "Token presente (longitud: " + token.length() + ")" : "Token NULL"));
 
             // Validar JWT
             validarTokenYUsuario(token);
@@ -332,9 +336,9 @@ public class EventoGrpcService extends EventoServiceGrpc.EventoServiceImplBase {
     public void eliminarEvento(BuscarEventoPorIdRequest request, StreamObserver<RespuestaExito> responseObserver) {
         try {
             // Extraer token desde el contexto
-            String token = TOKEN_KEY.get();
-            System.out.println("DEBUG Service: Token extraído del contexto: "
-                    + (token != null ? token.substring(0, Math.min(token.length(), 50)) + "..." : "null"));
+            String token = ContextKeys.TOKEN_KEY.get();
+            System.out.println("[EVENTO SERVICE] Token extraído del contexto: "
+                    + (token != null ? "Token presente (longitud: " + token.length() + ")" : "Token NULL"));
 
             // Validar JWT y obtener usuario
             Usuario usuario = validarTokenYUsuario(token);
@@ -384,72 +388,49 @@ public class EventoGrpcService extends EventoServiceGrpc.EventoServiceImplBase {
     // Métodos auxiliares
     private Usuario validarTokenYUsuario(String token) {
         try {
-            // TEMPORAL: Deshabilitar validación JWT para pruebas
-            // TODO: Rehabilitar validación JWT cuando esté funcionando correctamente
+            System.out.println("[JWT VALIDATION] Iniciando validación de token");
 
-            // Simulación temporal - siempre retorna un usuario válido
-            return Usuario.newBuilder()
-                    .setId(1L)
-                    .setNombreUsuario("admin")
-                    .setNombre("Administrador")
-                    .setApellido("Sistema")
-                    .setEmail("admin@grupo.com")
-                    .setRol(Rol.PRESIDENTE)
-                    .setEstado(EstadoUsuario.ACTIVO)
-                    .setFechaCreacion(System.currentTimeMillis())
-                    .build();
+            // Validar que el token no sea nulo o vacío
+            if (token == null || token.trim().isEmpty()) {
+                System.out.println("[JWT VALIDATION] ERROR: Token no proporcionado o vacío");
+                throw new RuntimeException("Token no proporcionado");
+            }
+            System.out.println("[JWT VALIDATION] Token recibido - Longitud: " + token.length());
 
-            /*
-             * VALIDACIÓN JWT COMENTADA TEMPORALMENTE
-             * if (token == null || token.trim().isEmpty()) {
-             * throw new RuntimeException("Token no proporcionado");
-             * }
-             * 
-             * String username = jwtService.extractUsername(token);
-             * // TODO: Implementar llamada real al servicio de usuarios
-             * // return usuarioGrpcClient.buscarUsuarioPorNombreUsuario(username);
-             * 
-             * // Simulación temporal
-             * return Usuario.newBuilder()
-             * .setId(1L)
-             * .setNombreUsuario(username)
-             * .setNombre("Usuario")
-             * .setApellido("Temporal")
-             * .setEmail("temp@example.com")
-             * .setRol(Rol.PRESIDENTE)
-             * .setEstado(EstadoUsuario.ACTIVO)
-             * .setFechaCreacion(System.currentTimeMillis())
-             * .build();
-             */
+            // Validar el token JWT
+            System.out.println("[JWT VALIDATION] Validando token con JwtService");
+            if (!jwtService.validateToken(token)) {
+                System.out.println("[JWT VALIDATION] ERROR: Token inválido o expirado");
+                throw new RuntimeException("Token inválido o expirado");
+            }
+            System.out.println("[JWT VALIDATION] Token válido según JwtService");
+
+            // Extraer el nombre de usuario del token
+            System.out.println("[JWT VALIDATION] Extrayendo username del token");
+            String username = jwtService.extractUsername(token);
+            System.out.println("[JWT VALIDATION] Username extraído: " + username);
+
+            // Buscar el usuario en el servicio de usuarios
+            System.out.println("[JWT VALIDATION] Buscando usuario en servicio de usuarios");
+            Usuario usuario = usuarioGrpcClient.buscarUsuarioPorNombreUsuario(username);
+
+            if (usuario == null) {
+                System.out.println("[JWT VALIDATION] ERROR: Usuario no encontrado en servicio de usuarios");
+                throw new RuntimeException("Usuario no encontrado o inactivo");
+            }
+            System.out.println("[JWT VALIDATION] Usuario encontrado - ID: " + usuario.getId() + ", Estado: "
+                    + usuario.getEstado());
+
+            // Validar que el usuario existe y está activo
+            if (usuario.getEstado() != EstadoUsuario.ACTIVO) {
+                System.out.println("[JWT VALIDATION] ERROR: Usuario inactivo - Estado: " + usuario.getEstado());
+                throw new RuntimeException("Usuario no encontrado o inactivo");
+            }
+            System.out.println("[JWT VALIDATION] Usuario validado exitosamente");
+
+            return usuario;
         } catch (Exception e) {
-            throw new RuntimeException("Token inválido: " + e.getMessage());
-        }
-    }
-
-    private Long validarTokenYExtraerUsuarioId(String token) {
-        try {
-            // TEMPORAL: Deshabilitar validación JWT para pruebas
-            // TODO: Rehabilitar validación JWT cuando esté funcionando correctamente
-
-            // Simulación temporal - siempre retorna usuario ID 1
-            return 1L;
-
-            /*
-             * VALIDACIÓN JWT COMENTADA TEMPORALMENTE
-             * if (token == null || token.trim().isEmpty()) {
-             * throw new RuntimeException("Token no proporcionado");
-             * }
-             * 
-             * String username = jwtService.extractUsername(token);
-             * // TODO: Implementar llamada real al servicio de usuarios
-             * // Usuario usuario =
-             * usuarioGrpcClient.buscarUsuarioPorNombreUsuario(username);
-             * // return usuario.getId();
-             * 
-             * // Simulación temporal
-             * return 1L;
-             */
-        } catch (Exception e) {
+            System.out.println("[JWT VALIDATION] ERROR: " + e.getMessage());
             throw new RuntimeException("Token inválido: " + e.getMessage());
         }
     }

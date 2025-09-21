@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import { Header } from "../Header";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
-import type { EventoResponse } from "../../models/eventoResponse";
+import { useNavigate, useParams } from "react-router-dom";
 import type { CrearEventoRequest } from "../../models/crearEventoRequest";
+import { eventosApiService } from "../../services/eventosApi";
 
 export const EventoForm = () => {
   const { id } = useParams<{ id: string }>();
@@ -11,11 +11,8 @@ export const EventoForm = () => {
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [fechaHora, setFechaHora] = useState<Date>();
-
-  const [eventosMock, setEventosMock] = useState<EventoResponse[]>([]);
-  useEffect(() => {
-    setEventosMock(eventosMock);
-  }, []);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // useEffect(() => {
   //   if (id) {
@@ -83,47 +80,46 @@ const handleSubmit = async (e: React.FormEvent) => {
 
 */
 
-  //Aca tendria que mandar el CrearEventoRequest al back para que mapee el DTO con la entidad Evento.
-  //Por ahora simulo el comportamiento
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!fechaHora) {
-      alert("Por favor selecciona una fecha y hora");
+      setError("Por favor selecciona una fecha y hora");
       return;
     }
 
-    // 1️⃣ Crear el DTO
-    const nuevoEventoDTO: CrearEventoRequest = {
-      nombreEvento: nombre,
-      descripcion,
-      fechaHora: fechaHora, // Date
-    };
+    try {
+      setLoading(true);
+      setError(null);
 
-    // 2️⃣ Simular envío al backend
-    console.log("Simulando envío al backend:", nuevoEventoDTO);
+      console.log("[FRONTEND] Creando evento:", nombre);
 
-    // 3️⃣ (Opcional) actualizar tus mocks localmente para ver efecto
-    setEventosMock((prev) => [
-      ...prev,
-      {
-        id: prev.length + 1, // id mock
-        nombreEvento: nuevoEventoDTO.nombreEvento,
-        descripcion: nuevoEventoDTO.descripcion,
-        fechaHora: nuevoEventoDTO.fechaHora, // Date
-        miembros: [], // vacío por ahora
-        donaciones: [], // vacío por ahora
-      },
-    ]);
+      // Crear el DTO para enviar al backend
+      const nuevoEventoDTO: CrearEventoRequest = {
+        nombreEvento: nombre,
+        descripcion,
+        fechaHora: fechaHora,
+      };
 
-    // Limpiar formulario
-    setNombre("");
-    setDescripcion("");
-    setFechaHora(undefined);
+      // Enviar al backend usando el servicio API
+      const eventoCreado = await eventosApiService.crearEvento(nuevoEventoDTO);
 
-    alert("Evento creado en mock ✅");
+      console.log("[FRONTEND] Evento creado exitosamente:", eventoCreado.id);
 
-    navigate("/eventos");
+      // Limpiar formulario
+      setNombre("");
+      setDescripcion("");
+      setFechaHora(undefined);
+
+      alert("Evento creado exitosamente ✅");
+      navigate("/eventos");
+
+    } catch (err) {
+      console.error("[FRONTEND] Error al crear evento:", err);
+      setError("Error al crear el evento. Verifica que el backend esté ejecutándose y que tengas permisos.");
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <>
@@ -133,6 +129,13 @@ const handleSubmit = async (e: React.FormEvent) => {
         <h2 className="text-3xl font-bold text-gray-800">
           {id ? "Editar evento" : "Crear nuevo evento"}
         </h2>
+
+        {/* Mostrar error si existe */}
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mt-4 w-full max-w-xl">
+            {error}
+          </div>
+        )}
 
         <form
           onSubmit={handleSubmit}
@@ -185,9 +188,9 @@ const handleSubmit = async (e: React.FormEvent) => {
               value={
                 fechaHora
                   ? `${fechaHora
-                      .getHours()
-                      .toString()
-                      .padStart(2, "0")}:${fechaHora
+                    .getHours()
+                    .toString()
+                    .padStart(2, "0")}:${fechaHora
                       .getMinutes()
                       .toString()
                       .padStart(2, "0")}`
@@ -237,9 +240,16 @@ const handleSubmit = async (e: React.FormEvent) => {
           <div className="mt-8 flex flex-col">
             <button
               type="submit"
-              className=" cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-xl text-lg transition"
+              disabled={loading}
+              className={`cursor-pointer text-white font-semibold py-3 rounded-xl text-lg transition ${loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-500 hover:bg-blue-600"
+                }`}
             >
-              {id ? "Actualizar evento" : "Guardar evento"}
+              {loading
+                ? "Creando evento..."
+                : (id ? "Actualizar evento" : "Guardar evento")
+              }
             </button>
           </div>
         </form>

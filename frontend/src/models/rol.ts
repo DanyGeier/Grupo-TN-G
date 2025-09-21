@@ -5,3 +5,5 @@ export const rolesMap: Record<number, string> = {
   3: "VOLUNTARIO",
 };
 
+export const rolMap = ["PRESIDENTE", "VOCAL", "COORDINADOR", "VOLUNTARIO"] as const;
+export const estadoMap = ["ACTIVO", "INACTIVO", "SUSPENDIDO"] as const;

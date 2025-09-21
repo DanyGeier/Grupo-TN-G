@@ -1,4 +1,4 @@
-import type { Usuario } from "../../../models/usuario";
+import { estadoMap, rolMap } from "../../../models/rol";
 
 const BASE_URL = "http://localhost:5000/usuarios";
 
@@ -9,15 +9,11 @@ export const obtenerUsuario = async (id: string) => {
   return res.json();
 };
 
-// export const crearUsuario = async (data: any) =>
-//   fetch(BASE_URL, {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify(data),
-//   });
+
+
 
 export const registrarUsuario = async (usuario: any) => {
-  const response = await fetch("http://localhost:5000/usuarios", {
+  const response = await fetch(`${BASE_URL}`,{
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(usuario),
@@ -26,7 +22,7 @@ export const registrarUsuario = async (usuario: any) => {
 };
 
 
-export const actualizarUsuario = async (id: string, data: any) => {
+export let actualizarUsuario = async (id: string, data: any) => {
 const response = await fetch(`${BASE_URL}/${id}`, {
   method: "PUT",
   headers: { "Content-Type": "application/json" },
@@ -49,8 +45,7 @@ export const obtenerUsuarios = async (): Promise<any[]> => {
 
   
 };
-
-export const desactivarUsuario = async (usuarioId: number) => {
+export const darDeBaja = async (usuarioId: number) => {
   const response = await fetch(`http://localhost:5000/usuarios/${usuarioId}`, {
     method: "DELETE",
   });
@@ -59,5 +54,16 @@ export const desactivarUsuario = async (usuarioId: number) => {
     throw new Error("Error al desactivar el usuario");
   }
 
-  return response.json(); // { message: "...", success: true/false }
+  return response.json(); 
+};
+
+
+export const activarUsuario = async (id: string, data: any) => {
+  const usuarioActivado = {
+    ...data,
+    estado: estadoMap[0], // "ACTIVO"
+    rol: rolMap[data.rol]
+  };
+
+  return await actualizarUsuario(id, usuarioActivado);
 };

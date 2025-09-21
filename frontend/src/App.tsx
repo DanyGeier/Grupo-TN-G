@@ -1,6 +1,5 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
-import { FormularioUsuario } from "./components/usuarios/FormularioUsuario";
 import { ListaUsuarios } from "./components/usuarios/ListaUsuarios";
 import { ToastContainer } from "react-toastify";
 import { HomePage } from "./components/HomePage";
@@ -10,6 +9,7 @@ import { useUser } from "./context/UserContext";
 import { AccesoDenegado } from "./components/AccesoDenegado";
 import { ListaEventos } from "./components/eventos/ListaEventos";
 import { EventoForm } from "./components/eventos/EventoForm";
+import { FormularioUsuario } from "./components/usuarios/FormularioUsuario";
 
 function App() {
   const { usuario } = useUser();

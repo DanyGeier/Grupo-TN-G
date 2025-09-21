@@ -49,6 +49,10 @@ message BuscarUsuarioPorIdRequest {
 	int64 id = 1;
 }
 
+message BuscarUsuarioPorNombreUsuarioRequest {
+	string nombreUsuario = 1;
+}
+
 message ListaUsuariosResponse {
     repeated Usuario usuarios = 1;
 }
@@ -73,5 +77,6 @@ service UsuarioService {
 	rpc actualizarUsuario(ActualizarUsuarioRequest) returns (Usuario);
 	rpc desactivarUsuario(BuscarUsuarioPorIdRequest) returns (RespuestaExito);
 	rpc buscarUsuarioPorId(BuscarUsuarioPorIdRequest) returns (Usuario);
+	rpc buscarUsuarioPorNombreUsuario(BuscarUsuarioPorNombreUsuarioRequest) returns (Usuario);
     rpc listarUsuarios(ListarUsuariosRequest) returns (ListaUsuariosResponse);
 }

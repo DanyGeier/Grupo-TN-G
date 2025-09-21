@@ -2,25 +2,42 @@
 
 import { useNavigate } from "react-router-dom";
 import type { EventoResponse } from "../../models/eventoResponse";
-import { useState } from "react";
-import { eventos } from "../../mocks";
+import { useState, useEffect } from "react";
 import { EventoCard } from "./EventoCard";
 import { Header } from "../Header";
+import { eventosApiService } from "../../services/eventosApi";
 
 import { useUser } from "../../context/UserContext";
 export const ListaEventos = () => {
-  const [eventosMock, setEventosMock] = useState<EventoResponse[]>(eventos);
+  const [eventos, setEventos] = useState<EventoResponse[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { usuario, logoutUser } = useUser();
-  //   const [events, setEvents] = useState<Evento[]>([]);
-  // // La llamada al backend, despues ubicarla en un servicio o algo por el estilo
 
-  //   // useEffect(() => {
-  //   //   fetch("http://localhost:5000/eventos")
-  //   //     .then((res) => res.json())
-  //   //     .then((data) => setEvents(data))
-  //   //     .catch((err) => console.error("Error al cargar eventos:", err));
-  //   // }, []);
+  // Cargar eventos del backend
+  useEffect(() => {
+    const cargarEventos = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        console.log("[FRONTEND] Cargando eventos desde el backend...");
+
+        const eventosData = await eventosApiService.listarEventos(false);
+        setEventos(eventosData);
+
+        console.log("[FRONTEND] Eventos cargados exitosamente:", eventosData.length);
+        console.log("[FRONTEND] Eventos:", eventosData);
+      } catch (err) {
+        console.error("[FRONTEND] Error al cargar eventos:", err);
+        setError("Error al cargar eventos. Verifica que el backend esté ejecutándose.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    cargarEventos();
+  }, []);
 
   //   const handleEdit = (event: Evento) => {
   //   navigate(`/eventos/${event.id}/editar`);
@@ -52,11 +69,20 @@ export const ListaEventos = () => {
     navigate(`/eventos/${event.id}/editar`);
   };
 
-  const handleDelete = (eventId: number) => {
+  const handleDelete = async (eventId: number) => {
     if (!window.confirm("¿Seguro que deseas eliminar este evento?")) return;
 
-    // Actualizamos el estado filtrando el evento eliminado
-    setEventosMock((prev) => prev.filter((e) => e.id !== eventId));
+    try {
+      console.log("[FRONTEND] Eliminando evento:", eventId);
+      await eventosApiService.eliminarEvento(eventId.toString());
+
+      // Actualizamos el estado filtrando el evento eliminado
+      setEventos((prev) => prev.filter((e) => e.id !== eventId));
+      console.log("[FRONTEND] Evento eliminado exitosamente");
+    } catch (err) {
+      console.error("[FRONTEND] Error al eliminar evento:", err);
+      alert("Error al eliminar el evento. Inténtalo de nuevo.");
+    }
   };
 
   return (
@@ -65,17 +91,40 @@ export const ListaEventos = () => {
       <div className="p-6 bg-gray-50 min-h-screen">
         <h2 className="text-2xl font-bold mb-6">Eventos Solidarios</h2>
 
-        <div className="grid gap-4">
-          {eventosMock.map((evento) => (
-            <EventoCard
-              key={evento.id}
-              evento={evento}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onToggleParticipation={handleToggleParticipation}
-            />
-          ))}
-        </div>
+        {/* Estado de carga */}
+        {loading && (
+          <div className="flex justify-center items-center py-8">
+            <div className="text-lg">Cargando eventos...</div>
+          </div>
+        )}
+
+        {/* Estado de error */}
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {error}
+          </div>
+        )}
+
+        {/* Lista de eventos */}
+        {!loading && !error && (
+          <div className="grid gap-4">
+            {eventos.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                No hay eventos disponibles
+              </div>
+            ) : (
+              eventos.map((evento) => (
+                <EventoCard
+                  key={evento.id}
+                  evento={evento}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  onToggleParticipation={handleToggleParticipation}
+                />
+              ))
+            )}
+          </div>
+        )}
 
         <div className="mt-8 flex flex-col">
           {usuario?.rol === 0 && (
