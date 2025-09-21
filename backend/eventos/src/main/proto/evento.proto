@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package com.grupog;
+
+option java_multiple_files = true;
+option java_package = "com.grupog";
+
+enum CategoriaDonacion {
+    ROPA = 0;
+    ALIMENTOS = 1;
+    JUGUETES = 2;
+    UTILES_ESCOLARES = 3;
+}
+
+message Evento {
+    string id = 1;
+    string nombreEvento = 2;
+    string descripcion = 3;
+    int64 fechaHoraEvento = 4; // timestamp
+    repeated int64 participantesIds = 5;
+    repeated DonacionRepartida donacionesRepartidas = 6;
+    int64 fechaCreacion = 7;
+    int64 usuarioCreacion = 8;
+    bool activo = 9;
+}
+
+message DonacionRepartida {
+    string categoria = 1;
+    string descripcion = 2;
+    int32 cantidadRepartida = 3;
+    int64 fechaRepartida = 4;
+    int64 usuarioRepartida = 5;
+    string nombreUsuarioRepartida = 6;
+}
+
+message CrearEventoRequest {
+    string nombreEvento = 1;
+    string descripcion = 2;
+    int64 fechaHoraEvento = 3;
+}
+
+message BuscarEventoPorIdRequest {
+    string id = 1;
+}
+
+message AsignarParticipanteRequest {
+    string eventoId = 1;
+    int64 usuarioId = 2;
+}
+
+message QuitarParticipanteRequest {
+    string eventoId = 1;
+    int64 usuarioId = 2;
+}
+
+message RegistrarDonacionRequest {
+    string eventoId = 1;
+    CategoriaDonacion categoria = 2;
+    string descripcion = 3;
+    int32 cantidad = 4;
+}
+
+message ListaEventosResponse {
+    repeated Evento eventos = 1;
+}
+
+message ListarEventosRequest {
+    bool soloFuturos = 1;
+}
+
+message RespuestaExito {
+    string mensaje = 1;
+    bool exito = 2;
+}
+
+service EventoService {
+    rpc crearEvento(CrearEventoRequest) returns (Evento);
+    rpc modificarEvento(Evento) returns (Evento);
+    rpc eliminarEvento(BuscarEventoPorIdRequest) returns (RespuestaExito);
+    rpc listarEventos(ListarEventosRequest) returns (ListaEventosResponse);
+    rpc buscarEventoPorId(BuscarEventoPorIdRequest) returns (Evento);
+    rpc asignarParticipante(AsignarParticipanteRequest) returns (RespuestaExito);
+    rpc quitarParticipante(QuitarParticipanteRequest) returns (RespuestaExito);
+    rpc registrarDonacionRepartida(RegistrarDonacionRequest) returns (RespuestaExito);
+}

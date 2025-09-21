@@ -68,6 +68,47 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+  eventos:
+    build:
+      context: ./backend/eventos
+      dockerfile: Dockerfile
+    ports:
+      - 9096:9096
+      - 8082:8082
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATA_MONGODB_HOST: mongodb
+      SPRING_DATA_MONGODB_PORT: 27017
+      SPRING_DATA_MONGODB_DATABASE: eventos_db
+      SPRING_DATA_MONGODB_USERNAME: admin
+      SPRING_DATA_MONGODB_PASSWORD: admin123
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      server:
+        condition: service_started
+
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: eventos_db
+    volumes:
+      - mongodb_data:/data/db
+      - ./backend/eventos/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - default
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   mailpit:
     image: axllent/mailpit
     container_name: mailpit
@@ -100,5 +141,6 @@ services:
 
 volumes:
   mysql-data:
+  mongodb_data:
 
 

@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package com.grupog;
+
+option java_multiple_files = true;
+option java_package = "com.grupog";
+
+enum Rol {
+    PRESIDENTE = 0;
+    VOCAL = 1;
+    COORDINADOR = 2;
+    VOLUNTARIO = 3;
+}
+
+enum EstadoUsuario {
+    ACTIVO = 0;
+    INACTIVO = 1;
+    SUSPENDIDO = 2;
+}
+
+message Usuario {
+    int64 id = 1;
+    string nombreUsuario = 2;
+    string nombre = 3;
+    string apellido = 4;
+    string telefono = 5;
+    string email = 6;
+    Rol rol = 7;
+    int64 fechaCreacion = 8;
+    EstadoUsuario estado = 9;
+}
+
+message BuscarUsuarioPorIdRequest {
+    int64 id = 1;
+}
+
+message ListarUsuariosRequest {
+    EstadoUsuario estadoUsuario = 1;
+}
+
+message ListaUsuariosResponse {
+    repeated Usuario usuarios = 1;
+}
+
+service UsuarioService {
+    rpc buscarUsuarioPorId(BuscarUsuarioPorIdRequest) returns (Usuario);
+    rpc listarUsuarios(ListarUsuariosRequest) returns (ListaUsuariosResponse);
+}
