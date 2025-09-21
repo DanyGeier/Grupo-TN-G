@@ -1,167 +1,39 @@
-from flask import Flask, request, jsonify
-from service.grpcClient import UsuarioClient
-from proto import usuario_pb2
+from flask import Flask, jsonify
 from flask_cors import CORS
+from routes.usuarios import usuarios_bp
+from routes.eventos import eventos_bp
+from routes.auth import auth_bp
 
 
-app = Flask(__name__)
-client = UsuarioClient()
-CORS(app, origins="http://localhost:5173")  # Permite CORS desde React
+def create_app():
+    """Factory function para crear la aplicación Flask"""
+    app = Flask(__name__)
 
-@app.route("/")
-def home():
-    return jsonify({"message": "API Usuarios - Grupo TN-G"})
+    # Configurar CORS
+    CORS(app, origins="http://localhost:5173")  # Permite CORS desde React
 
+    # Registrar blueprints
+    app.register_blueprint(usuarios_bp)
+    app.register_blueprint(eventos_bp)
+    app.register_blueprint(auth_bp)
 
-@app.route("/usuarios", methods=["GET"])
-def listar_usuarios():
-    try:
-        usuarios = client.listarUsuarios()
-        usuarios_list = []
-        for u in usuarios.usuarios:
-            usuarios_list.append(
-                {
-                    "id": u.id,
-                    "nombreUsuario": u.nombreUsuario,
-                    "nombre": u.nombre,
-                    "apellido": u.apellido,
-                    "email": u.email,
-                    "rol": u.rol,
-                    "estado": u.estado,
-                }
-            )
-        return jsonify({"usuarios": usuarios_list})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    # Endpoint principal
+    @app.route("/")
+    def home():
+        return jsonify({"message": "API Grupo TN-G - Sistema de Gestión"})
 
-
-@app.route("/usuarios/<int:usuario_id>", methods=["GET"])
-def buscar_usuario(usuario_id):
-    try:
-        usuario = client.buscarUsuarioPorId(usuario_id)
+    # Endpoint de salud
+    @app.route("/health")
+    def health_check():
         return jsonify(
-            {
-                "id": usuario.id,
-                "nombreUsuario": usuario.nombreUsuario,
-                "nombre": usuario.nombre,
-                "apellido": usuario.apellido,
-                "email": usuario.email,
-                "rol": usuario.rol,
-                "estado": usuario.estado,
-            }
-        )
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@app.route("/usuarios", methods=["POST"])
-def registrar_usuario():
-    try:
-        data = request.get_json()
-        rol_map = {
-            "PRESIDENTE": usuario_pb2.Rol.PRESIDENTE,
-            "VOCAL": usuario_pb2.Rol.VOCAL,
-            "COORDINADOR": usuario_pb2.Rol.COORDINADOR,
-            "VOLUNTARIO": usuario_pb2.Rol.VOLUNTARIO,
-        }
-
-        usuario = client.registrarUsuario(
-            data["nombreUsuario"],
-            data["nombre"],
-            data["apellido"],
-            data.get("telefono", ""),
-            data["email"],
-            rol_map[data["rol"]],
-
+            {"status": "healthy", "service": "Grupo TN-G API", "version": "1.0.0"}
         )
 
-        return jsonify(
-            {
-                "id": usuario.id,
-                "nombreUsuario": usuario.nombreUsuario,
-                "nombre": usuario.nombre,
-                "apellido": usuario.apellido,
-                "email": usuario.email,
-                "rol": usuario.rol,
-                "estado": usuario.estado,
-            }
-        )
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    return app
 
 
-@app.route("/usuarios/<int:usuario_id>", methods=["PUT"])
-def actualizar_usuario(usuario_id):
-    try:
-        data = request.get_json()
-        rol_map = {
-            "PRESIDENTE": usuario_pb2.Rol.PRESIDENTE,
-            "VOCAL": usuario_pb2.Rol.VOCAL,
-            "COORDINADOR": usuario_pb2.Rol.COORDINADOR,
-            "VOLUNTARIO": usuario_pb2.Rol.VOLUNTARIO,
-        }
-        estado_map = {
-            "ACTIVO": usuario_pb2.EstadoUsuario.ACTIVO,
-            "INACTIVO": usuario_pb2.EstadoUsuario.INACTIVO,
-            "SUSPENDIDO": usuario_pb2.EstadoUsuario.SUSPENDIDO,
-        }
-
-        usuario = client.actualizarUsuario(
-            usuario_id,
-            data["nombreUsuario"],
-            data["nombre"],
-            data["apellido"],
-            data.get("telefono", ""),
-            data["email"],
-            rol_map[data["rol"]],
-            estado_map[data["estado"]],
-        )
-
-        return jsonify(
-            {
-                "id": usuario.id,
-                "nombreUsuario": usuario.nombreUsuario,
-                "nombre": usuario.nombre,
-                "apellido": usuario.apellido,
-                "email": usuario.email,
-                "rol": usuario.rol,
-                "estado": usuario.estado,
-            }
-        )
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@app.route("/usuarios/<int:usuario_id>", methods=["DELETE"])
-def desactivar_usuario(usuario_id):
-    try:
-        resultado = client.desactivarUsuario(usuario_id)
-        return jsonify({"message": resultado.mensaje})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@app.route("/auth/login", methods=["POST"])
-def autenticar_usuario():
-    try:
-        data = request.get_json()
-        response = client.login(data["nombreUsuario"], data["clave"])
-        return jsonify(
-            {
-                "usuario": {
-                    "id": response.usuario.id,
-                    "nombreUsuario": response.usuario.nombreUsuario,
-                    "nombre": response.usuario.nombre,
-                    "apellido": response.usuario.apellido,
-                    "email": response.usuario.email,
-                    "rol": response.usuario.rol,
-                    "estado": response.usuario.estado,
-                },
-                "token": response.token,
-            }
-        )
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+# Crear instancia de la aplicación
+app = create_app()
 
 
 if __name__ == "__main__":

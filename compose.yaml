@@ -15,10 +15,13 @@ services:
     environment:
       - GRPC_SERVER_HOST=server
       - GRPC_SERVER_PORT=9095
+      - EVENTOS_GRPC_HOST=eventos
+      - EVENTOS_GRPC_PORT=9096
     ports:
       - 5000:5000
     depends_on:
       - server
+      - eventos
   server:
     build:
       context: ./backend/users
