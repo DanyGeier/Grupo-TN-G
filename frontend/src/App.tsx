@@ -8,6 +8,8 @@ import { LoginForm } from "./components/login/LoginForm";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { useUser } from "./context/UserContext";
 import { AccesoDenegado } from "./components/AccesoDenegado";
+import { ListaEventos } from "./components/eventos/ListaEventos";
+import { EventoForm } from "./components/eventos/EventoForm";
 
 function App() {
   const { usuario } = useUser();
@@ -16,13 +18,11 @@ function App() {
       <ToastContainer position="bottom-right" autoClose={2000} />
 
       <Routes>
-
         {/* Login */}
         <Route path="/" element={<LoginForm />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/acceso-denegado" element={<AccesoDenegado />} />
 
-        
         {/* Home: cualquier usuario logueado */}
         <Route element={<ProtectedRoute isAllowed={!!usuario} />}>
           <Route path="/home" element={<HomePage />} />
@@ -42,6 +42,12 @@ function App() {
           <Route path="/registro" element={<FormularioUsuario />} />
           <Route path="/usuarios/:id/editar" element={<FormularioUsuario />} />
         </Route>
+
+
+
+        <Route path="/eventos" element={<ListaEventos />} />
+        <Route path="/eventos/nuevo" element={<EventoForm />} />
+        <Route path="/eventos/:id/editar" element={<EventoForm />} />
       </Routes>
     </>
   );
