@@ -19,6 +19,8 @@ public class TokenExtractionInterceptor implements ServerInterceptor {
         // Extraer token del header Authorization
         String token = headers.get(TOKEN_KEY);
 
+        System.out.println("Token interceptado: " + token);
+
         // Remover "Bearer " si está presente
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);

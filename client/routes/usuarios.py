@@ -139,3 +139,4 @@ def desactivar_usuario(usuario_id):
         return jsonify({"message": resultado.mensaje})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+

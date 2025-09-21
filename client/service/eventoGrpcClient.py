@@ -22,26 +22,30 @@ class EventoClient(object):
         """
         Crear un nuevo evento
         """
-        # Configurar metadata con token JWT
-        metadata = [("authorization", token)]
-
         request = evento_pb2.CrearEventoRequest(
             nombreEvento=nombre_evento,
             descripcion=descripcion,
             fechaHoraEvento=fecha_hora_evento,
         )
 
-        response = self.stub.crearEvento(request, metadata=metadata)
+        if token:
+            metadata = [("authorization", token)]
+            response = self.stub.crearEvento(request, metadata=metadata)
+        else:
+            response = self.stub.crearEvento(request)
         return response
 
     def listar_eventos(self, solo_futuros=False, token=None):
         """
         Listar eventos, opcionalmente solo los futuros
         """
-        metadata = [("authorization", token)] if token else []
-
         request = evento_pb2.ListarEventosRequest(soloFuturos=solo_futuros)
-        response = self.stub.listarEventos(request, metadata=metadata)
+
+        if token:
+            metadata = [("authorization", token)]
+            response = self.stub.listarEventos(request, metadata=metadata)
+        else:
+            response = self.stub.listarEventos(request)
         return response
 
     def buscar_evento_por_id(self, evento_id, token):
