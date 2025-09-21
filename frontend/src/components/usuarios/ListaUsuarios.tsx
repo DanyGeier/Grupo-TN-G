@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faPen } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faPen, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 
 import { useNavigate } from "react-router-dom";
 import type { Usuario } from "../../models/usuario";
 import { Header } from "../Header";
-import { obtenerUsuarios } from "./api/usuarios";
+import {
+  activarUsuario,
+  darDeBaja,
+  obtenerUsuario,
+  obtenerUsuarios,
+} from "./api/usuarios";
 import { rolesMap } from "../../models/rol";
 
 export const ListaUsuarios = () => {
@@ -15,7 +20,7 @@ export const ListaUsuarios = () => {
   const navigate = useNavigate();
 
 
-  
+
   // Llamada al backend al iniciar el componente
   useEffect(() => {
     const listaUsuarios = async () => {
@@ -24,7 +29,7 @@ export const ListaUsuarios = () => {
         setUsuarios(data);
       } catch (error) {
         setError("No se pudieron cargar los usuarios");
-      } 
+      }
     };
     listaUsuarios();
   }, []);
@@ -34,33 +39,43 @@ export const ListaUsuarios = () => {
     navigate(`/usuarios/${id}/editar`);
   };
 
-  const handleDarDeBaja = async (id: number) => {
+ const handleDarDeBaja = async (id: number) => {
   try {
-    const response = await fetch(`http://localhost:5000/usuarios/${id}`, {
-      method: "DELETE",
-    });
+    const usuarioActualizado = await darDeBaja(id); // devuelve el usuario con estado actualizado
+   
 
-    if (!response.ok) {
-      throw new Error("Error al dar de baja al usuario");
-    }
-
-    const data = await response.json();
-    console.log("Respuesta:", data);
-
-    // Actualizamos el estado local marcando al usuario como inactivo
-    setUsuarios((prev) =>
-      prev.map((u) =>
-        u.id === id ? { ...u, activo: false } : u
-      )
+    // Actualizamos solo ese usuario en el estado
+    setUsuarios(prev =>
+      prev.map(u => (u.id === id ? { ...u, estado: usuarioActualizado.estado } : u))
     );
 
-    alert(data.message);
+    alert("Usuario dado de baja ✅");
   } catch (error) {
     console.error("Error en la petición:", error);
     alert("No se pudo dar de baja al usuario");
   }
-};
 
+
+}
+  //Aca se podria tener el metodo en el back
+const handleActivar = async (id: string) => {
+  try {
+    // Buscamos el usuario actual
+    const usuarioActual = await obtenerUsuario(id);
+    const usuarioActualizado = await activarUsuario(id, usuarioActual);
+    console.log(usuarioActual)
+        console.log(usuarioActualizado)
+    // Actualizamos solo ese usuario en el estado
+    setUsuarios(prev =>
+      prev.map(u => (u.id.toString() === id ? { ...u, estado: usuarioActualizado.estado } : u))
+    );
+
+    alert("Usuario activado ✅");
+  } catch (err) {
+    console.error(err);
+    alert("Error al activar usuario");
+  }
+};
   return (
     <>
       <Header></Header>
@@ -82,7 +97,7 @@ export const ListaUsuarios = () => {
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">
                   Apellido
                 </th>
-             
+
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">
                   Email
                 </th>
@@ -107,15 +122,15 @@ export const ListaUsuarios = () => {
                   <td className="px-4 py-3 text-left">{user.nombreUsuario}</td>
                   <td className="px-4 py-3 text-left">{user.nombre}</td>
                   <td className="px-4 py-3 text-left">{user.apellido}</td>
-            
+
                   <td className="px-4 py-3 text-left">{user.email}</td>
                   <td className="px-4 py-3 text-left"> {rolesMap[user.rol]}</td>
                   <td
                     className={`px-4 py-3 font-semibold ${
-                      user.estado ? "text-green-600" : "text-red-600"
+                      user.estado === 0 ? "text-green-600" : "text-red-600"
                     }`}
                   >
-                    {user.estado ? "Activo" : "Inactivo"}
+                    {user.estado === 0 ? "Activo" : "Inactivo"}
                   </td>
 
                   <td className="px-4 py-3 flex justify-center space-x-4">
@@ -132,6 +147,13 @@ export const ListaUsuarios = () => {
                       onClick={() => handleDarDeBaja(user.id)}
                     >
                       <FontAwesomeIcon icon={faTrash} />
+                    </button>
+                    <button
+                      className="text-green-500 hover:text-green-700 cursor-pointer"
+                      title="Activar usuario"
+                      onClick={() => handleActivar(user.id.toString())}
+                    >
+                      <FontAwesomeIcon icon={faUserPlus} />
                     </button>
                   </td>
                 </tr>

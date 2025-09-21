@@ -6,7 +6,7 @@ export interface Usuario {
   telefono?: string;
   email: string;
   rol: number;
-  estado: boolean;
+  estado: number;
 }
 
 

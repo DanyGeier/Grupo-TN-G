@@ -6,36 +6,54 @@ import {
   obtenerUsuario,
   registrarUsuario,
 } from "./api/usuarios";
+import type { CrearUsuarioRequest } from "../../models/crearUsuarioRequest";
+import type { ActualizarUsuarioRequest } from "../../models/actualizarUsuarioRequest";
 
 export const FormularioUsuario = () => {
-  const { id } = useParams();
+   // si en la url hay un id, es edición; sino, es creacion
+  const { id } = useParams<{ id: string }>();
+
+
   const navigate = useNavigate();
 
+  // Estado único para el formulario
   const [formData, setFormData] = useState({
     nombreUsuario: "",
     nombre: "",
     apellido: "",
     telefono: "",
     email: "",
-    rol: "",
-    //estado: ""
+    rol: "VOLUNTARIO",
+    estado: "INACTIVO", // solo se usa en edición
   });
+const rolMap = ["PRESIDENTE", "VOCAL", "COORDINADOR", "VOLUNTARIO"];
+const estadoMap = ["ACTIVO", "INACTIVO", "SUSPENDIDO"];
 
-  // Precargar datos si es edición
-  useEffect(() => {
-    if (id) {
-      obtenerUsuario(id)
-        .then(setFormData)
-        .catch((err) => console.error("Error:", err));
-    }
-  }, [id]);
-
-  const handleChange = (e: React.ChangeEvent<any>) => {
-    const { name, type, value, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+  // Cargar datos si estamos editando
+useEffect(() => {
+  if (id) {
+    obtenerUsuario(id)
+      .then((data) => {
+        setFormData({
+          nombreUsuario: data.nombreUsuario,
+          nombre: data.nombre,
+          apellido: data.apellido,
+          telefono: data.telefono,
+          email: data.email,
+    rol: rolMap[data.rol], 
+          estado: estadoMap[data.estado], 
+        });
+      })
+      .catch((err) => {
+        console.error("Error al obtener usuario:", err);
+        alert("No se pudo cargar el usuario");
+      });
+  }
+}, [id]);
+  // Manejo genérico de cambios
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -43,20 +61,41 @@ export const FormularioUsuario = () => {
 
     try {
       if (id) {
-        await actualizarUsuario(id, formData);
-        alert("Usuario actualizado");
+        // Actualización
+        const usuarioActualizar: ActualizarUsuarioRequest = {
+          id: Number(id),
+          nombreUsuario: formData.nombreUsuario,
+          nombre: formData.nombre,
+          apellido: formData.apellido,
+          telefono: formData.telefono,
+          email: formData.email,
+          rol: formData.rol,
+          estado: formData.estado!,
+        };
+        console.log(usuarioActualizar);
+        await actualizarUsuario(id, usuarioActualizar);
+        alert("Usuario actualizado ✅");
       } else {
-        await registrarUsuario(formData);
-        alert("Usuario creado");
+        // Creación
+        const usuarioNuevo: CrearUsuarioRequest = {
+          nombreUsuario: formData.nombreUsuario,
+          nombre: formData.nombre,
+          apellido: formData.apellido,
+          telefono: formData.telefono,
+          email: formData.email,
+          rol: formData.rol,
+        };
+        console.log(usuarioNuevo)
+        await registrarUsuario(usuarioNuevo);
+        alert("Usuario creado ✅");
       }
-
       navigate("/usuarios");
-    } catch (error) {
-      console.error("Error en handleSubmit:", error);
-      alert("Error al procesar el usuario");
+    } catch (err) {
+      console.error(err);
+      alert("Error al guardar usuario");
     }
   };
-
+  
   return (
     <>
       <Header />
@@ -143,7 +182,7 @@ export const FormularioUsuario = () => {
 
       
           
-          {/* {id && (
+          { id && (
             <div className="mt-4 text-left">
               <label className="text-lg font-medium">Estado</label>
               <select
@@ -155,10 +194,10 @@ export const FormularioUsuario = () => {
               >
                 <option value="ACTIVO">Activo</option>
                 <option value="INACTIVO">Inactivo</option>
-                <option value="SUSPENDIDO">Suspendido</option>
+
               </select>
             </div>
-          )} */}
+          )} 
 
           <div className="mt-8 flex flex-col">
             <button

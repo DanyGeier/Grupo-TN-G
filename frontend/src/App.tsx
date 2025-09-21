@@ -1,6 +1,5 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
-import { FormularioUsuario } from "./components/usuarios/FormularioUsuario";
 import { ListaUsuarios } from "./components/usuarios/ListaUsuarios";
 import { ToastContainer } from "react-toastify";
 import { HomePage } from "./components/HomePage";
@@ -8,6 +7,7 @@ import { LoginForm } from "./components/login/LoginForm";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { useUser } from "./context/UserContext";
 import { AccesoDenegado } from "./components/AccesoDenegado";
+import { FormularioUsuario } from "./components/usuarios/FormularioUsuario";
 
 function App() {
   const { usuario } = useUser();
