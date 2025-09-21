@@ -1,225 +1,185 @@
-# Grupo-TN-G — Guía de Setup con Docker
+# Empuje Comunitario - Sistema de Gestión ONG
 
-Esta guía permite levantar el backend de usuarios (Spring Boot + gRPC) y la base de datos MySQL con un solo comando usando Docker. Está pensada para cualquiera que quiera poner el entorno en marcha rápidamente.
+Sistema web desarrollado para la gestión de actividades, donaciones y miembros de la ONG "Empuje Comunitario". Este proyecto forma parte de un trabajo práctico universitario sobre sistemas distribuidos utilizando gRPC.
+
+## Descripción del Proyecto
+
+El sistema permite gestionar las actividades de una ONG a través de diferentes roles de usuario, manejo de inventario de donaciones y coordinación de eventos solidarios. La arquitectura está diseñada como un sistema distribuido con múltiples servicios independientes que se comunican mediante gRPC.
+
+## Arquitectura del Sistema
+
+### Componentes Principales
+
+- **Frontend (React + TypeScript)**: Interfaz web para operar con el sistema
+- **API Gateway (Flask + Python)**: Recibe peticiones del frontend y coordina servicios
+- **Servicio de Usuarios (Spring Boot + Java)**: Gestión de usuarios y autenticación
+- **Servicio de Eventos (Spring Boot + Java)**: Gestión de eventos solidarios
+- **Base de Datos MySQL**: Persistencia para usuarios
+- **Base de Datos MongoDB**: Persistencia para eventos
+- **Mailpit**: Servicio de correo para notificaciones
+
+### Roles de Usuario
+
+- **Presidente**: Gestión completa del sistema (usuarios, eventos, inventario)
+- **Vocal**: Acceso al inventario de donaciones
+- **Coordinador**: Coordinación de eventos solidarios
+- **Voluntario**: Consulta y participación en eventos
+
+### Funcionalidades Principales
+
+1. **Gestión de Usuarios**: ABM con roles, autenticación y notificaciones por email
+2. **Inventario de Donaciones**: Registro por categorías (ropa, alimentos, juguetes, útiles escolares)
+3. **Eventos Solidarios**: Creación, modificación y participación en eventos comunitarios
+
+## Tecnologías Utilizadas
+
+- **Frontend**: React 19, TypeScript, TailwindCSS, Vite
+- **Backend**: Spring Boot 3.5, Java 21
+- **API Gateway**: Flask, Python 3.13
+- **Comunicación**: gRPC con Protocol Buffers
+- **Bases de Datos**: MySQL 8.0, MongoDB 7.0
+- **Containerización**: Docker y Docker Compose
+- **Autenticación**: JWT
+- **Email**: Spring Mail con Mailpit
 
 ## Requisitos
+
 - Docker Desktop (o Docker Engine + docker compose)
-- Puertos libres: 8081 (HTTP), 9095 (gRPC), 3306 (MySQL)
+- Puertos libres: 5000, 8081, 8082, 9095, 9096, 3306, 3307, 27017, 1025, 8025
 
-## Servicios y puertos
-- Backend Usuarios (Spring Boot + gRPC)
-  - HTTP: 8081 (actuator, etc.)
-  - gRPC: 9095
-- MySQL: 3306
+## Estructura del Proyecto
 
-### Cliente (Flask + gRPC client)
-- REST expuesto: 5000
-- Conexión al backend gRPC: configurable por variables de entorno
-  - `GRPC_SERVER_HOST` (por defecto: `localhost` fuera de Docker, `server` dentro de Docker Compose)
-  - `GRPC_SERVER_PORT` (por defecto: `9095`)
-  
-Endpoints útiles del cliente:
-- `GET /health` → chequeo simple
-- `GET /` → prueba que consulta `listarUsuarios` por gRPC y devuelve el resultado
-
-## Estructura relevante del repo
 ```
 Grupo-TN-G/
-├── compose.yaml                 # Orquestación (raíz)
-├── README-DOCKER.md            # Esta guía
+├── frontend/                   # React + TypeScript
+├── client/                     # API Gateway (Flask + Python)
 ├── backend/
-│   └── users/
-│       ├── Dockerfile
-│       ├── init.sql             # Opcional (se puede omitir)
-│       └── src/
-│           ├── main/java/com/grupog/GrupoGApplication.java
-│           ├── main/java/com/grupog/grpc/service/UsuarioGrpcService.java
-│           ├── main/java/com/grupog/repositories/UsuarioRepository.java
-│           └── main/proto/usuario.proto
+│   ├── users/                  # Servicio de Usuarios (Spring Boot + Java)
+│   └── eventos/                # Servicio de Eventos (Spring Boot + Java)
+├── compose.yaml               # Orquestación de servicios
+└── README.md                  # Este archivo
 ```
 
-## docker compose (raíz del repo)
-Usamos MySQL 8.0 (estable) y exponemos 8081/9095 para el backend.
+## Servicios y Puertos
 
-```yaml
-version: '3.8'
+- **Frontend React**: 5173 (desarrollo)
+- **API Gateway**: 5000
+- **Servicio Usuarios**: 8081 (HTTP), 9095 (gRPC)
+- **Servicio Eventos**: 8082 (HTTP), 9096 (gRPC)
+- **MySQL**: 3307
+- **MongoDB**: 27017
+- **Mailpit**: 1025 (SMTP), 8025 (Web UI)
 
-services:
-  client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-    environment:
-      - GRPC_SERVER_HOST=server
-      - GRPC_SERVER_PORT=9095
-    ports:
-      - "5000:5000"
-    depends_on:
-      - backend-users
-  db:
-    image: mysql:8.0
-    container_name: grupo-tn-g-mysql
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: root123456
-      MYSQL_DATABASE: bd_empuje_comunitario
-      MYSQL_USER: grupog
-      MYSQL_PASSWORD: grupog123
-      TZ: America/Argentina/Buenos_Aires
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql-data:/var/lib/mysql
-      # Opcional: habilitar solo si querés seed inicial
-      # - ./backend/users/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
-    healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$${MYSQL_ROOT_PASSWORD} || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
+## Instalación y Ejecución
 
-  backend-users:
-    build:
-      context: ./backend/users
-      dockerfile: Dockerfile
-    container_name: grupo-tn-g-server
-    restart: unless-stopped
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/bd_empuje_comunitario?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: grupog
-      SPRING_DATASOURCE_PASSWORD: grupog123
-      GRPC_SERVER_PORT: 9095
-    ports:
-      - "8081:8081"
-      - "9095:9095"
+### Prerequisitos
+- Docker Desktop instalado y funcionando
+- Puertos disponibles según se especifica arriba
 
-volumes:
-  mysql-data:
-```
+### Levantar el Sistema Completo
 
-Notas:
-- El backend usa el host `db` en la URL JDBC (resolución por nombre dentro de la red de Docker).
-- Evitamos `mysql:latest`; `8.0` es estable y compatible.
-- Si activás `init.sql`, se ejecuta solo la primera vez (volumen vacío). Para re-ejecutarlo: `docker compose down -v && docker compose up --build`.
-
-## Levantar el entorno (pasos)
-1) Clonar y entrar al proyecto:
+1. **Clonar el repositorio:**
 ```bash
 git clone <url-del-repo>
 cd Grupo-TN-G
 ```
 
-2) Levantar todo:
+2. **Levantar todos los servicios:**
 ```bash
 docker compose up --build
 ```
 
-3) Confirmar en logs:
-- MySQL “ready for connections” y saludable.
-- Backend:
-  - “HikariPool-1 - Start completed.” (conectado a DB)
-  - “Registered gRPC service: com.grupog.UsuarioService”
-  - “gRPC Server started … port: 9095”
- - Cliente:
-   - Flask running on http://0.0.0.0:5000 (Press CTRL+C to quit)
+3. **Acceder a la aplicación:**
+- **Frontend**: http://localhost:5173 (desarrollo)
+- **API Gateway**: http://localhost:5000
+- **Mailpit Web UI**: http://localhost:8025
 
-4) Verificar salud HTTP (opcional si tenés actuator):
+
+### Verificar el Estado de los Servicios
+
 ```bash
-curl http://localhost:8081/actuator/health
-# Esperado: {"status":"UP"}
-```
-
-5) Probar cliente REST:
-```bash
-curl http://localhost:5000/health
-curl http://localhost:5000/
-```
-
-## Insertar datos de prueba (manual)
-Entrar a MySQL y crear un usuario de prueba.
-
-1) Conectarse:
-```bash
-docker compose exec -it db mysql -ugrupog -pgrupog123 bd_empuje_comunitario
-```
-
-2) SQL:
-```sql
-INSERT IGNORE INTO rol (nombre_rol) VALUES ('PRESIDENTE');
-
-INSERT INTO usuarios (
-  activo, apellido, contrasenia, email, nombre, nombre_usuario, telefono, rol_id
-) VALUES (
-  1, 'Perez', 'secret', 'test@example.com', 'Juan', 'juanp', '123456789',
-  (SELECT id_rol FROM rol WHERE nombre_rol='PRESIDENTE' LIMIT 1)
-);
-
-SELECT id_usuario, nombre, apellido, email FROM usuarios;
-```
-
-## Probar gRPC sin cliente (grpcurl)
-Como el servidor gRPC registra Server Reflection, podés llamar servicios con `grpcurl`:
-```bash
-# Instalar grpcurl (según SO) y luego:
-grpcurl -plaintext localhost:9095 list
-grpcurl -plaintext localhost:9095 com.grupog.UsuarioService/listarUsuarios -d '{}'
-```
-
-## Ejecutar cliente fuera de Docker (opcional)
-Si preferís correr el cliente localmente, exportá las variables para apuntar al backend publicado en 9095 y ejecutá Flask:
-```bash
-export GRPC_SERVER_HOST=localhost
-export GRPC_SERVER_PORT=9095
-python client/app.py
-```
-
-## Cambios clave en el backend (resumen)
-- Paquete base unificado: `com.grupog`.
-- `GrupoGApplication` con:
-  - `@SpringBootApplication`
-  - `@EntityScan("com.grupog.entities")`
-  - `@ComponentScan(basePackages = {"com.grupog"})`
-- gRPC:
-  - `UsuarioGrpcService extends UsuarioServiceGrpc.UsuarioServiceImplBase`
-  - Método `listarUsuarios` consulta `UsuarioRepository` y mapea a proto.
-- Puertos:
-  - HTTP 8081
-  - gRPC 9095 (`GRPC_SERVER_PORT`)
-
-## Troubleshooting
-- Puerto ocupado: cambiá los puertos en `compose.yaml` o liberá con `lsof -i :<puerto>`.
-- MySQL no aplica `init.sql`: recordá que solo corre con volumen vacío. Usá:
-  ```bash
-  docker compose down -v && docker compose up --build
-  ```
-- “Communications link failure”: asegurate de:
-  - `depends_on` con healthcheck activo
-  - URL JDBC con host `db`
-  - Credenciales correctas
-- Silenciar aviso JTA (opcional):
-  ```
-  spring.jpa.properties.hibernate.transaction.jta.platform=org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform
-  ```
-
-## Comandos útiles
-```bash
-# Ver logs
+# Ver logs de todos los servicios
 docker compose logs -f
 
-# Reiniciar todo
-docker compose down && docker compose up --build
+# Verificar salud de la API
+curl http://localhost:5000/health
 
-# Reset completo (incluye borrar datos DB)
-docker compose down -v && docker compose up --build
+# Verificar servicio de usuarios
+curl http://localhost:8081/actuator/health
 
-# Entrar al contenedor MySQL
-docker compose exec -it db sh
+# Verificar servicio de eventos
+curl http://localhost:8082/actuator/health
 ```
 
-Listo. Con esto tus colegas pueden clonar y levantar el proyecto en minutos.
+## Comandos Útiles
 
+```bash
+# Ver logs de todos los servicios
+docker compose logs -f
 
+# Ver logs de un servicio específico
+docker compose logs -f server
+docker compose logs -f eventos
+docker compose logs -f client
+
+# Reiniciar todos los servicios
+docker compose down && docker compose up --build
+
+# Reset completo (incluye borrar datos de las bases de datos)
+docker compose down -v && docker compose up --build
+
+# Acceder a MySQL
+docker compose exec -it db mysql -ugrupog -pgrupog123 bd_empuje_comunitario
+
+# Acceder a MongoDB
+docker compose exec -it mongodb mongosh -u admin -p admin123
+
+# Verificar servicios gRPC
+grpcurl -plaintext localhost:9095 list
+grpcurl -plaintext localhost:9096 list
+```
+
+## Desarrollo
+
+### Ejecutar Frontend en Modo Desarrollo
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+El frontend estará disponible en http://localhost:5173
+
+### Comunicación gRPC
+
+El sistema utiliza gRPC para la comunicación entre servicios:
+- **Servicio Usuarios**: Puerto 9095
+- **Servicio Eventos**: Puerto 9096
+- **Protocol Buffers**: Definidos en `backend/*/src/main/proto/`
+
+### Base de Datos
+
+- **MySQL**: Para gestión de usuarios y roles
+- **MongoDB**: Para gestión de eventos solidarios
+- **Datos de prueba**: Se crean automáticamente al inicializar los contenedores
+
+## Información del Trabajo Práctico
+
+Este proyecto corresponde al Trabajo Práctico de la materia "Desarrollo de Software en Sistemas Distribuidos" de la Universidad Nacional de Lanús, enfocado en la implementación de sistemas distribuidos utilizando gRPC.
+
+### Características Implementadas
+
+✅ Sistema distribuido con múltiples servicios  
+✅ Comunicación gRPC entre servicios  
+✅ Diferentes tecnologías (Java, Python, TypeScript)  
+✅ Gestión de usuarios con roles y permisos  
+✅ Sistema de eventos solidarios  
+✅ Inventario de donaciones  
+✅ Autenticación JWT  
+✅ Notificaciones por email  
+✅ Interfaz web moderna con React  
+
+---
+
+**Grupo TN-G** - Universidad Nacional de Lanús
