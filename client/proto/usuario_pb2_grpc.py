@@ -3,25 +3,28 @@
 import grpc
 import warnings
 
-import usuario_pb2 as usuario__pb2
+from . import usuario_pb2 as usuario__pb2
 
-GRPC_GENERATED_VERSION = '1.75.0'
+GRPC_GENERATED_VERSION = "1.75.0"
 GRPC_VERSION = grpc.__version__
 _version_not_supported = False
 
 try:
     from grpc._utilities import first_version_is_lower
-    _version_not_supported = first_version_is_lower(GRPC_VERSION, GRPC_GENERATED_VERSION)
+
+    _version_not_supported = first_version_is_lower(
+        GRPC_VERSION, GRPC_GENERATED_VERSION
+    )
 except ImportError:
     _version_not_supported = True
 
 if _version_not_supported:
     raise RuntimeError(
-        f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in usuario_pb2_grpc.py depends on'
-        + f' grpcio>={GRPC_GENERATED_VERSION}.'
-        + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
-        + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
+        f"The grpc package installed is at version {GRPC_VERSION},"
+        + f" but the generated code in usuario_pb2_grpc.py depends on"
+        + f" grpcio>={GRPC_GENERATED_VERSION}."
+        + f" Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}"
+        + f" or downgrade your generated code using grpcio-tools<={GRPC_VERSION}."
     )
 
 
@@ -38,35 +41,41 @@ class UsuarioServiceStub(object):
             channel: A grpc.Channel.
         """
         self.registrarUsuario = channel.unary_unary(
-                '/com.grupog.UsuarioService/registrarUsuario',
-                request_serializer=usuario__pb2.CrearUsuarioRequest.SerializeToString,
-                response_deserializer=usuario__pb2.Usuario.FromString,
-                _registered_method=True)
+            "/com.grupog.UsuarioService/registrarUsuario",
+            request_serializer=usuario__pb2.CrearUsuarioRequest.SerializeToString,
+            response_deserializer=usuario__pb2.Usuario.FromString,
+            _registered_method=True,
+        )
         self.actualizarUsuario = channel.unary_unary(
-                '/com.grupog.UsuarioService/actualizarUsuario',
-                request_serializer=usuario__pb2.ActualizarUsuarioRequest.SerializeToString,
-                response_deserializer=usuario__pb2.Usuario.FromString,
-                _registered_method=True)
+            "/com.grupog.UsuarioService/actualizarUsuario",
+            request_serializer=usuario__pb2.ActualizarUsuarioRequest.SerializeToString,
+            response_deserializer=usuario__pb2.Usuario.FromString,
+            _registered_method=True,
+        )
         self.desactivarUsuario = channel.unary_unary(
-                '/com.grupog.UsuarioService/desactivarUsuario',
-                request_serializer=usuario__pb2.BuscarUsuarioPorIdRequest.SerializeToString,
-                response_deserializer=usuario__pb2.RespuestaExito.FromString,
-                _registered_method=True)
+            "/com.grupog.UsuarioService/desactivarUsuario",
+            request_serializer=usuario__pb2.BuscarUsuarioPorIdRequest.SerializeToString,
+            response_deserializer=usuario__pb2.RespuestaExito.FromString,
+            _registered_method=True,
+        )
         self.buscarUsuarioPorId = channel.unary_unary(
-                '/com.grupog.UsuarioService/buscarUsuarioPorId',
-                request_serializer=usuario__pb2.BuscarUsuarioPorIdRequest.SerializeToString,
-                response_deserializer=usuario__pb2.Usuario.FromString,
-                _registered_method=True)
+            "/com.grupog.UsuarioService/buscarUsuarioPorId",
+            request_serializer=usuario__pb2.BuscarUsuarioPorIdRequest.SerializeToString,
+            response_deserializer=usuario__pb2.Usuario.FromString,
+            _registered_method=True,
+        )
         self.listarUsuarios = channel.unary_unary(
-                '/com.grupog.UsuarioService/listarUsuarios',
-                request_serializer=usuario__pb2.ListarUsuariosRequest.SerializeToString,
-                response_deserializer=usuario__pb2.ListaUsuariosResponse.FromString,
-                _registered_method=True)
+            "/com.grupog.UsuarioService/listarUsuarios",
+            request_serializer=usuario__pb2.ListarUsuariosRequest.SerializeToString,
+            response_deserializer=usuario__pb2.ListaUsuariosResponse.FromString,
+            _registered_method=True,
+        )
         self.autenticarUsuario = channel.unary_unary(
-                '/com.grupog.UsuarioService/autenticarUsuario',
-                request_serializer=usuario__pb2.LoginData.SerializeToString,
-                response_deserializer=usuario__pb2.Usuario.FromString,
-                _registered_method=True)
+            "/com.grupog.UsuarioService/autenticarUsuario",
+            request_serializer=usuario__pb2.LoginData.SerializeToString,
+            response_deserializer=usuario__pb2.Usuario.FromString,
+            _registered_method=True,
+        )
 
 
 class UsuarioServiceServicer(object):
@@ -78,80 +87,83 @@ class UsuarioServiceServicer(object):
     def registrarUsuario(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
     def actualizarUsuario(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
     def desactivarUsuario(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
     def buscarUsuarioPorId(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
     def listarUsuarios(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
     def autenticarUsuario(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
 
 def add_UsuarioServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'registrarUsuario': grpc.unary_unary_rpc_method_handler(
-                    servicer.registrarUsuario,
-                    request_deserializer=usuario__pb2.CrearUsuarioRequest.FromString,
-                    response_serializer=usuario__pb2.Usuario.SerializeToString,
-            ),
-            'actualizarUsuario': grpc.unary_unary_rpc_method_handler(
-                    servicer.actualizarUsuario,
-                    request_deserializer=usuario__pb2.ActualizarUsuarioRequest.FromString,
-                    response_serializer=usuario__pb2.Usuario.SerializeToString,
-            ),
-            'desactivarUsuario': grpc.unary_unary_rpc_method_handler(
-                    servicer.desactivarUsuario,
-                    request_deserializer=usuario__pb2.BuscarUsuarioPorIdRequest.FromString,
-                    response_serializer=usuario__pb2.RespuestaExito.SerializeToString,
-            ),
-            'buscarUsuarioPorId': grpc.unary_unary_rpc_method_handler(
-                    servicer.buscarUsuarioPorId,
-                    request_deserializer=usuario__pb2.BuscarUsuarioPorIdRequest.FromString,
-                    response_serializer=usuario__pb2.Usuario.SerializeToString,
-            ),
-            'listarUsuarios': grpc.unary_unary_rpc_method_handler(
-                    servicer.listarUsuarios,
-                    request_deserializer=usuario__pb2.ListarUsuariosRequest.FromString,
-                    response_serializer=usuario__pb2.ListaUsuariosResponse.SerializeToString,
-            ),
-            'autenticarUsuario': grpc.unary_unary_rpc_method_handler(
-                    servicer.autenticarUsuario,
-                    request_deserializer=usuario__pb2.LoginData.FromString,
-                    response_serializer=usuario__pb2.Usuario.SerializeToString,
-            ),
+        "registrarUsuario": grpc.unary_unary_rpc_method_handler(
+            servicer.registrarUsuario,
+            request_deserializer=usuario__pb2.CrearUsuarioRequest.FromString,
+            response_serializer=usuario__pb2.Usuario.SerializeToString,
+        ),
+        "actualizarUsuario": grpc.unary_unary_rpc_method_handler(
+            servicer.actualizarUsuario,
+            request_deserializer=usuario__pb2.ActualizarUsuarioRequest.FromString,
+            response_serializer=usuario__pb2.Usuario.SerializeToString,
+        ),
+        "desactivarUsuario": grpc.unary_unary_rpc_method_handler(
+            servicer.desactivarUsuario,
+            request_deserializer=usuario__pb2.BuscarUsuarioPorIdRequest.FromString,
+            response_serializer=usuario__pb2.RespuestaExito.SerializeToString,
+        ),
+        "buscarUsuarioPorId": grpc.unary_unary_rpc_method_handler(
+            servicer.buscarUsuarioPorId,
+            request_deserializer=usuario__pb2.BuscarUsuarioPorIdRequest.FromString,
+            response_serializer=usuario__pb2.Usuario.SerializeToString,
+        ),
+        "listarUsuarios": grpc.unary_unary_rpc_method_handler(
+            servicer.listarUsuarios,
+            request_deserializer=usuario__pb2.ListarUsuariosRequest.FromString,
+            response_serializer=usuario__pb2.ListaUsuariosResponse.SerializeToString,
+        ),
+        "autenticarUsuario": grpc.unary_unary_rpc_method_handler(
+            servicer.autenticarUsuario,
+            request_deserializer=usuario__pb2.LoginData.FromString,
+            response_serializer=usuario__pb2.Usuario.SerializeToString,
+        ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'com.grupog.UsuarioService', rpc_method_handlers)
+        "com.grupog.UsuarioService", rpc_method_handlers
+    )
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('com.grupog.UsuarioService', rpc_method_handlers)
+    server.add_registered_method_handlers(
+        "com.grupog.UsuarioService", rpc_method_handlers
+    )
 
 
- # This class is part of an EXPERIMENTAL API.
+# This class is part of an EXPERIMENTAL API.
 class UsuarioService(object):
     """Agregar mas entidades
 
@@ -159,20 +171,22 @@ class UsuarioService(object):
     """
 
     @staticmethod
-    def registrarUsuario(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
+    def registrarUsuario(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/com.grupog.UsuarioService/registrarUsuario',
+            "/com.grupog.UsuarioService/registrarUsuario",
             usuario__pb2.CrearUsuarioRequest.SerializeToString,
             usuario__pb2.Usuario.FromString,
             options,
@@ -183,23 +197,26 @@ class UsuarioService(object):
             wait_for_ready,
             timeout,
             metadata,
-            _registered_method=True)
+            _registered_method=True,
+        )
 
     @staticmethod
-    def actualizarUsuario(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
+    def actualizarUsuario(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/com.grupog.UsuarioService/actualizarUsuario',
+            "/com.grupog.UsuarioService/actualizarUsuario",
             usuario__pb2.ActualizarUsuarioRequest.SerializeToString,
             usuario__pb2.Usuario.FromString,
             options,
@@ -210,23 +227,26 @@ class UsuarioService(object):
             wait_for_ready,
             timeout,
             metadata,
-            _registered_method=True)
+            _registered_method=True,
+        )
 
     @staticmethod
-    def desactivarUsuario(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
+    def desactivarUsuario(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/com.grupog.UsuarioService/desactivarUsuario',
+            "/com.grupog.UsuarioService/desactivarUsuario",
             usuario__pb2.BuscarUsuarioPorIdRequest.SerializeToString,
             usuario__pb2.RespuestaExito.FromString,
             options,
@@ -237,23 +257,26 @@ class UsuarioService(object):
             wait_for_ready,
             timeout,
             metadata,
-            _registered_method=True)
+            _registered_method=True,
+        )
 
     @staticmethod
-    def buscarUsuarioPorId(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
+    def buscarUsuarioPorId(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/com.grupog.UsuarioService/buscarUsuarioPorId',
+            "/com.grupog.UsuarioService/buscarUsuarioPorId",
             usuario__pb2.BuscarUsuarioPorIdRequest.SerializeToString,
             usuario__pb2.Usuario.FromString,
             options,
@@ -264,23 +287,26 @@ class UsuarioService(object):
             wait_for_ready,
             timeout,
             metadata,
-            _registered_method=True)
+            _registered_method=True,
+        )
 
     @staticmethod
-    def listarUsuarios(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
+    def listarUsuarios(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/com.grupog.UsuarioService/listarUsuarios',
+            "/com.grupog.UsuarioService/listarUsuarios",
             usuario__pb2.ListarUsuariosRequest.SerializeToString,
             usuario__pb2.ListaUsuariosResponse.FromString,
             options,
@@ -291,23 +317,26 @@ class UsuarioService(object):
             wait_for_ready,
             timeout,
             metadata,
-            _registered_method=True)
+            _registered_method=True,
+        )
 
     @staticmethod
-    def autenticarUsuario(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
+    def autenticarUsuario(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/com.grupog.UsuarioService/autenticarUsuario',
+            "/com.grupog.UsuarioService/autenticarUsuario",
             usuario__pb2.LoginData.SerializeToString,
             usuario__pb2.Usuario.FromString,
             options,
@@ -318,4 +347,5 @@ class UsuarioService(object):
             wait_for_ready,
             timeout,
             metadata,
-            _registered_method=True)
+            _registered_method=True,
+        )

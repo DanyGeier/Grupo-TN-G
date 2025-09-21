@@ -3,25 +3,28 @@
 import grpc
 import warnings
 
-import autenticacion_pb2 as autenticacion__pb2
+from . import autenticacion_pb2 as autenticacion__pb2
 
-GRPC_GENERATED_VERSION = '1.75.0'
+GRPC_GENERATED_VERSION = "1.75.0"
 GRPC_VERSION = grpc.__version__
 _version_not_supported = False
 
 try:
     from grpc._utilities import first_version_is_lower
-    _version_not_supported = first_version_is_lower(GRPC_VERSION, GRPC_GENERATED_VERSION)
+
+    _version_not_supported = first_version_is_lower(
+        GRPC_VERSION, GRPC_GENERATED_VERSION
+    )
 except ImportError:
     _version_not_supported = True
 
 if _version_not_supported:
     raise RuntimeError(
-        f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in autenticacion_pb2_grpc.py depends on'
-        + f' grpcio>={GRPC_GENERATED_VERSION}.'
-        + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
-        + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
+        f"The grpc package installed is at version {GRPC_VERSION},"
+        + f" but the generated code in autenticacion_pb2_grpc.py depends on"
+        + f" grpcio>={GRPC_GENERATED_VERSION}."
+        + f" Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}"
+        + f" or downgrade your generated code using grpcio-tools<={GRPC_VERSION}."
     )
 
 
@@ -35,15 +38,17 @@ class AuthenticationServiceStub(object):
             channel: A grpc.Channel.
         """
         self.login = channel.unary_unary(
-                '/com.grupog.AuthenticationService/login',
-                request_serializer=autenticacion__pb2.LoginRequest.SerializeToString,
-                response_deserializer=autenticacion__pb2.LoginResponse.FromString,
-                _registered_method=True)
+            "/com.grupog.AuthenticationService/login",
+            request_serializer=autenticacion__pb2.LoginRequest.SerializeToString,
+            response_deserializer=autenticacion__pb2.LoginResponse.FromString,
+            _registered_method=True,
+        )
         self.logout = channel.unary_unary(
-                '/com.grupog.AuthenticationService/logout',
-                request_serializer=autenticacion__pb2.LogoutRequest.SerializeToString,
-                response_deserializer=autenticacion__pb2.LogoutResponse.FromString,
-                _registered_method=True)
+            "/com.grupog.AuthenticationService/logout",
+            request_serializer=autenticacion__pb2.LogoutRequest.SerializeToString,
+            response_deserializer=autenticacion__pb2.LogoutResponse.FromString,
+            _registered_method=True,
+        )
 
 
 class AuthenticationServiceServicer(object):
@@ -52,54 +57,59 @@ class AuthenticationServiceServicer(object):
     def login(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
     def logout(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
 
 def add_AuthenticationServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'login': grpc.unary_unary_rpc_method_handler(
-                    servicer.login,
-                    request_deserializer=autenticacion__pb2.LoginRequest.FromString,
-                    response_serializer=autenticacion__pb2.LoginResponse.SerializeToString,
-            ),
-            'logout': grpc.unary_unary_rpc_method_handler(
-                    servicer.logout,
-                    request_deserializer=autenticacion__pb2.LogoutRequest.FromString,
-                    response_serializer=autenticacion__pb2.LogoutResponse.SerializeToString,
-            ),
+        "login": grpc.unary_unary_rpc_method_handler(
+            servicer.login,
+            request_deserializer=autenticacion__pb2.LoginRequest.FromString,
+            response_serializer=autenticacion__pb2.LoginResponse.SerializeToString,
+        ),
+        "logout": grpc.unary_unary_rpc_method_handler(
+            servicer.logout,
+            request_deserializer=autenticacion__pb2.LogoutRequest.FromString,
+            response_serializer=autenticacion__pb2.LogoutResponse.SerializeToString,
+        ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'com.grupog.AuthenticationService', rpc_method_handlers)
+        "com.grupog.AuthenticationService", rpc_method_handlers
+    )
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('com.grupog.AuthenticationService', rpc_method_handlers)
+    server.add_registered_method_handlers(
+        "com.grupog.AuthenticationService", rpc_method_handlers
+    )
 
 
- # This class is part of an EXPERIMENTAL API.
+# This class is part of an EXPERIMENTAL API.
 class AuthenticationService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def login(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
+    def login(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/com.grupog.AuthenticationService/login',
+            "/com.grupog.AuthenticationService/login",
             autenticacion__pb2.LoginRequest.SerializeToString,
             autenticacion__pb2.LoginResponse.FromString,
             options,
@@ -110,23 +120,26 @@ class AuthenticationService(object):
             wait_for_ready,
             timeout,
             metadata,
-            _registered_method=True)
+            _registered_method=True,
+        )
 
     @staticmethod
-    def logout(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
+    def logout(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/com.grupog.AuthenticationService/logout',
+            "/com.grupog.AuthenticationService/logout",
             autenticacion__pb2.LogoutRequest.SerializeToString,
             autenticacion__pb2.LogoutResponse.FromString,
             options,
@@ -137,4 +150,5 @@ class AuthenticationService(object):
             wait_for_ready,
             timeout,
             metadata,
-            _registered_method=True)
+            _registered_method=True,
+        )
