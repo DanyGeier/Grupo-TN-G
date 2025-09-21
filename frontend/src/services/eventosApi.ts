@@ -118,7 +118,7 @@ class EventosApiService {
         console.log("[API SERVICE] Mapeando evento:", eventoApi);
 
         return {
-            id: parseInt(eventoApi.id),
+            id: eventoApi.id,
             nombreEvento: eventoApi.nombreEvento || "Sin nombre",
             descripcion: eventoApi.descripcion || "Sin descripción",
             fechaHora: new Date(eventoApi.fechaHoraEvento || Date.now()),
