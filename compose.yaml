@@ -17,11 +17,14 @@ services:
       - GRPC_SERVER_PORT=9095
       - EVENTOS_GRPC_HOST=eventos
       - EVENTOS_GRPC_PORT=9096
+      - INVENTARIO_GRPC_HOST=inventario
+      - INVENTARIO_GRPC_PORT=9097
     ports:
       - 5000:5000
     depends_on:
       - server
       - eventos
+      - inventario
   server:
     build:
       context: ./backend/users
@@ -49,15 +52,6 @@ services:
       retries: 5
       start_period: 30s
 
-  # The commented out section below is an example of how to define a PostgreSQL
-  # database that your application can use. `depends_on` tells Docker Compose to
-  # start the database before your application. The `db-data` volume persists the
-  # database data between container restarts. The `db-password` secret is used
-  # to set the database password. You must create `db/password.txt` and add
-  # a password of your choosing to it before running `docker-compose up`.
-  #     depends_on:
-  #       db:
-  #         condition: service_healthy
   db:
     image: mysql:8.0
     restart: always
@@ -70,7 +64,6 @@ services:
     ports:
       - 3307:3306
     volumes:
-      #- ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - mysql-data:/var/lib/mysql
     healthcheck:
       test: [ "CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$${MYSQL_ROOT_PASSWORD} || exit 1" ]
@@ -95,6 +88,23 @@ services:
       mongodb:
         condition: service_healthy
       server:
+        condition: service_healthy
+
+  inventario:
+    build:
+      context: ./backend/inventario
+      dockerfile: Dockerfile
+    ports:
+      - 9097:9097
+    environment:
+      PORT: 9097
+      MONGO_HOST: mongodb
+      MONGO_PORT: 27017
+      MONGO_DB: inventario_db
+      MONGO_USER: admin
+      MONGO_PASS: admin123
+    depends_on:
+      mongodb:
         condition: service_healthy
 
   mongodb:
@@ -127,29 +137,7 @@ services:
     environment:
       - MP_SMTP_AUTH_ACCEPT_ANY=1
       - MP_SMTP_AUTH_ALLOW_INSECURE=1
-#     user: postgres
-#     secrets:
-#       - db-password
-#     volumes:
-#       - db-data:/var/lib/postgresql/data
-#     environment:
-#       - POSTGRES_DB=example
-#       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
-#     expose:
-#       - 5432
-#     healthcheck:
-#       test: [ "CMD", "pg_isready" ]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-# volumes:
-#   db-data:
-# secrets:
-#   db-password:
-#     file: db/password.txt
 
 volumes:
   mysql-data:
   mongodb_data:
-
-

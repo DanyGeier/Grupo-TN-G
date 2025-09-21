@@ -40,8 +40,7 @@ COPY pyproject.toml .
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip install --upgrade pip && \
     pip install . && \
-    pip install grpcio-tools
-    RUN pip install . && pip install grpcio-tools flask-cors
+    pip install grpcio-tools flask-cors
 
 # Copy the source code into the container.
 COPY . .

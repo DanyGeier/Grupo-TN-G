@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package com.grupog;
+
+// Categorías de inventario
+enum CategoriaInventario {
+  ROPA = 0;
+  ALIMENTOS = 1;
+  JUGUETES = 2;
+  UTILES_ESCOLARES = 3;
+}
+
+message InventarioItem {
+  string id = 1;
+  CategoriaInventario categoria = 2;
+  string nombre = 3;
+  string descripcion = 4;
+  int32 cantidad = 5;
+  bool eliminado = 6;
+  int64 fechaAlta = 7;
+  string usuarioAlta = 8;
+  int64 fechaModificacion = 9;
+  string usuarioModificacion = 10;
+}
+
+message CrearItemRequest {
+  CategoriaInventario categoria = 1;
+  string nombre = 2;
+  string descripcion = 3;
+  int32 cantidad = 4;
+  string usuario = 5;
+}
+
+message ActualizarItemRequest {
+  string id = 1;
+  string descripcion = 2;
+  int32 cantidad = 3;
+  string usuario = 4;
+}
+
+message EliminarItemRequest {
+  string id = 1;
+  string usuario = 2;
+}
+
+message ListarItemsRequest {
+  bool incluirEliminados = 1;
+}
+
+message ListarItemsResponse {
+  repeated InventarioItem items = 1;
+}
+
+message OperacionResponse {
+  bool exito = 1;
+  string mensaje = 2;
+}
+
+service InventarioService {
+  rpc CrearItem (CrearItemRequest) returns (InventarioItem);
+  rpc ActualizarItem (ActualizarItemRequest) returns (InventarioItem);
+  rpc EliminarItem (EliminarItemRequest) returns (OperacionResponse);
+  rpc ListarItems (ListarItemsRequest) returns (ListarItemsResponse);
+}
+
