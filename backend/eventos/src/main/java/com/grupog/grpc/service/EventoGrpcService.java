@@ -94,6 +94,82 @@ public class EventoGrpcService extends EventoServiceGrpc.EventoServiceImplBase {
     }
 
     @Override
+    public void modificarEvento(Evento request, StreamObserver<Evento> responseObserver) {
+        try {
+            // Extraer token desde el contexto
+            String token = ContextKeys.TOKEN_KEY.get();
+            System.out.println("[EVENTO SERVICE] Token extraído del contexto: "
+                    + (token != null ? "Token presente (longitud: " + token.length() + ")" : "Token NULL"));
+
+            // Validar JWT y obtener usuario
+            Usuario usuario = validarTokenYUsuario(token);
+
+            // Validar rol (PRESIDENTE o COORDINADOR)
+            if (!esPresidenteOCoordinador(usuario)) {
+                responseObserver.onError(Status.PERMISSION_DENIED
+                        .withDescription("Solo PRESIDENTE o COORDINADOR pueden modificar eventos")
+                        .asRuntimeException());
+                return;
+            }
+
+            // Validar ID
+            if (request.getId() == null || request.getId().trim().isEmpty()) {
+                responseObserver.onError(Status.INVALID_ARGUMENT
+                        .withDescription("ID de evento requerido")
+                        .asRuntimeException());
+                return;
+            }
+
+            // Buscar evento existente y activo
+            Optional<EventoDocument> eventoOpt = eventoRepository.findByIdAndActivoTrue(request.getId());
+            if (eventoOpt.isEmpty()) {
+                responseObserver.onError(Status.NOT_FOUND
+                        .withDescription("Evento no encontrado")
+                        .asRuntimeException());
+                return;
+            }
+
+            EventoDocument evento = eventoOpt.get();
+
+            // Validar que el evento actual sea futuro
+            if (evento.getFechaHoraEvento().isBefore(LocalDateTime.now())) {
+                responseObserver.onError(Status.INVALID_ARGUMENT
+                        .withDescription("Solo se pueden modificar eventos futuros")
+                        .asRuntimeException());
+                return;
+            }
+
+            // Validar que la nueva fecha sea futura
+            LocalDateTime nuevaFecha = LocalDateTime.ofInstant(
+                    java.time.Instant.ofEpochMilli(request.getFechaHoraEvento()),
+                    ZoneId.systemDefault());
+            if (nuevaFecha.isBefore(LocalDateTime.now())) {
+                responseObserver.onError(Status.INVALID_ARGUMENT
+                        .withDescription("La nueva fecha/hora debe ser futura")
+                        .asRuntimeException());
+                return;
+            }
+
+            // Actualizar campos permitidos
+            if (request.getNombreEvento() != null && !request.getNombreEvento().trim().isEmpty()) {
+                evento.setNombreEvento(request.getNombreEvento());
+            }
+            evento.setDescripcion(request.getDescripcion()); // puede ser vacía
+            evento.setFechaHoraEvento(nuevaFecha);
+
+            EventoDocument guardado = eventoRepository.save(evento);
+
+            responseObserver.onNext(eventoMapper.toProto(guardado));
+            responseObserver.onCompleted();
+
+        } catch (Exception e) {
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription("Error al modificar evento: " + e.getMessage())
+                    .asRuntimeException());
+        }
+    }
+
+    @Override
     public void asignarParticipante(AsignarParticipanteRequest request,
             StreamObserver<RespuestaExito> responseObserver) {
         try {
@@ -230,11 +306,18 @@ public class EventoGrpcService extends EventoServiceGrpc.EventoServiceImplBase {
                 return;
             }
 
-            // TODO: Descontar del inventario via gRPC
-            // inventarioGrpcClient.descontarDonacion(
-            // request.getCategoria().name(),
-            // request.getDescripcion(),
-            // request.getCantidad());
+            // Validar stock y descontar (cliente simulado o real según implementación)
+            if (!inventarioGrpcClient.verificarDisponibilidad(request.getCategoria().name(), request.getCantidad())) {
+                responseObserver.onError(Status.FAILED_PRECONDITION
+                        .withDescription("Stock insuficiente en inventario")
+                        .asRuntimeException());
+                return;
+            }
+            inventarioGrpcClient.descontarDonacion(
+                    request.getCategoria().name(),
+                    request.getDescripcion(),
+                    request.getCantidad(),
+                    usuario.getId());
 
             // Registrar donación repartida localmente
             EventoDocument.DonacionRepartidaSimple donacion = new EventoDocument.DonacionRepartidaSimple(

@@ -43,30 +43,30 @@ export const HomePage = () => {
     <>
       <Header></Header>
 
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-        <h1 className="text-4xl font-bold text-gray-800 mb-10">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors">
+        <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-10">
           Empuje Solidario
         </h1>
 
         {usuario && (
-          <p className="mb-6 text-gray-700">
+          <p className="mb-6 text-gray-700 dark:text-gray-300">
             Bienvenido,{" "}
             <span className="font-bold">{usuario.nombreUsuario}</span> - Rol:{" "}
             <span className="font-semibold"> {rolesMap[usuario!.rol]}</span>
           </p>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 justify-items-center">
           {filteredCards.map((card) => (
             <div
               key={card.title}
               onClick={() => navigate(card.route)}
-              className="cursor-pointer bg-white shadow-lg rounded-2xl p-6 w-64 h-40 flex flex-col justify-center items-center hover:shadow-2xl hover:scale-105 transition"
+              className="cursor-pointer bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-6 w-64 h-40 flex flex-col justify-center items-center hover:shadow-2xl hover:scale-105 transition"
             >
-              <h2 className="text-2xl font-semibold text-blue-600">
+              <h2 className="text-2xl font-semibold text-blue-600 dark:text-blue-400">
                 {card.title}
               </h2>
-              <p className="text-gray-600 mt-2 text-center">
+              <p className="text-gray-600 dark:text-gray-300 mt-2 text-center">
                 {card.description}
               </p>
             </div>

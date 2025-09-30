@@ -9,6 +9,15 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+def _auth_metadata(token: str | None):
+    if not token:
+        return None
+    t = token.strip()
+    if not t.lower().startswith("bearer "):
+        t = f"Bearer {t}"
+    return [("authorization", t)]
+
+
 class EventoClient(object):
     """
     Cliente gRPC para el servicio de eventos
@@ -31,47 +40,20 @@ class EventoClient(object):
         logger.info("[gRPC CLIENT] EventoServiceStub creado correctamente")
 
     def crear_evento(self, nombre_evento, descripcion, fecha_hora_evento, token):
-        """
-        Crear un nuevo evento
-        """
         logger.info(f"[gRPC CLIENT] Iniciando creación de evento: {nombre_evento}")
-        logger.info(
-            f"[JWT PROPAGATION] Token recibido: {'Token presente' if token else 'Sin token'}"
-        )
-        if token:
-            logger.info(f"[JWT PROPAGATION] Token longitud: {len(token)}")
-            logger.info(f"[JWT PROPAGATION] Token (primeros 50 chars): {token[:50]}...")
-
         request = evento_pb2.CrearEventoRequest(
             nombreEvento=nombre_evento,
             descripcion=descripcion,
             fechaHoraEvento=fecha_hora_evento,
         )
-
-        logger.info(
-            f"[gRPC REQUEST] crearEvento - Nombre: {nombre_evento}, Fecha: {fecha_hora_evento}"
-        )
-        logger.debug(f"[gRPC REQUEST] Request completo: {MessageToJson(request)}")
-        logger.info(f"[JWT PROPAGATION] Enviando token en metadata de autorización")
-
         try:
-            if token:
-                metadata = [("authorization", token)]
-                logger.info(
-                    f"[JWT PROPAGATION] Metadata creada con token de autorización"
-                )
-                response, call = self.stub.crearEvento.with_call(
-                    request, metadata=metadata
-                )
+            md = _auth_metadata(token)
+            if md:
+                response, _ = self.stub.crearEvento.with_call(request, metadata=md)
             else:
-                logger.warning(f"[JWT PROPAGATION] WARNING: Enviando request sin token")
-                response, call = self.stub.crearEvento.with_call(request)
-
+                response, _ = self.stub.crearEvento.with_call(request)
             logger.info(
                 f"[gRPC RESPONSE] Evento creado exitosamente - ID: {response.id}, Nombre: {response.nombreEvento}"
-            )
-            logger.debug(
-                f"[gRPC RESPONSE] Response completo: {MessageToJson(response)}"
             )
             return response
         except grpc.RpcError as e:
@@ -81,43 +63,18 @@ class EventoClient(object):
             raise
 
     def listar_eventos(self, solo_futuros=False, token=None):
-        """
-        Listar eventos, opcionalmente solo los futuros
-        """
         logger.info(
             f"[gRPC CLIENT] Iniciando listado de eventos - Solo futuros: {solo_futuros}"
         )
-        logger.info(
-            f"[JWT PROPAGATION] Token recibido: {'Token presente' if token else 'Sin token'}"
-        )
-        if token:
-            logger.info(f"[JWT PROPAGATION] Token longitud: {len(token)}")
-            logger.info(f"[JWT PROPAGATION] Token (primeros 50 chars): {token[:50]}...")
-
         request = evento_pb2.ListarEventosRequest(soloFuturos=solo_futuros)
-
-        logger.info(f"[gRPC REQUEST] listarEventos - Solo futuros: {solo_futuros}")
-        logger.debug(f"[gRPC REQUEST] Request completo: {MessageToJson(request)}")
-        logger.info(f"[JWT PROPAGATION] Enviando token en metadata de autorización")
-
         try:
-            if token:
-                metadata = [("authorization", token)]
-                logger.info(
-                    f"[JWT PROPAGATION] Metadata creada con token de autorización"
-                )
-                response, call = self.stub.listarEventos.with_call(
-                    request, metadata=metadata
-                )
+            md = _auth_metadata(token)
+            if md:
+                response, _ = self.stub.listarEventos.with_call(request, metadata=md)
             else:
-                logger.warning(f"[JWT PROPAGATION] WARNING: Enviando request sin token")
-                response, call = self.stub.listarEventos.with_call(request)
-
+                response, _ = self.stub.listarEventos.with_call(request)
             logger.info(
                 f"[gRPC RESPONSE] Eventos encontrados: {len(response.eventos)} eventos"
-            )
-            logger.debug(
-                f"[gRPC RESPONSE] Response completo: {MessageToJson(response)}"
             )
             return response
         except grpc.RpcError as e:
@@ -127,34 +84,11 @@ class EventoClient(object):
             raise
 
     def buscar_evento_por_id(self, evento_id, token):
-        """
-        Buscar un evento por su ID
-        """
-        logger.info(f"[gRPC CLIENT] Iniciando búsqueda de evento por ID: {evento_id}")
-        logger.info(
-            f"[JWT PROPAGATION] Token recibido: {'Token presente' if token else 'Sin token'}"
-        )
-        if token:
-            logger.info(f"[JWT PROPAGATION] Token longitud: {len(token)}")
-            logger.info(f"[JWT PROPAGATION] Token (primeros 50 chars): {token[:50]}...")
-
-        metadata = [("authorization", token)]
+        logger.info(f"[gRPC CLIENT] Buscando evento por ID: {evento_id}")
+        md = _auth_metadata(token)
         request = evento_pb2.BuscarEventoPorIdRequest(id=evento_id)
-
-        logger.info(f"[gRPC REQUEST] buscarEventoPorId - ID: {evento_id}")
-        logger.debug(f"[gRPC REQUEST] Request completo: {MessageToJson(request)}")
-        logger.info(f"[JWT PROPAGATION] Metadata creada con token de autorización")
-
         try:
-            response, call = self.stub.buscarEventoPorId.with_call(
-                request, metadata=metadata
-            )
-            logger.info(
-                f"[gRPC RESPONSE] Evento encontrado - ID: {response.id}, Nombre: {response.nombreEvento}"
-            )
-            logger.debug(
-                f"[gRPC RESPONSE] Response completo: {MessageToJson(response)}"
-            )
+            response, _ = self.stub.buscarEventoPorId.with_call(request, metadata=md)
             return response
         except grpc.RpcError as e:
             logger.error(
@@ -163,40 +97,15 @@ class EventoClient(object):
             raise
 
     def asignar_participante(self, evento_id, usuario_id, token):
-        """
-        Asignar un participante a un evento
-        """
         logger.info(
-            f"[gRPC CLIENT] Iniciando asignación de participante - Evento: {evento_id}, Usuario: {usuario_id}"
+            f"[gRPC CLIENT] Asignando participante - Evento: {evento_id}, Usuario: {usuario_id}"
         )
-        logger.info(
-            f"[JWT PROPAGATION] Token recibido: {'Token presente' if token else 'Sin token'}"
-        )
-        if token:
-            logger.info(f"[JWT PROPAGATION] Token longitud: {len(token)}")
-            logger.info(f"[JWT PROPAGATION] Token (primeros 50 chars): {token[:50]}...")
-
-        metadata = [("authorization", token)]
+        md = _auth_metadata(token)
         request = evento_pb2.AsignarParticipanteRequest(
             eventoId=evento_id, usuarioId=usuario_id
         )
-
-        logger.info(
-            f"[gRPC REQUEST] asignarParticipante - Evento: {evento_id}, Usuario: {usuario_id}"
-        )
-        logger.debug(f"[gRPC REQUEST] Request completo: {MessageToJson(request)}")
-        logger.info(f"[JWT PROPAGATION] Metadata creada con token de autorización")
-
         try:
-            response, call = self.stub.asignarParticipante.with_call(
-                request, metadata=metadata
-            )
-            logger.info(
-                f"[gRPC RESPONSE] Participante asignado exitosamente - Evento: {evento_id}, Usuario: {usuario_id}"
-            )
-            logger.debug(
-                f"[gRPC RESPONSE] Response completo: {MessageToJson(response)}"
-            )
+            response, _ = self.stub.asignarParticipante.with_call(request, metadata=md)
             return response
         except grpc.RpcError as e:
             logger.error(
@@ -205,40 +114,15 @@ class EventoClient(object):
             raise
 
     def quitar_participante(self, evento_id, usuario_id, token):
-        """
-        Quitar un participante de un evento
-        """
         logger.info(
-            f"[gRPC CLIENT] Iniciando eliminación de participante - Evento: {evento_id}, Usuario: {usuario_id}"
+            f"[gRPC CLIENT] Quitando participante - Evento: {evento_id}, Usuario: {usuario_id}"
         )
-        logger.info(
-            f"[JWT PROPAGATION] Token recibido: {'Token presente' if token else 'Sin token'}"
-        )
-        if token:
-            logger.info(f"[JWT PROPAGATION] Token longitud: {len(token)}")
-            logger.info(f"[JWT PROPAGATION] Token (primeros 50 chars): {token[:50]}...")
-
-        metadata = [("authorization", token)]
+        md = _auth_metadata(token)
         request = evento_pb2.QuitarParticipanteRequest(
             eventoId=evento_id, usuarioId=usuario_id
         )
-
-        logger.info(
-            f"[gRPC REQUEST] quitarParticipante - Evento: {evento_id}, Usuario: {usuario_id}"
-        )
-        logger.debug(f"[gRPC REQUEST] Request completo: {MessageToJson(request)}")
-        logger.info(f"[JWT PROPAGATION] Metadata creada con token de autorización")
-
         try:
-            response, call = self.stub.quitarParticipante.with_call(
-                request, metadata=metadata
-            )
-            logger.info(
-                f"[gRPC RESPONSE] Participante eliminado exitosamente - Evento: {evento_id}, Usuario: {usuario_id}"
-            )
-            logger.debug(
-                f"[gRPC RESPONSE] Response completo: {MessageToJson(response)}"
-            )
+            response, _ = self.stub.quitarParticipante.with_call(request, metadata=md)
             return response
         except grpc.RpcError as e:
             logger.error(
@@ -249,51 +133,25 @@ class EventoClient(object):
     def registrar_donacion_repartida(
         self, evento_id, categoria, descripcion, cantidad, token
     ):
-        """
-        Registrar una donación repartida en un evento
-        """
         logger.info(
-            f"[gRPC CLIENT] Iniciando registro de donación - Evento: {evento_id}, Categoría: {categoria}, Cantidad: {cantidad}"
+            f"[gRPC CLIENT] Registrando donación - Evento: {evento_id}, Categoría: {categoria}, Cantidad: {cantidad}"
         )
-        logger.info(
-            f"[JWT PROPAGATION] Token recibido: {'Token presente' if token else 'Sin token'}"
-        )
-        if token:
-            logger.info(f"[JWT PROPAGATION] Token longitud: {len(token)}")
-            logger.info(f"[JWT PROPAGATION] Token (primeros 50 chars): {token[:50]}...")
-
-        metadata = [("authorization", token)]
-
-        # Mapear categoría string a enum
+        md = _auth_metadata(token)
         categoria_map = {
             "ROPA": evento_pb2.CategoriaDonacion.ROPA,
             "ALIMENTOS": evento_pb2.CategoriaDonacion.ALIMENTOS,
             "JUGUETES": evento_pb2.CategoriaDonacion.JUGUETES,
             "UTILES_ESCOLARES": evento_pb2.CategoriaDonacion.UTILES_ESCOLARES,
         }
-
         request = evento_pb2.RegistrarDonacionRequest(
             eventoId=evento_id,
             categoria=categoria_map.get(categoria, evento_pb2.CategoriaDonacion.ROPA),
             descripcion=descripcion,
             cantidad=cantidad,
         )
-
-        logger.info(
-            f"[gRPC REQUEST] registrarDonacionRepartida - Evento: {evento_id}, Categoría: {categoria}, Cantidad: {cantidad}"
-        )
-        logger.debug(f"[gRPC REQUEST] Request completo: {MessageToJson(request)}")
-        logger.info(f"[JWT PROPAGATION] Metadata creada con token de autorización")
-
         try:
-            response, call = self.stub.registrarDonacionRepartida.with_call(
-                request, metadata=metadata
-            )
-            logger.info(
-                f"[gRPC RESPONSE] Donación registrada exitosamente - Evento: {evento_id}, Categoría: {categoria}"
-            )
-            logger.debug(
-                f"[gRPC RESPONSE] Response completo: {MessageToJson(response)}"
+            response, _ = self.stub.registrarDonacionRepartida.with_call(
+                request, metadata=md
             )
             return response
         except grpc.RpcError as e:
@@ -303,34 +161,11 @@ class EventoClient(object):
             raise
 
     def eliminar_evento(self, evento_id, token):
-        """
-        Eliminar un evento
-        """
-        logger.info(f"[gRPC CLIENT] Iniciando eliminación de evento ID: {evento_id}")
-        logger.info(
-            f"[JWT PROPAGATION] Token recibido: {'Token presente' if token else 'Sin token'}"
-        )
-        if token:
-            logger.info(f"[JWT PROPAGATION] Token longitud: {len(token)}")
-            logger.info(f"[JWT PROPAGATION] Token (primeros 50 chars): {token[:50]}...")
-
-        metadata = [("authorization", token)]
+        logger.info(f"[gRPC CLIENT] Eliminando evento ID: {evento_id}")
+        md = _auth_metadata(token)
         request = evento_pb2.BuscarEventoPorIdRequest(id=evento_id)
-
-        logger.info(f"[gRPC REQUEST] eliminarEvento - ID: {evento_id}")
-        logger.debug(f"[gRPC REQUEST] Request completo: {MessageToJson(request)}")
-        logger.info(f"[JWT PROPAGATION] Metadata creada con token de autorización")
-
         try:
-            response, call = self.stub.eliminarEvento.with_call(
-                request, metadata=metadata
-            )
-            logger.info(
-                f"[gRPC RESPONSE] Evento eliminado exitosamente - ID: {evento_id}"
-            )
-            logger.debug(
-                f"[gRPC RESPONSE] Response completo: {MessageToJson(response)}"
-            )
+            response, _ = self.stub.eliminarEvento.with_call(request, metadata=md)
             return response
         except grpc.RpcError as e:
             logger.error(
@@ -339,19 +174,8 @@ class EventoClient(object):
             raise
 
     def modificar_evento(self, evento_data, token):
-        """
-        Modificar un evento existente
-        """
-        evento_id = evento_data.get("id", "N/A")
-        logger.info(f"[gRPC CLIENT] Iniciando modificación de evento ID: {evento_id}")
-        logger.info(
-            f"[JWT PROPAGATION] Token recibido: {'Token presente' if token else 'Sin token'}"
-        )
-        if token:
-            logger.info(f"[JWT PROPAGATION] Token longitud: {len(token)}")
-            logger.info(f"[JWT PROPAGATION] Token (primeros 50 chars): {token[:50]}...")
-
-        metadata = [("authorization", token)]
+        logger.info(f"[gRPC CLIENT] Modificando evento ID: {evento_data.get('id')}")
+        md = _auth_metadata(token)
         request = evento_pb2.Evento(
             id=evento_data["id"],
             nombreEvento=evento_data["nombreEvento"],
@@ -362,27 +186,12 @@ class EventoClient(object):
             usuarioCreacion=evento_data.get("usuarioCreacion", 0),
             activo=evento_data.get("activo", True),
         )
-
-        logger.info(
-            f"[gRPC REQUEST] modificarEvento - ID: {evento_id}, Nombre: {evento_data.get('nombreEvento')}"
-        )
-        logger.debug(f"[gRPC REQUEST] Request completo: {MessageToJson(request)}")
-        logger.info(f"[JWT PROPAGATION] Metadata creada con token de autorización")
-
         try:
-            response, call = self.stub.modificarEvento.with_call(
-                request, metadata=metadata
-            )
-            logger.info(
-                f"[gRPC RESPONSE] Evento modificado exitosamente - ID: {response.id}, Nombre: {response.nombreEvento}"
-            )
-            logger.debug(
-                f"[gRPC RESPONSE] Response completo: {MessageToJson(response)}"
-            )
+            response, _ = self.stub.modificarEvento.with_call(request, metadata=md)
             return response
         except grpc.RpcError as e:
             logger.error(
-                f"[gRPC ERROR] Error al modificar evento ID {evento_id}: {e.code()} - {e.details()}"
+                f"[gRPC ERROR] Error al modificar evento ID {evento_data.get('id')}: {e.code()} - {e.details()}"
             )
             raise
 

@@ -36,3 +36,4 @@ build/
 client.egg-info
 __pycache__
 
+tmp/

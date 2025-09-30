@@ -3,19 +3,33 @@ from flask_cors import CORS
 from routes.usuarios import usuarios_bp
 from routes.eventos import eventos_bp
 from routes.auth import auth_bp
+from routes.inventario import inventario_bp
 
 
 def create_app():
     """Factory function para crear la aplicación Flask"""
     app = Flask(__name__)
 
-    # Configurar CORS
-    CORS(app, origins="http://localhost:5173")  # Permite CORS desde React
+    # Configurar CORS global para todos los orígenes (solo entorno dev)
+    CORS(
+        app,
+        resources={
+            r"/*": {
+                "origins": "*",
+                "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+                "allow_headers": ["Content-Type", "Authorization"],
+                "expose_headers": ["Authorization"],
+                "supports_credentials": False,
+                "always_send": True,
+            }
+        },
+    )
 
     # Registrar blueprints
     app.register_blueprint(usuarios_bp)
     app.register_blueprint(eventos_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(inventario_bp)
 
     # Endpoint principal
     @app.route("/")
