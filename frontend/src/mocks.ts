@@ -30,7 +30,7 @@ export const inventarioItems: InventarioItemDto[] = [
 
  export const eventos: EventoResponse[] = [
   {
-    id: 1,
+    id: "1",
     nombreEvento: "Donación de Ropa",
     descripcion: "Recolecta ropa para niños y niñas",
     fechaHora: new Date("2025-09-25T10:00:00"),
@@ -38,7 +38,7 @@ export const inventarioItems: InventarioItemDto[] = [
     donaciones: [inventarioItems[0], inventarioItems[1], inventarioItems[9]],
   },
   {
-    id: 2,
+    id: "2",
     nombreEvento: "Entrega de Alimentos",
     descripcion: "Distribución de alimentos básicos",
     fechaHora: new Date("2025-09-28T15:00:00"),
@@ -46,7 +46,7 @@ export const inventarioItems: InventarioItemDto[] = [
     donaciones: [inventarioItems[2], inventarioItems[3], inventarioItems[8]],
   },
   {
-    id: 3,
+    id: "3",
     nombreEvento: "Juguetes Solidarios",
     descripcion: "Donación de juguetes a escuelas",
     fechaHora: new Date("2025-10-01T11:00:00"),
@@ -54,7 +54,7 @@ export const inventarioItems: InventarioItemDto[] = [
     donaciones: [inventarioItems[4], inventarioItems[5]],
   },
   {
-    id: 4,
+    id: "4",
     nombreEvento: "Útiles Escolares",
     descripcion: "Entrega de útiles escolares",
     fechaHora: new Date("2025-10-05T09:30:00"),
@@ -62,7 +62,7 @@ export const inventarioItems: InventarioItemDto[] = [
     donaciones: [inventarioItems[6], inventarioItems[7]],
   },
   {
-    id: 5,
+    id: "5",
     nombreEvento: "Gran Evento Solidario",
     descripcion: "Combinación de ropa, alimentos y juguetes",
     fechaHora: new Date("2025-10-10T14:00:00"),

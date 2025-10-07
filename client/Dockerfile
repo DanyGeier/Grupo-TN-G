@@ -32,35 +32,31 @@ RUN adduser \
     --uid "${UID}" \
     appuser
 
-# Download dependencies as a separate step to take advantage of Docker's caching.
-# Leverage a cache mount to /root/.cache/pip to speed up subsequent builds.
-# Leverage a bind mount to requirements.txt to avoid having to copy them into
-# into this layer.
+# Install system dependencies needed for grpcio-tools (protoc compiler runtime)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies (avoid installing the local package)
 COPY pyproject.toml .
-RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install --upgrade pip && \
-    pip install . && \
-    pip install grpcio-tools
-    RUN pip install . && pip install grpcio-tools flask-cors
+RUN pip install --upgrade pip \
+    && pip install grpcio>=1.60.0 grpcio-tools>=1.60.0 protobuf>=4.25.0 flask>=3.0.0 flask-cors>=4.0.0 PyJWT>=2.9.0 requests>=2.32.3
 
 # Copy the source code into the container.
 COPY . .
 
-# Generate proto files BEFORE switching to appuser
-RUN python -m grpc_tools.protoc -I proto --python_out=proto --grpc_python_out=proto proto/usuario.proto
-RUN python -m grpc_tools.protoc -I proto --python_out=proto --grpc_python_out=proto proto/autenticacion.proto
+# Generate gRPC stubs
+RUN python -m grpc_tools.protoc -I proto --python_out=proto --grpc_python_out=proto proto/usuario.proto \
+    && python -m grpc_tools.protoc -I proto --python_out=proto --grpc_python_out=proto proto/autenticacion.proto \
+    && python -m grpc_tools.protoc -I proto --python_out=proto --grpc_python_out=proto proto/evento.proto \
+    && python -m grpc_tools.protoc -I proto --python_out=proto --grpc_python_out=proto proto/inventario.proto
 
-# Create __init__.py in proto directory
+# Ensure proto is a package
 RUN touch proto/__init__.py
 
 # Change ownership of the entire app directory to appuser
 RUN chown -R appuser:appuser /app
-
-# Switch to the non-privileged user to run the application.
 USER appuser
 
-# Expose the port that the application listens on.
 EXPOSE 5000
-
-# Run the application.
-CMD python app.py
+CMD ["python", "app.py"]

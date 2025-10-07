@@ -57,6 +57,13 @@ class UsuarioClient(object):
         response = self.stub.buscarUsuarioPorId(request)
         return response
 
+    def buscarUsuarioPorNombreUsuario(self, nombre_usuario: str):
+        request = usuario_pb2.BuscarUsuarioPorNombreUsuarioRequest(
+            nombreUsuario=nombre_usuario
+        )
+        response = self.stub.buscarUsuarioPorNombreUsuario(request)
+        return response
+
     def listarUsuarios(self, estado=None):
         if estado is not None:
             request = usuario_pb2.ListarUsuariosRequest(estadoUsuario=estado)
@@ -84,7 +91,7 @@ if __name__ == "__main__":
 
     # Ejemplo de uso
     try:
-        usuarios = client.listar_usuarios()
+        usuarios = client.listarUsuarios()
         print("Usuarios encontrados:")
         print(MessageToJson(usuarios))
     except grpc.RpcError as e:

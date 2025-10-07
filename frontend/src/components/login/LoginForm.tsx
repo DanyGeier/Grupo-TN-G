@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "./api/auth";
 import { useUser } from "../../context/UserContext";
-import type { Usuario } from "../../models/usuario";
 
 interface LoginRequest {
   nombreUsuario: string;
@@ -27,72 +26,57 @@ export const LoginForm = () => {
   };
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    // Usuario hardcodeado para pruebas
-    if (
-      loginRequest.nombreUsuario === "admin" &&
-      loginRequest.clave === "1234"
-    ) {
-      // Creamos el usuario hardcodeado siguiendo tu interface
-      const fakeUser: Usuario = {
-        id: 0,
-        nombreUsuario: "admin",
-        nombre: "Administrador",
-        apellido: "Sistema",
-        telefono: "0000000000",
-        email: "admin@example.com",
-        rol: 0,       // por ejemplo 1 = ADMIN
-        estado: 0, // activo
-      };
+    try {
+      const data = await login(loginRequest);
 
-      const fakeToken = "fake-jwt-token";
+      // Guardar en contexto
+      loginUser(data.usuario, data.token);
 
-      loginUser(fakeUser, fakeToken); // guardamos en contexto
       navigate("/home");
-      return;
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Error al iniciar sesión";
+      setErrorMessage(message);
     }
-
-    // Login normal para usuarios reales
-    const data = await login(loginRequest);
-
-    // Guardar en contexto
-    loginUser(data.usuario, data.token);
-
-    navigate("/home");
-  } catch (err: any) {
-    setErrorMessage(err.message);
-  }
-};
+  };
   const isFormValid = loginRequest.nombreUsuario && loginRequest.clave;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <h1 className="text-3xl font-bold text-gray-800">Bienvenido</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors">
+      <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
+        Bienvenido
+      </h1>
 
       <form
         onSubmit={handleLogin}
-        className="bg-white px-10 py-8 rounded-2xl mt-8 shadow-lg w-96"
+        className="bg-white dark:bg-gray-800 px-10 py-8 rounded-2xl mt-8 shadow-lg w-96"
       >
         {/* Usuario */}
         <div>
-          <label htmlFor="nombreUsuario" className="text-lg font-medium">
-            Nombre de usuario
+          <label
+            htmlFor="nombreUsuario"
+            className="text-lg font-medium text-gray-800 dark:text-gray-100"
+          >
+            Usuario o email
           </label>
           <input
             id="nombreUsuario"
             name="nombreUsuario"
             value={loginRequest.nombreUsuario}
             onChange={handleChange}
-            className="w-full border-2 border-gray-200 rounded-2xl p-3 mt-1 outline-none focus:border-blue-500"
-            placeholder="Ingresar nombre de usuario"
+            className="w-full border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-3 mt-1 outline-none focus:border-blue-500 dark:bg-gray-900 dark:text-gray-100"
+            placeholder="Ingresar usuario o email"
           />
         </div>
 
         {/* Contraseña */}
         <div className="mt-4">
-          <label htmlFor="clave" className="text-lg font-medium">
+          <label
+            htmlFor="clave"
+            className="text-lg font-medium text-gray-800 dark:text-gray-100"
+          >
             Contraseña
           </label>
           <input
@@ -101,14 +85,16 @@ export const LoginForm = () => {
             type="password"
             value={loginRequest.clave}
             onChange={handleChange}
-            className="w-full border-2 border-gray-200 rounded-2xl p-3 mt-1 outline-none focus:border-blue-500"
+            className="w-full border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-3 mt-1 outline-none focus:border-blue-500 dark:bg-gray-900 dark:text-gray-100"
             placeholder="Ingrese su contraseña"
           />
         </div>
 
         {/* Mensaje de error */}
         {errorMessage && (
-          <p className="mt-4 text-sm text-red-500">{errorMessage}</p>
+          <p className="mt-4 text-sm text-red-600 dark:text-red-300">
+            {errorMessage}
+          </p>
         )}
 
         {/* Botón */}

@@ -35,13 +35,13 @@ useEffect(() => {
     obtenerUsuario(id)
       .then((data) => {
         setFormData({
-          nombreUsuario: data.nombreUsuario,
-          nombre: data.nombre,
-          apellido: data.apellido,
-          telefono: data.telefono,
-          email: data.email,
-    rol: rolMap[data.rol], 
-          estado: estadoMap[data.estado], 
+          nombreUsuario: data.nombreUsuario ?? "",
+          nombre: data.nombre ?? "",
+          apellido: data.apellido ?? "",
+          telefono: data.telefono ?? "",
+          email: data.email ?? "",
+          rol: rolMap[data.rol],
+          estado: estadoMap[data.estado],
         });
       })
       .catch((err) => {
@@ -99,78 +99,78 @@ useEffect(() => {
   return (
     <>
       <Header />
-      <div>
+      <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors">
         <form
           onSubmit={handleSubmit}
-          className="bg-white px-10 py-14 rounded-2xl mt-4"
+          className="bg-white dark:bg-gray-800 px-10 py-14 rounded-2xl mt-4 text-gray-800 dark:text-gray-100"
         >
           <div className="text-left">
-            <label className="text-lg font-medium">Nombre de usuario</label>
+            <label className="text-lg font-medium text-gray-700 dark:text-gray-300">Nombre de usuario</label>
             <input
               name="nombreUsuario"
               value={formData.nombreUsuario}
               onChange={handleChange}
-              className="w-full border-2 border-gray-200 rounded-2xl p-3 mt-1"
+              className="w-full border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-3 mt-1 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
               placeholder="Ingrese su nombre de usuario"
               required
             />
           </div>
 
           <div className="mt-4 text-left">
-            <label className="text-lg font-medium">Nombre</label>
+            <label className="text-lg font-medium text-gray-700 dark:text-gray-300">Nombre</label>
             <input
               name="nombre"
               value={formData.nombre}
               onChange={handleChange}
-              className="w-full border-2 border-gray-200 rounded-2xl p-3 mt-1"
+              className="w-full border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-3 mt-1 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
               placeholder="Ingresar nombre"
               required
             />
           </div>
 
           <div className="mt-4 text-left">
-            <label className="text-lg font-medium">Apellido</label>
+            <label className="text-lg font-medium text-gray-700 dark:text-gray-300">Apellido</label>
             <input
               name="apellido"
               value={formData.apellido}
               onChange={handleChange}
-              className="w-full border-2 border-gray-200 rounded-2xl p-3 mt-1"
+              className="w-full border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-3 mt-1 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
               placeholder="Ingresar apellido"
               required
             />
           </div>
 
           <div className="mt-4 text-left">
-            <label className="text-lg font-medium">Teléfono</label>
+            <label className="text-lg font-medium text-gray-700 dark:text-gray-300">Teléfono</label>
             <input
               name="telefono"
               value={formData.telefono}
               onChange={handleChange}
-              className="w-full border-2 border-gray-200 rounded-2xl p-3 mt-1"
+              className="w-full border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-3 mt-1 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
               placeholder="Ingresar teléfono"
             />
           </div>
 
           <div className="mt-4 text-left">
-            <label className="text-lg font-medium">Email</label>
+            <label className="text-lg font-medium text-gray-700 dark:text-gray-300">Email</label>
             <input
               name="email"
               type="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full border-2 border-gray-200 rounded-2xl p-3 mt-1"
+              className="w-full border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-3 mt-1 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
               placeholder="Ingresar email"
               required
             />
           </div>
 
           <div className="mt-4 text-left">
-            <label className="text-lg font-medium">Rol</label>
+            <label className="text-lg font-medium text-gray-700 dark:text-gray-300">Rol</label>
             <select
               name="rol"
               value={formData.rol}
               onChange={handleChange}
-              className="w-full border-2 border-gray-200 rounded-2xl p-3 mt-1"
+              className="w-full border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-3 mt-1 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
               required
             >
               <option value="PRESIDENTE">Presidente</option>
@@ -180,24 +180,23 @@ useEffect(() => {
             </select>
           </div>
 
-      
-          
           { id && (
             <div className="mt-4 text-left">
-              <label className="text-lg font-medium">Estado</label>
+              <label className="text-lg font-medium text-gray-700 dark:text-gray-300">Estado</label>
               <select
                 name="estado"
                 value={formData.estado}
                 onChange={handleChange}
-                className="w-full border-2 border-gray-200 rounded-2xl p-3 mt-1"
+                className="w-full border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-3 mt-1 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
                 required
               >
                 <option value="ACTIVO">Activo</option>
                 <option value="INACTIVO">Inactivo</option>
+                <option value="SUSPENDIDO">Suspendido</option>
 
               </select>
             </div>
-          )} 
+          )}
 
           <div className="mt-8 flex flex-col">
             <button

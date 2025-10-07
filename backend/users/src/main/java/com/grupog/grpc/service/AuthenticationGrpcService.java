@@ -46,32 +46,37 @@ public class AuthenticationGrpcService extends AuthenticationServiceImplBase {
     @Override
     public void login(LoginRequest request, StreamObserver<LoginResponse> responseObserver) {
         System.out.println("Login: " + request.getNombreUsuario());
-        // Authentication authentication = authenticationManager.authenticate(
-        // new UsernamePasswordAuthenticationToken(request.getNombreUsuario(),
-        // passwordEncoder.encode(request.getClave())));
 
-        // System.out.println("Authentication: " + authentication.isAuthenticated());
-        // if (!authentication.isAuthenticated()) {
-        // responseObserver.onError(new StatusRuntimeException(Status.UNAUTHENTICATED));
-        // return;
-        // }
+        String userOrEmail = request.getNombreUsuario();
+        Optional<UsuarioEntity> usuarioOpt;
 
-        Optional<UsuarioEntity> usuario = usuarioRepository
-                .findByNombreUsuarioAndActivoTrue(request.getNombreUsuario());
+        // Permitir login por email o por nombre de usuario
+        if (userOrEmail != null && userOrEmail.contains("@")) {
+            usuarioOpt = usuarioRepository.findByEmailAndActivoTrue(userOrEmail);
+        } else {
+            usuarioOpt = usuarioRepository.findByNombreUsuarioAndActivoTrue(userOrEmail);
+        }
 
-        if (!passwordEncoder.matches(request.getClave(), usuario.get().getClave())) {
+        if (usuarioOpt.isEmpty()) {
+            responseObserver.onError(Status.NOT_FOUND
+                    .withDescription("Usuario/email inexistente o inactivo")
+                    .asRuntimeException());
+            return;
+        }
+
+        UsuarioEntity usuario = usuarioOpt.get();
+
+        if (!passwordEncoder.matches(request.getClave(), usuario.getClave())) {
             responseObserver.onError(Status.UNAUTHENTICATED
                     .withDescription("Credenciales incorrectas")
                     .asRuntimeException());
             return;
         }
 
-        System.out.println("Usuario: " + usuario.get().getNombreUsuario());
-
-        String jwtToken = jwtService.generateToken(usuario.get());
+        String jwtToken = jwtService.generateToken(usuario);
 
         LoginResponse response = LoginResponse.newBuilder()
-                .setUsuario(usuarioMapper.toProto(usuario.get()))
+                .setUsuario(usuarioMapper.toProto(usuario))
                 .setToken(jwtToken)
                 .build();
         responseObserver.onNext(response);

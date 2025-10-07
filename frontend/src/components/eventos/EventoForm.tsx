@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { Header } from "../Header";
 import { useNavigate, useParams } from "react-router-dom";
@@ -14,71 +14,23 @@ export const EventoForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // useEffect(() => {
-  //   if (id) {
-  //     obtenerEvento(id)
-  //       .then((evento: { nombre: SetStateAction<string>; descripcion: SetStateAction<string>; fechaHora: string | number | Date; miembros: Usuario[]; }) => {
-  //         setNombre(evento.nombre);
-  //         setDescripcion(evento.descripcion);
-  //         setFechaHora(new Date(evento.fechaHora).toISOString().slice(0, 16)); // para datetime-local
-  //         setMiembros(evento.miembros.map((m: Usuario) => m.id));
-  //       })
-  //       .catch((err) => console.error("Error:", err));
-  //   }
-  // }, [id]);
-
-  // Traer usuarios para poder asignar miembros --> Esto al final no lo voy a usar. Primero se crea el evento, y luego se le
-  //asignan miembros
-
-  // useEffect(() => {
-  //   fetch("http://localhost:5000/usuarios")
-  //     .then((res) => res.json())
-  //     .then((data) => setUsuarios(data))
-  //     .catch((err) => console.error("Error al cargar usuarios:", err));
-  // }, []);
-
-  //Por ahora uso los usuarios mockeados, aunque podria cargar los del back
-
-  /*
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-
-  // DTO para enviar al backend
-  const evento: Omit<Evento, "id"> = {
-    nombre,
-    descripcion,
-    fechaHora: new Date(fechaHora),
-    miembros: usuarios.filter((u) => miembros.includes(u.id)),
-  };
-
-  // Si existe `id`, entonces es edición, si no, es creación
-  const url = id
-    ? `http://localhost:8080/eventos/actualizar/${id}`
-    : "http://localhost:8080/eventos";
-
-  const method = id ? "PUT" : "POST";
-
-  const res = await fetch(url, {
-    method,
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(evento),
-  });
-
-  if (res.ok) {
-    alert(id ? "Evento actualizado ✅" : "Evento creado con éxito ");
-    if (!id) {
-      // Solo limpio el form si fue creación
-      setNombre("");
-      setDescripcion("");
-      setFechaHora("");
-      setMiembros([]);
-    }
-  } else {
-    alert("Error al guardar evento ");
-  }
-};
-
-*/
+  useEffect(() => {
+    const cargarEvento = async () => {
+      if (!id) return;
+      try {
+        setLoading(true);
+        const evento = await eventosApiService.obtenerEvento(id);
+        setNombre(evento.nombreEvento);
+        setDescripcion(evento.descripcion);
+        setFechaHora(evento.fechaHora);
+      } catch (e: any) {
+        setError(e?.message || "No se pudo cargar el evento");
+      } finally {
+        setLoading(false);
+      }
+    };
+    cargarEvento();
+  }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,31 +44,29 @@ const handleSubmit = async (e: React.FormEvent) => {
       setLoading(true);
       setError(null);
 
-      console.log("[FRONTEND] Creando evento:", nombre);
+      if (id) {
+        await eventosApiService.actualizarEvento({
+          id,
+          nombreEvento: nombre,
+          descripcion,
+          fechaHora,
+        });
+      } else {
+        const nuevoEventoDTO: CrearEventoRequest = {
+          nombreEvento: nombre,
+          descripcion,
+          fechaHora: fechaHora,
+        };
+        await eventosApiService.crearEvento(nuevoEventoDTO);
+      }
 
-      // Crear el DTO para enviar al backend
-      const nuevoEventoDTO: CrearEventoRequest = {
-        nombreEvento: nombre,
-        descripcion,
-        fechaHora: fechaHora,
-      };
-
-      // Enviar al backend usando el servicio API
-      const eventoCreado = await eventosApiService.crearEvento(nuevoEventoDTO);
-
-      console.log("[FRONTEND] Evento creado exitosamente:", eventoCreado.id);
-
-      // Limpiar formulario
-      setNombre("");
-      setDescripcion("");
-      setFechaHora(undefined);
-
-      alert("Evento creado exitosamente ✅");
+      alert(id ? "Evento actualizado ✅" : "Evento creado exitosamente ✅");
       navigate("/eventos");
-
-    } catch (err) {
-      console.error("[FRONTEND] Error al crear evento:", err);
-      setError("Error al crear el evento. Verifica que el backend esté ejecutándose y que tengas permisos.");
+    } catch (e: any) {
+      setError(e?.message || (id
+        ? "Error al actualizar el evento. Verifica permisos y backend."
+        : "Error al crear el evento. Verifica backend y permisos.")
+      );
     } finally {
       setLoading(false);
     }
@@ -125,47 +75,47 @@ const handleSubmit = async (e: React.FormEvent) => {
     <>
       <Header></Header>
 
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4">
-        <h2 className="text-3xl font-bold text-gray-800">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors px-4">
+        <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
           {id ? "Editar evento" : "Crear nuevo evento"}
         </h2>
 
         {/* Mostrar error si existe */}
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mt-4 w-full max-w-xl">
+          <div className="bg-red-100 dark:bg-red-900/30 border border-red-400 text-red-700 dark:text-red-200 px-4 py-3 rounded mt-4 w-full max-w-xl">
             {error}
           </div>
         )}
 
         <form
           onSubmit={handleSubmit}
-          className="bg-white px-10 py-8 rounded-2xl mt-8 shadow-lg w-full max-w-xl"
+          className="bg-white dark:bg-gray-800 px-10 py-8 rounded-2xl mt-8 shadow-lg w-full max-w-xl"
         >
           <div>
-            <label className="text-lg font-medium">Nombre del evento</label>
+            <label className="text-lg font-medium text-gray-800 dark:text-gray-100">Nombre del evento</label>
             <input
               type="text"
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
               required
-              className="w-full border-2 border-gray-200 rounded-2xl p-3 mt-1 outline-none focus:border-blue-500"
+              className="w-full border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-3 mt-1 outline-none focus:border-blue-500 dark:bg-gray-900 dark:text-gray-100"
               placeholder="Ingrese el nombre del evento"
             />
           </div>
 
           <div className="mt-4">
-            <label className="text-lg font-medium">Descripción</label>
+            <label className="text-lg font-medium text-gray-800 dark:text-gray-100">Descripción</label>
             <textarea
               value={descripcion}
               onChange={(e) => setDescripcion(e.target.value)}
               required
-              className="w-full border-2 border-gray-200 rounded-2xl p-3 mt-1 outline-none focus:border-blue-500"
+              className="w-full border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-3 mt-1 outline-none focus:border-blue-500 dark:bg-gray-900 dark:text-gray-100"
               placeholder="Ingrese una descripción"
             />
           </div>
 
           <div className="mt-4">
-            <label className="text-lg font-medium">Fecha</label>
+            <label className="text-lg font-medium text-gray-800 dark:text-gray-100">Fecha</label>
             <input
               type="date"
               value={fechaHora ? fechaHora.toISOString().slice(0, 10) : ""}
@@ -177,12 +127,12 @@ const handleSubmit = async (e: React.FormEvent) => {
                 setFechaHora(fecha);
               }}
               required
-              className="w-full border-2 border-gray-200 rounded-2xl p-3 mt-1 outline-none focus:border-blue-500"
+              className="w-full border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-3 mt-1 outline-none focus:border-blue-500 dark:bg-gray-900 dark:text-gray-100"
             />
           </div>
 
           <div className="mt-4">
-            <label className="text-lg font-medium">Hora</label>
+            <label className="text-lg font-medium text-gray-800 dark:text-gray-100">Hora</label>
             <input
               type="time"
               value={
@@ -197,45 +147,17 @@ const handleSubmit = async (e: React.FormEvent) => {
                   : ""
               }
               onChange={(e) => {
-                if (fechaHora) {
-                  const [hours, minutes] = e.target.value
-                    .split(":")
-                    .map(Number);
-                  const nuevaFecha = new Date(fechaHora);
-                  nuevaFecha.setHours(hours, minutes);
-                  setFechaHora(nuevaFecha);
-                }
+                const [hours, minutes] = e.target.value
+                  .split(":")
+                  .map(Number);
+                const base = fechaHora ? new Date(fechaHora) : new Date();
+                base.setHours(hours, minutes);
+                setFechaHora(base);
               }}
               required
-              className="w-full border-2 border-gray-200 rounded-2xl p-3 mt-1 outline-none focus:border-blue-500"
+              className="w-full border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-3 mt-1 outline-none focus:border-blue-500 dark:bg-gray-900 dark:text-gray-100"
             />
           </div>
-
-          {/* Solo mostrar miembros si es creación  --> Al final creo que esto no lo voy a usar*/}
-
-          {/*  {!id && (
-            <div className="mt-4">
-              <label className="text-lg font-medium">Miembros</label>
-              <div className="grid grid-cols-2 gap-4 mt-2">
-                {usuarios.map((u) => (
-        <label
-          key={u.id}
-          className="flex items-center space-x-2 cursor-pointer bg-white border-2 border-gray-200 rounded-2xl p-3 hover:bg-gray-100 transition"
-        >
-          <input
-            type="checkbox"
-            checked={miembros.includes(u.id)}
-            onChange={() => toggleMiembro(u.id)}
-            className="w-5 h-5 rounded-xl border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 appearance-none checked:bg-blue-500 checked:border-blue-500 transition"
-          />
-          <span className="text-gray-700 font-medium">
-            {u.nombre} {u.apellido}
-          </span>
-        </label>
-      ))} }
-              </div>
-            </div> 
-          )}*/}
 
           <div className="mt-8 flex flex-col">
             <button
@@ -247,7 +169,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 }`}
             >
               {loading
-                ? "Creando evento..."
+                ? (id ? "Actualizando..." : "Creando evento...")
                 : (id ? "Actualizar evento" : "Guardar evento")
               }
             </button>

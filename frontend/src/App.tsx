@@ -10,9 +10,17 @@ import { AccesoDenegado } from "./components/AccesoDenegado";
 import { ListaEventos } from "./components/eventos/ListaEventos";
 import { EventoForm } from "./components/eventos/EventoForm";
 import { FormularioUsuario } from "./components/usuarios/FormularioUsuario";
+import { InventarioLista } from "./components/inventario/InventarioLista";
 
 function App() {
   const { usuario } = useUser();
+  const esPresidente = usuario?.rol === 0;
+  const esVocal = usuario?.rol === 1;
+  const esCoordinador = usuario?.rol === 2;
+  const esVoluntario = usuario?.rol === 3;
+  const puedeGestionarEventos = !!usuario && (esPresidente || esCoordinador);
+  const puedeVerInventario = !!usuario && (esPresidente || esVocal);
+  const puedeVerEventos = !!usuario && (esPresidente || esCoordinador || esVoluntario);
   return (
     <>
       <ToastContainer position="bottom-right" autoClose={2000} />
@@ -43,11 +51,41 @@ function App() {
           <Route path="/usuarios/:id/editar" element={<FormularioUsuario />} />
         </Route>
 
+        {/* Inventario: PRESIDENTE o VOCAL */}
+        <Route
+          element={
+            <ProtectedRoute
+              isAllowed={puedeVerInventario}
+              redirectTo="/acceso-denegado"
+            />
+          }
+        >
+          <Route path="/inventario" element={<InventarioLista />} />
+        </Route>
 
-
-        <Route path="/eventos" element={<ListaEventos />} />
-        <Route path="/eventos/nuevo" element={<EventoForm />} />
-        <Route path="/eventos/:id/editar" element={<EventoForm />} />
+        {/* Eventos: PRESIDENTE, COORDINADOR o VOLUNTARIO */}
+        <Route
+          element={
+            <ProtectedRoute
+              isAllowed={puedeVerEventos}
+              redirectTo="/acceso-denegado"
+            />
+          }
+        >
+          <Route path="/eventos" element={<ListaEventos />} />
+        </Route>
+        {/* Crear/editar eventos: PRESIDENTE o COORDINADOR */}
+        <Route
+          element={
+            <ProtectedRoute
+              isAllowed={puedeGestionarEventos}
+              redirectTo="/acceso-denegado"
+            />
+          }
+        >
+          <Route path="/eventos/nuevo" element={<EventoForm />} />
+          <Route path="/eventos/:id/editar" element={<EventoForm />} />
+        </Route>
       </Routes>
     </>
   );

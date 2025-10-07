@@ -1,9 +1,9 @@
 import { faUserMinus, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import type { Usuario } from "../models/usuario";
+import type { UsuarioDto } from "../../models/dto/usuarioDto";
 
 interface Props {
-  participantes: Usuario[];
+  participantes: UsuarioDto[];
   open: boolean;
   onClose: () => void;
   onAdd: (id: number) => void;
@@ -22,11 +22,10 @@ export const ModalParticipantes = ({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white p-6 rounded-xl shadow-xl w-96 max-h-[80vh] overflow-y-auto">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+      <div className="bg-white dark:bg-gray-800 dark:text-gray-100 p-6 rounded-xl shadow-xl w-96 max-h-[80vh] overflow-y-auto">
         <h3 className="text-lg font-bold mb-4">
           {mode === "delete" ? "Eliminar Participantes" : "Participantes"}
-          {/* Participantes ({participantes.length}) */}
         </h3>
 
         {participantes.length > 0 ? (
@@ -48,7 +47,7 @@ export const ModalParticipantes = ({
                 {mode === "delete" && (
                   <button
                     onClick={() => onRemove(usuario.id)}
-                    className="text-red-500 hover:text-red-700 font-bold flex items-center gap-1 cursor-pointer"
+                    className="text-red-500 hover:text-red-400 font-bold flex items-center gap-1 cursor-pointer"
                   >
                     <FontAwesomeIcon icon={faUserMinus} />
                     Eliminar
@@ -57,7 +56,7 @@ export const ModalParticipantes = ({
                 {mode === "add" && (
                   <button
                     onClick={() => onAdd(usuario.id)}
-                    className="text-green-500 hover:text-green-700 font-bold flex items-center gap-1 cursor-pointer"
+                    className="text-green-500 hover:text-green-400 font-bold flex items-center gap-1 cursor-pointer"
                   >
                     <FontAwesomeIcon icon={faUserPlus} />
                     Agregar
@@ -67,7 +66,7 @@ export const ModalParticipantes = ({
             ))}
           </ul>
         ) : (
-          <p className="text-gray-500">
+          <p className="text-gray-500 dark:text-gray-300">
             {mode === "delete"
               ? "No hay participantes para eliminar"
               : mode === "add"
