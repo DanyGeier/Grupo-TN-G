@@ -27,4 +27,12 @@ public class RolEntity implements GrantedAuthority {
 		return "ROLE_" + nombreRol;
 	}
 
+	public String getNombreRol() {
+		return nombreRol;
+	}
+
+	public void setNombreRol(String nombreRol) {
+		this.nombreRol = nombreRol;
+	}
+
 }

@@ -11,7 +11,6 @@ import com.grupog.entities.RolEntity;
 public interface RolRepository extends JpaRepository<RolEntity, Long> {
 
     Optional<RolEntity> findByNombreRol(String nombreRol);
+
+    boolean existsByNombreRol(String nombreRol);
 }
-
-
-
