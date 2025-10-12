@@ -41,7 +41,6 @@ public class AdhesionEventoListener {
 
         logger.info("📅 ========================================");
 
-        // TODO: Registrar la adhesión del voluntario externo al evento en MongoDB
-        // Por ejemplo: adhesionRepository.save(...)
     }
 }
+

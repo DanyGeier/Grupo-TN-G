@@ -2,13 +2,23 @@ package com.grupog.consumers;
 
 import com.grupog.events.SolicitudDonacionEvent.DonacionItem;
 import com.grupog.events.TransferirDonacionEvent;
+import com.grupog.service.ItemInventarioService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TransferenciaDonacionListener {
+
+    @Value("${organizacion.id}")
+    private Long idOrganizacion;
+
+    @Autowired
+    private ItemInventarioService inventarioService;
 
     private static final Logger logger = LoggerFactory.getLogger(TransferenciaDonacionListener.class);
 
@@ -34,6 +44,19 @@ public class TransferenciaDonacionListener {
         }
 
         logger.info("📥 ========================================");
+
+        if (idOrganizacion.toString().equals(transferencia.getIdOrganizacionDonante())) {
+            logger.info("-> Transferencia enviada por nosotros, ya descontada del inventario");
+            return;
+        }
+
+        try {
+            inventarioService.sumarStock(transferencia.getDonaciones());
+            logger.info("Transferencia recibida y stock actualizado");
+        } catch (Exception e) {
+            logger.error("Error al actualizar inventario: {}", e.getMessage());
+        }
+
     }
 
 }
