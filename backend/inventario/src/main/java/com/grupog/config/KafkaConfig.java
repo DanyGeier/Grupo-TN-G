@@ -1,6 +1,8 @@
 package com.grupog.config;
 
 import com.grupog.events.SolicitudDonacionEvent;
+import com.grupog.events.TransferirDonacionEvent;
+
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +26,9 @@ public class KafkaConfig {
 
     @Value("${spring.kafka.consumer.group-id}")
     private String groupId;
+
+    @Value("${spring.kafka.consumer.transferencias-group-id}")
+    private String transferenciasGroupId;
 
     @Value("${spring.kafka.consumer.auto-offset-reset}")
     private String autoOffsetReset;
@@ -51,4 +56,28 @@ public class KafkaConfig {
         factory.setConsumerFactory(consumerFactory);
         return factory;
     }
+
+    // Factory para TransferirDonacionEvent
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, TransferirDonacionEvent> transferirDonacionListenerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, TransferirDonacionEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
+
+        Map<String, Object> props = new HashMap<>();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, transferenciasGroupId);
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
+
+        JsonDeserializer<TransferirDonacionEvent> deserializer = new JsonDeserializer<>(TransferirDonacionEvent.class);
+        deserializer.setRemoveTypeHeaders(false);
+        deserializer.addTrustedPackages("*");
+
+        ConsumerFactory<String, TransferirDonacionEvent> consumerFactory = new DefaultKafkaConsumerFactory<>(
+                props,
+                new StringDeserializer(),
+                deserializer);
+
+        factory.setConsumerFactory(consumerFactory);
+        return factory;
+    }
+
 }
