@@ -1,8 +1,15 @@
-import type { DonacionItem } from "./donacionItem";
+import type { Donacion, DonacionPost } from "./donacion";
 
 export interface SolicitudDonacion {
-  idOrganizacionSolicitante: number;
-  idSolicitud: number;
-  donaciones: DonacionItem[];
-  //activa:boolean
+  idSolicitud: string;                  
+  idOrganizacionSolicitante: number;  
+  donaciones: Donacion[];              
+  activa: boolean;                    
+  fechaRecepcion: Date;             
+}
+
+export interface SolicitudDonacionPost {
+
+   donaciones: DonacionPost[];
+
 }

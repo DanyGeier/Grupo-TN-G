@@ -3,35 +3,20 @@ import { Header } from "../Header";
 import { CardSolicitudDonacion } from "./CardSolicitudDonacion";
 import type { SolicitudDonacion } from "../../models/donaciones/solicitudDonacion";
 import { useNavigate } from "react-router-dom";
-const handleNuevaSolicitud = () => {
-  // En el futuro, podrías abrir un modal o redirigir a un formulario
-  alert("Funcionalidad para crear una nueva solicitud próximamente ✨");
-};
 
-// Datos de prueba
+// Función de datos de prueba
 const generarDatosDePrueba = (): SolicitudDonacion[] => {
-  const categorias = [
-    "ALIMENTOS",
-    "ROPA",
-    "MEDICAMENTOS",
-    "JUGUETES",
-    "HIGIENE",
-  ];
-  const descripciones = [
-    "Puré de tomates",
-    "Camisas",
-    "Ibuprofeno",
-    "Pelota de futbol",
-    "Jabón",
-  ];
+  const categorias = ["ALIMENTOS", "ROPA", "MEDICAMENTOS", "JUGUETES", "HIGIENE"];
+  const descripciones = ["Puré de tomates", "Camisas", "Ibuprofeno", "Pelota de futbol", "Jabón"];
 
   return Array.from({ length: 10 }, (_, i) => ({
-    idOrganizacionSolicitante: i + 1,
+    idOrganizacion: i + 1,
     idSolicitud: 100 + i,
     donaciones: Array.from({ length: 3 }, () => ({
+      id: Math.floor(Math.random() * 1000),
       categoria: categorias[Math.floor(Math.random() * categorias.length)],
-      descripcion:
-        descripciones[Math.floor(Math.random() * descripciones.length)],
+      descripcion: descripciones[Math.floor(Math.random() * descripciones.length)],
+      cantidad: Math.floor(Math.random() * 10) + 1,
     })),
   }));
 };
@@ -39,13 +24,17 @@ const generarDatosDePrueba = (): SolicitudDonacion[] => {
 export const ListaSolicitudesPropias: React.FC = () => {
   const [solicitudes, setSolicitudes] = useState<SolicitudDonacion[]>([]);
   const navigate = useNavigate();
-
   const [solicitudSeleccionada, setSolicitudSeleccionada] =
     useState<SolicitudDonacion | null>(null);
 
   useEffect(() => {
     setSolicitudes(generarDatosDePrueba());
   }, []);
+
+  const handleNuevaSolicitud = () => {
+    // Futuro: abrir modal o redirigir a formulario
+    navigate("/donaciones/solicitar");
+  };
 
   return (
     <>
@@ -64,17 +53,13 @@ export const ListaSolicitudesPropias: React.FC = () => {
           ))}
         </div>
 
-
-
-          <div className="mt-8 flex flex-col">
-         
-            <button
-              onClick={() => navigate("/donaciones/solicitar")}
-              className="hover:bg-blue-600 cursor-pointer bg-blue-500 rounded-xl text-lg py-3 text-white"
-            >
-              Realizar nueva solicitud
-            </button>
-          
+        <div className="mt-8 flex flex-col items-center">
+          <button
+            onClick={handleNuevaSolicitud}
+            className="hover:bg-blue-600 cursor-pointer bg-blue-500 rounded-xl text-lg py-3 text-white px-6"
+          >
+            Realizar nueva solicitud
+          </button>
         </div>
       </div>
     </>

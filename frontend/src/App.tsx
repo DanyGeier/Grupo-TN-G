@@ -30,16 +30,10 @@ function App() {
   return (
     <>
       <ToastContainer position="bottom-right" autoClose={2000} />
- 
- {/* ------------------------------------------------- */}
-      <Routes>
-        <Route path="/donaciones/solicitar" element={<FormSolicitarDonaciones />} />
-        <Route path="/donaciones/ofrecer" element={<FormOfrecerDonaciones />} />
-        <Route path="/donaciones/lista-solicitudes" element={<ListaSolicitudesPropias />} />
-        <Route path="/eventos-externos/solicitudes" element={<ListaSolicitudesExternas />} />
-                <Route path="/eventos-externos/lista-eventos" element={<ListaEventosExternos />} />
 
-{/* ---------------------------------------------------- */}
+      {/* ------------------------------------------------- */}
+      <Routes>
+        {/* ---------------------------------------------------- */}
 
         {/* Login */}
         <Route path="/" element={<LoginForm />} />
@@ -49,6 +43,26 @@ function App() {
         {/* Home: cualquier usuario logueado */}
         <Route element={<ProtectedRoute isAllowed={!!usuario} />}>
           <Route path="/home" element={<HomePage />} />
+          <Route
+            path="/donaciones/solicitar"
+            element={<FormSolicitarDonaciones />}
+          />
+          <Route
+            path="/donaciones/ofrecer"
+            element={<FormOfrecerDonaciones />}
+          />
+          <Route
+            path="/donaciones/lista-solicitudes"
+            element={<ListaSolicitudesPropias />}
+          />
+          <Route
+            path="/eventos-externos/solicitudes"
+            element={<ListaSolicitudesExternas />}
+          />
+          <Route
+            path="/eventos-externos/lista-eventos"
+            element={<ListaEventosExternos />}
+          />
         </Route>
 
         {/* Rutas de usuarios: solo PRESIDENTE */}

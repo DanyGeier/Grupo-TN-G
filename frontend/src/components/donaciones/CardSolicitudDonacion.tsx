@@ -29,7 +29,7 @@ export const CardSolicitudDonacion: React.FC<Props> = ({
      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 space-y-4 hover:shadow-lg transition-all duration-200">
       {esExterna && (
         <p className="text-gray-700 dark:text-gray-200">
-          <strong>ID Organización:</strong> {solicitud.idOrganizacionSolicitante}
+          <strong>ID Organización:</strong> {solicitud.idOrganizacion}
         </p>
       )}
    

@@ -52,4 +52,7 @@ public class ItemInventarioController {
         ofertaDonacionProducer.enviarMensaje(oferta);
         return ResponseEntity.ok("Oferta de donacion enviada con ID: " + oferta.getIdOferta());
     }
+
+
+
 }

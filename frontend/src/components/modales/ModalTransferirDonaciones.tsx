@@ -1,15 +1,20 @@
 import React, { useState } from "react";
 import type { SolicitudDonacion } from "../../models/donaciones/solicitudDonacion";
-import type { TransferenciaDonacion } from "../../models/donaciones/transferenciaDonacion";
+import type {
 
-// Interfaces de transferencia
+  TransferenciaDonacionPost,
+} from "../../models/donaciones/transferenciaDonacion";
+
 
 interface Props {
   solicitud: SolicitudDonacion;
   cerrarModal: () => void;
 }
 
-export const ModalTransferirDonaciones: React.FC<Props> = ({ solicitud, cerrarModal }) => {
+export const ModalTransferirDonaciones: React.FC<Props> = ({
+  solicitud,
+  cerrarModal,
+}) => {
   const [cantidades, setCantidades] = useState<number[]>(
     solicitud.donaciones.map(() => 0)
   );
@@ -21,12 +26,10 @@ export const ModalTransferirDonaciones: React.FC<Props> = ({ solicitud, cerrarMo
   };
 
   const handleTransferir = () => {
-    const transferencia: TransferenciaDonacion = {
-      idOrganizacionSolicitante: solicitud.idOrganizacionSolicitante,
-      idTransferencia: `T-${Date.now()}`, // pongo la fecha para probar por ahora
+    const transferencia: TransferenciaDonacionPost = {
       donaciones: solicitud.donaciones.map((donacion, index) => ({
-        id: index + 1,
-        donacionItem: donacion,
+        categoria: donacion.categoria,
+        descripcion: donacion.descripcion,
         cantidad: cantidades[index],
       })),
     };
@@ -45,16 +48,25 @@ export const ModalTransferirDonaciones: React.FC<Props> = ({ solicitud, cerrarMo
 
         <div className="space-y-4 max-h-96 overflow-y-auto">
           {solicitud.donaciones.map((donacion, index) => (
-            <div key={index} className="border border-gray-200 dark:border-gray-700 rounded-xl p-3 flex justify-between items-center">
+            <div
+              key={index}
+              className="border border-gray-200 dark:border-gray-700 rounded-xl p-3 flex justify-between items-center"
+            >
               <div>
-                <p className="font-semibold text-gray-700 dark:text-gray-200">{donacion.categoria}</p>
-                <p className="text-gray-600 dark:text-gray-300">{donacion.descripcion}</p>
+                <p className="font-semibold text-gray-700 dark:text-gray-200">
+                  {donacion.categoria}
+                </p>
+                <p className="text-gray-600 dark:text-gray-300">
+                  {donacion.descripcion}
+                </p>
               </div>
               <input
                 type="number"
                 min={0}
                 value={cantidades[index]}
-                onChange={(e) => handleCantidadChange(index, Number(e.target.value))}
+                onChange={(e) =>
+                  handleCantidadChange(index, Number(e.target.value))
+                }
                 className="w-20 border-2 border-gray-200 dark:border-gray-700 rounded-xl p-1 text-center outline-none dark:bg-gray-900 dark:text-gray-100"
               />
             </div>

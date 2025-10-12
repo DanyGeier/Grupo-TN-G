@@ -1,7 +1,13 @@
-import type { DonacionItem } from "./donacionItem";
-
 export interface Donacion {
-    id:number,
-    donacionItem:DonacionItem
-    cantidad:number
+  id: number;
+  categoria: string;
+  descripcion: string;
+  cantidad: number;
+}
+
+export interface DonacionPost {
+
+  categoria: string;
+  descripcion: string;
+  cantidad: number;
 }
