@@ -1,5 +1,6 @@
 package com.grupog.config;
 
+import com.grupog.events.BajaSolicitudDonacionEvent;
 import com.grupog.events.OfertaDonacionEvent;
 import com.grupog.events.SolicitudDonacionEvent;
 import com.grupog.events.TransferirDonacionEvent;
@@ -115,6 +116,30 @@ public class KafkaConfig {
         deserializer.addTrustedPackages("*");
 
         ConsumerFactory<String, OfertaDonacionEvent> consumerFactory = new DefaultKafkaConsumerFactory<>(
+                props,
+                new StringDeserializer(),
+                deserializer);
+
+        factory.setConsumerFactory(consumerFactory);
+        return factory;
+    }
+
+    // Factory para BajaSolicitudDonacionEvent
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, BajaSolicitudDonacionEvent> bajaSolicitudDonacionListenerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, BajaSolicitudDonacionEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
+
+        Map<String, Object> props = new HashMap<>();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
+
+        JsonDeserializer<BajaSolicitudDonacionEvent> deserializer = new JsonDeserializer<>(
+                BajaSolicitudDonacionEvent.class);
+        deserializer.setRemoveTypeHeaders(false);
+        deserializer.addTrustedPackages("*");
+
+        ConsumerFactory<String, BajaSolicitudDonacionEvent> consumerFactory = new DefaultKafkaConsumerFactory<>(
                 props,
                 new StringDeserializer(),
                 deserializer);
