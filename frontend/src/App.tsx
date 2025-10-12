@@ -11,6 +11,11 @@ import { ListaEventos } from "./components/eventos/ListaEventos";
 import { EventoForm } from "./components/eventos/EventoForm";
 import { FormularioUsuario } from "./components/usuarios/FormularioUsuario";
 import { InventarioLista } from "./components/inventario/InventarioLista";
+import { FormSolicitarDonaciones } from "./components/donaciones/FormSolicitarDonaciones";
+import { FormOfrecerDonaciones } from "./components/donaciones/FormOfrecerDonaciones";
+import { ListaSolicitudesExternas } from "./components/donaciones/ListaSolicitudesExternas";
+import { ListaSolicitudesPropias } from "./components/donaciones/ListaSolicitudesPropias";
+import { ListaEventosExternos } from "./components/eventos/eventosExternos/ListaEventosExternos";
 
 function App() {
   const { usuario } = useUser();
@@ -20,12 +25,22 @@ function App() {
   const esVoluntario = usuario?.rol === 3;
   const puedeGestionarEventos = !!usuario && (esPresidente || esCoordinador);
   const puedeVerInventario = !!usuario && (esPresidente || esVocal);
-  const puedeVerEventos = !!usuario && (esPresidente || esCoordinador || esVoluntario);
+  const puedeVerEventos =
+    !!usuario && (esPresidente || esCoordinador || esVoluntario);
   return (
     <>
       <ToastContainer position="bottom-right" autoClose={2000} />
-
+ 
+ {/* ------------------------------------------------- */}
       <Routes>
+        <Route path="/donaciones/solicitar" element={<FormSolicitarDonaciones />} />
+        <Route path="/donaciones/ofrecer" element={<FormOfrecerDonaciones />} />
+        <Route path="/donaciones/lista-solicitudes" element={<ListaSolicitudesPropias />} />
+        <Route path="/eventos-externos/solicitudes" element={<ListaSolicitudesExternas />} />
+                <Route path="/eventos-externos/lista-eventos" element={<ListaEventosExternos />} />
+
+{/* ---------------------------------------------------- */}
+
         {/* Login */}
         <Route path="/" element={<LoginForm />} />
         <Route path="/login" element={<LoginForm />} />
