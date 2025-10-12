@@ -6,7 +6,7 @@ import { publicarSolicitudDonacion } from "../../services/donacionApi";
 
 export const FormSolicitarDonaciones = () => {
   const [formData, setFormData] = useState<SolicitudDonacionPost>({
-    donaciones: [{ categoria: "ROPA", descripcion: "", cantidad: 1 }],
+    donaciones: [{ categoria: "ROPA", descripcion: ""}],
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +28,7 @@ export const FormSolicitarDonaciones = () => {
   const agregarDonacion = () => {
     setFormData((prev) => ({
       ...prev,
-      donaciones: [...prev.donaciones, { categoria: "ROPA", descripcion: "", cantidad: 1 }],
+      donaciones: [...prev.donaciones, { categoria: "ROPA", descripcion: "" }],
     }));
   };
 
@@ -41,6 +41,7 @@ export const FormSolicitarDonaciones = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (formData.donaciones.length === 0) {
       setError("Completa todos los campos antes de enviar");
       return;
@@ -50,16 +51,20 @@ export const FormSolicitarDonaciones = () => {
     setError(null);
 
     try {
+            console.log("Solicitud enviada:", formData);
+
       const respuesta = await publicarSolicitudDonacion(formData);
+      
       console.log("Solicitud enviada:", respuesta);
       alert("Solicitud enviada correctamente ✅");
-      setFormData({ donaciones: [{ categoria: "ROPA", descripcion: "", cantidad: 1 }] });
+      setFormData({ donaciones: [{ categoria: "ROPA", descripcion: ""}] });
     } catch (err: any) {
       console.error(err);
       setError(err.message || "Ocurrió un error al enviar la solicitud");
     } finally {
       setLoading(false);
     }
+      
   };
 
   return (
@@ -108,15 +113,7 @@ export const FormSolicitarDonaciones = () => {
                   required
                 />
 
-                <label className="text-gray-700 dark:text-gray-200 mb-1 font-medium">Cantidad</label>
-                <input
-                  type="number"
-                  min={1}
-                  value={donacion.cantidad}
-                  onChange={(e) => handleDonacionChange(index, "cantidad", e.target.value)}
-                  className="w-full border-2 border-gray-200 dark:border-gray-700 rounded-xl p-2 outline-none focus:border-blue-500 dark:bg-gray-900 dark:text-gray-100"
-                  required
-                />
+   
 
                 {formData.donaciones.length > 1 && (
                   <button

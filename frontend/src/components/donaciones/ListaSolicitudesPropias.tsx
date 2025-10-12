@@ -32,7 +32,7 @@ export const ListaSolicitudesPropias: React.FC = () => {
   }, []);
 
   const handleNuevaSolicitud = () => {
-    // Futuro: abrir modal o redirigir a formulario
+
     navigate("/donaciones/solicitar");
   };
 

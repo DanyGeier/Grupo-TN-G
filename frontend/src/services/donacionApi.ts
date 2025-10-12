@@ -86,7 +86,7 @@ export const ofrecerDonacion = async (oferta: OfertaDonacionPost) => {
 
 export const transferirDonacion = async (oferta: TransferenciaDonacionPost) => {
   try {
-    const response = await fetch(`${API_URL}/inventario/transferir-donacion`, {
+    const response = await fetch(`${API_URL}/transferir-donacion`, {
       method: "POST",
       headers: authHeaders(),
       body: JSON.stringify(oferta),

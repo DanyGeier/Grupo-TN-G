@@ -2,7 +2,7 @@ import type { Donacion, DonacionPost } from "./donacion";
 
 
 export interface OfertaDonacion {
-  idOrganizacionSolicitante: number;
+  idOrganizacion: number;
   idOferta: number;
   donaciones: Donacion[];
 
