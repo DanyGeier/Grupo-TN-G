@@ -274,7 +274,7 @@ public class InventarioGrpcService extends InventarioServiceGrpc.InventarioServi
                                 .map(d -> DonacionItem.newBuilder()
                                         .setCategoria(d.getCategoria())
                                         .setDescripcion(d.getDescripcion())
-                                        .setCantidad(d.getCantidad())
+                                        .setCantidad(0)
                                         .build())
                                 .collect(Collectors.toList());
 

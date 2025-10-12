@@ -59,8 +59,7 @@ public class SolicitudDonacionListener {
             List<ItemDonacionEntity> donaciones = solicitud.getDonaciones().stream()
                     .map(item -> new ItemDonacionEntity(
                             item.getCategoria(),
-                            item.getDescripcion(),
-                            item.getCantidad()))
+                            item.getDescripcion()))
                     .collect(Collectors.toList());
 
             // Crear y guardar - JPA maneja todo automáticamente

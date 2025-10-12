@@ -30,30 +30,75 @@ public class ItemInventarioEntity {
 
     private String usuarioModificacion;
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getCategoria() { return categoria; }
-    public void setCategoria(String categoria) { this.categoria = categoria; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+    public String getCategoria() {
+        return categoria;
+    }
 
-    public int getCantidad() { return cantidad; }
-    public void setCantidad(int cantidad) { this.cantidad = cantidad; }
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
 
-    public boolean isEliminado() { return eliminado; }
-    public void setEliminado(boolean eliminado) { this.eliminado = eliminado; }
+    public String getDescripcion() {
+        return descripcion;
+    }
 
-    public Instant getFechaAlta() { return fechaAlta; }
-    public void setFechaAlta(Instant fechaAlta) { this.fechaAlta = fechaAlta; }
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
 
-    public String getUsuarioAlta() { return usuarioAlta; }
-    public void setUsuarioAlta(String usuarioAlta) { this.usuarioAlta = usuarioAlta; }
+    public int getCantidad() {
+        return cantidad;
+    }
 
-    public Instant getFechaModificacion() { return fechaModificacion; }
-    public void setFechaModificacion(Instant fechaModificacion) { this.fechaModificacion = fechaModificacion; }
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
+    }
 
-    public String getUsuarioModificacion() { return usuarioModificacion; }
-    public void setUsuarioModificacion(String usuarioModificacion) { this.usuarioModificacion = usuarioModificacion; }
+    public boolean isEliminado() {
+        return eliminado;
+    }
+
+    public void setEliminado(boolean eliminado) {
+        this.eliminado = eliminado;
+    }
+
+    public Instant getFechaAlta() {
+        return fechaAlta;
+    }
+
+    public void setFechaAlta(Instant fechaAlta) {
+        this.fechaAlta = fechaAlta;
+    }
+
+    public String getUsuarioAlta() {
+        return usuarioAlta;
+    }
+
+    public void setUsuarioAlta(String usuarioAlta) {
+        this.usuarioAlta = usuarioAlta;
+    }
+
+    public Instant getFechaModificacion() {
+        return fechaModificacion;
+    }
+
+    public void setFechaModificacion(Instant fechaModificacion) {
+        this.fechaModificacion = fechaModificacion;
+    }
+
+    public String getUsuarioModificacion() {
+        return usuarioModificacion;
+    }
+
+    public void setUsuarioModificacion(String usuarioModificacion) {
+        this.usuarioModificacion = usuarioModificacion;
+    }
 }

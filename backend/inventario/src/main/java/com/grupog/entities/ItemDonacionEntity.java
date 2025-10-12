@@ -12,17 +12,13 @@ public class ItemDonacionEntity {
     @Column(name = "descripcion")
     private String descripcion;
 
-    @Column(name = "cantidad")
-    private Integer cantidad;
-
     // Constructores
     public ItemDonacionEntity() {
     }
 
-    public ItemDonacionEntity(String categoria, String descripcion, Integer cantidad) {
+    public ItemDonacionEntity(String categoria, String descripcion) {
         this.categoria = categoria;
         this.descripcion = descripcion;
-        this.cantidad = cantidad;
     }
 
     // Getters y Setters
@@ -42,11 +38,4 @@ public class ItemDonacionEntity {
         this.descripcion = descripcion;
     }
 
-    public Integer getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
-    }
 }
