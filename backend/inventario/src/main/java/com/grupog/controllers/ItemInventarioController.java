@@ -23,7 +23,7 @@ public class ItemInventarioController {
 
     private final ItemInventarioRepository repository;
 
-    @Value("${mi.organizacion.id}")
+    @Value("${organizacion.id}")
     private Long idOrganizacion;
 
     @Autowired

@@ -16,7 +16,7 @@ public class OfertaDonacionListener {
 
     private static final Logger logger = LoggerFactory.getLogger(OfertaDonacionListener.class);
 
-    @Value("${mi.organizacion.id}")
+    @Value("${organizacion.id}")
     private Long idOrganizacion;
 
     @Autowired

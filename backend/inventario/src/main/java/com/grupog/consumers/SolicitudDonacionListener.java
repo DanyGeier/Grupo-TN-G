@@ -1,4 +1,4 @@
-package com.grupog.kafka;
+package com.grupog.consumers;
 
 import com.grupog.events.SolicitudDonacionEvent;
 import org.slf4j.Logger;
