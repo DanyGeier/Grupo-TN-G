@@ -34,3 +34,4 @@ public class BajaEventoSolidarioListener {
         // Por ejemplo: eventoExternoRepository.deleteByIdEvento(...)
     }
 }
+

@@ -67,11 +67,60 @@ message RespuestaExito {
   bool exito = 2;
 }
 
+
+// ========== KAFKA - Solicitudes de donación ==========
+message DonacionItem {
+  string categoria = 1;
+  string descripcion = 2;
+  int32 cantidad = 3;
+}
+
+message SolicitarDonacionesRequest {
+  repeated DonacionItem donaciones = 1;
+}
+
+message SolicitarDonacionesResponse {
+  string idSolicitud = 1;
+  string mensaje = 2;
+  bool exito = 3;
+}
+
+// ========== KAFKA - Transferir donaciones ==========
+message TransferirDonacionRequest {
+  string idSolicitud = 1; // ID de solicitud externa
+  repeated DonacionItem donaciones = 2;
+}
+
+// ========== Listar solicitudes externas ==========
+message ListarSolicitudesExternasRequest {
+  bool soloActivas = 1; // true = solo activas, false = todas
+}
+
+message SolicitudExterna {
+  string idSolicitud = 1;
+  int64 idOrganizacionSolicitante = 2;
+  repeated DonacionItem donaciones = 3;
+  bool activa = 4;
+  int64 fechaRecepcion = 5; // timestamp
+}
+
+message ListarSolicitudesExternasResponse {
+  repeated SolicitudExterna solicitudes = 1;
+}
+
+
 service InventarioService {
   rpc crearItem (CrearItemRequest) returns (InventarioItem);
   rpc actualizarItem (ActualizarItemRequest) returns (InventarioItem);
   rpc bajaLogicaItem (BajaLogicaItemRequest) returns (RespuestaExito);
   rpc listarItems (ListarItemsRequest) returns (ListaItemsResponse);
   rpc buscarItemPorId (BuscarItemPorIdRequest) returns (InventarioItem);
-  rpc registrarSalida (RegistrarSalidaRequest) returns (RespuestaExito);
+  rpc registrarSalida (RegistrarSalidaRequest) returns (RespuestaExito)
+  
+   // Kafka - Solicitudes
+  rpc solicitarDonaciones (SolicitarDonacionesRequest) returns (SolicitarDonacionesResponse);
+  rpc listarSolicitudesExternas (ListarSolicitudesExternasRequest) returns (ListarSolicitudesExternasResponse);
+  
+    // Kafka - Transferencias
+  rpc transferirDonacion (TransferirDonacionRequest) returns (RespuestaExito);
 }

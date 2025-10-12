@@ -38,3 +38,4 @@ public class EventoSolidarioListener {
         // Por ejemplo: eventoExternoRepository.save(...)
     }
 }
+
