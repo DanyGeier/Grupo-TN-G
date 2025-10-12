@@ -1,5 +1,6 @@
 package com.grupog.configs;
 
+import com.grupog.events.BajaEventoSolidarioEvent;
 import com.grupog.events.EventoSolidarioEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -44,6 +45,31 @@ public class KafkaConfig {
         deserializer.setUseTypeMapperForKey(false);
 
         ConsumerFactory<String, EventoSolidarioEvent> consumerFactory = new DefaultKafkaConsumerFactory<>(
+                props,
+                new StringDeserializer(),
+                deserializer);
+
+        factory.setConsumerFactory(consumerFactory);
+        return factory;
+    }
+
+    // Factory para BajaEventoSolidarioEvent
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, BajaEventoSolidarioEvent> bajaEventoSolidarioListenerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, BajaEventoSolidarioEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
+
+        Map<String, Object> props = new HashMap<>();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
+
+        JsonDeserializer<BajaEventoSolidarioEvent> deserializer = new JsonDeserializer<>(
+                BajaEventoSolidarioEvent.class);
+        deserializer.setRemoveTypeHeaders(false);
+        deserializer.addTrustedPackages("*");
+        deserializer.setUseTypeMapperForKey(false);
+
+        ConsumerFactory<String, BajaEventoSolidarioEvent> consumerFactory = new DefaultKafkaConsumerFactory<>(
                 props,
                 new StringDeserializer(),
                 deserializer);
