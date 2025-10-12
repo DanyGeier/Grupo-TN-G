@@ -12,4 +12,5 @@ public interface ItemInventarioRepository extends JpaRepository<ItemInventarioEn
     List<ItemInventarioEntity> findByEliminadoFalse();
     Optional<ItemInventarioEntity> findByIdAndEliminadoFalse(Long id);
     Optional<ItemInventarioEntity> findFirstByCategoriaAndDescripcionAndEliminadoFalse(String categoria, String descripcion);
+    Optional<ItemInventarioEntity> findByDescripcion(String descripcion);
 }
