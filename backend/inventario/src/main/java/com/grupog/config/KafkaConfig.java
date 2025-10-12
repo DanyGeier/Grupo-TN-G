@@ -1,7 +1,10 @@
 package com.grupog.config;
 
+import com.grupog.events.BajaSolicitudDonacionEvent;
 import com.grupog.events.OfertaDonacionEvent;
 import com.grupog.events.SolicitudDonacionEvent;
+import com.grupog.events.TransferirDonacionEvent;
+
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -29,6 +32,9 @@ public class KafkaConfig {
 
     @Value("${spring.kafka.consumer.group-id}")
     private String groupId;
+
+    @Value("${spring.kafka.consumer.transferencias-group-id}")
+    private String transferenciasGroupId;
 
     @Value("${spring.kafka.consumer.auto-offset-reset}")
     private String autoOffsetReset;
@@ -71,7 +77,30 @@ public class KafkaConfig {
         return factory;
     }
 
-    //Factory para OfertaDonacionEvent
+    // Factory para TransferirDonacionEvent
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, TransferirDonacionEvent> transferirDonacionListenerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, TransferirDonacionEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
+
+        Map<String, Object> props = new HashMap<>();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, transferenciasGroupId);
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
+
+        JsonDeserializer<TransferirDonacionEvent> deserializer = new JsonDeserializer<>(TransferirDonacionEvent.class);
+        deserializer.setRemoveTypeHeaders(false);
+        deserializer.addTrustedPackages("*");
+
+        ConsumerFactory<String, TransferirDonacionEvent> consumerFactory = new DefaultKafkaConsumerFactory<>(
+                props,
+                new StringDeserializer(),
+                deserializer);
+
+        factory.setConsumerFactory(consumerFactory);
+        return factory;
+    }
+
+    // Factory para OfertaDonacionEvent
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, OfertaDonacionEvent> ofertaDonacionListenerFactory() {
 
@@ -82,15 +111,39 @@ public class KafkaConfig {
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
 
-        JsonDeserializer<OfertaDonacionEvent> deserializer = new JsonDeserializer<> (OfertaDonacionEvent.class);
+        JsonDeserializer<OfertaDonacionEvent> deserializer = new JsonDeserializer<>(OfertaDonacionEvent.class);
         deserializer.setRemoveTypeHeaders(false);
         deserializer.addTrustedPackages("*");
-        
+
         ConsumerFactory<String, OfertaDonacionEvent> consumerFactory = new DefaultKafkaConsumerFactory<>(
                 props,
                 new StringDeserializer(),
                 deserializer);
-        
+
+        factory.setConsumerFactory(consumerFactory);
+        return factory;
+    }
+
+    // Factory para BajaSolicitudDonacionEvent
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, BajaSolicitudDonacionEvent> bajaSolicitudDonacionListenerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, BajaSolicitudDonacionEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
+
+        Map<String, Object> props = new HashMap<>();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
+
+        JsonDeserializer<BajaSolicitudDonacionEvent> deserializer = new JsonDeserializer<>(
+                BajaSolicitudDonacionEvent.class);
+        deserializer.setRemoveTypeHeaders(false);
+        deserializer.addTrustedPackages("*");
+
+        ConsumerFactory<String, BajaSolicitudDonacionEvent> consumerFactory = new DefaultKafkaConsumerFactory<>(
+                props,
+                new StringDeserializer(),
+                deserializer);
+
         factory.setConsumerFactory(consumerFactory);
         return factory;
     }

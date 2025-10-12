@@ -2,7 +2,7 @@ package com.grupog.controllers;
 
 import com.grupog.entities.ItemInventarioEntity;
 import com.grupog.events.OfertaDonacionEvent;
-import com.grupog.kafka.OfertaDonacionProducer;
+import com.grupog.consumers.OfertaDonacionProducer;
 import com.grupog.repositories.ItemInventarioRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class ItemInventarioController {
 
     private final ItemInventarioRepository repository;
 
-    @Value("${mi.organizacion.id}")
+    @Value("${organizacion.id}")
     private Long idOrganizacion;
 
     @Autowired
@@ -53,4 +53,3 @@ public class ItemInventarioController {
         return ResponseEntity.ok("Oferta de donacion enviada con ID: " + oferta.getIdOferta());
     }
 }
-
