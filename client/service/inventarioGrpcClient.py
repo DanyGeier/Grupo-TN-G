@@ -46,3 +46,39 @@ class InventarioClient(object):
         req = inventario_pb2.BuscarItemPorIdRequest(id=id)
         return self.stub.buscarItemPorId(req)
 
+    # ========== KAFKA - Solicitudes de donación ==========
+
+    def solicitar_donaciones(self, donaciones: list):
+        """Enviar solicitud de donaciones a la red de ONGs"""
+        donaciones_proto = [
+            inventario_pb2.DonacionItem(
+                categoria=d.get("categoria", ""),
+                descripcion=d.get("descripcion", ""),
+                cantidad=d.get("cantidad", 0),
+            )
+            for d in donaciones
+        ]
+
+        req = inventario_pb2.SolicitarDonacionesRequest(donaciones=donaciones_proto)
+        return self.stub.solicitarDonaciones(req)
+
+    def listar_solicitudes_externas(self, solo_activas=True):
+        """Listar solicitudes externas de otras organizaciones"""
+        req = inventario_pb2.ListarSolicitudesExternasRequest(soloActivas=solo_activas)
+        return self.stub.listarSolicitudesExternas(req)
+
+    def transferir_donacion(self, id_solicitud: str, donaciones: list):
+        """Transferir donaciones a una organización solicitante"""
+        donaciones_proto = [
+            inventario_pb2.DonacionItem(
+                categoria=d.get("categoria", ""),
+                descripcion=d.get("descripcion", ""),
+                cantidad=d.get("cantidad", 0),
+            )
+            for d in donaciones
+        ]
+
+        req = inventario_pb2.TransferirDonacionRequest(
+            idSolicitud=id_solicitud, donaciones=donaciones_proto
+        )
+        return self.stub.transferirDonacion(req)

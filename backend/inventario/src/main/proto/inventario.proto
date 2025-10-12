@@ -115,7 +115,7 @@ service InventarioService {
   rpc bajaLogicaItem (BajaLogicaItemRequest) returns (RespuestaExito);
   rpc listarItems (ListarItemsRequest) returns (ListaItemsResponse);
   rpc buscarItemPorId (BuscarItemPorIdRequest) returns (InventarioItem);
-  rpc registrarSalida (RegistrarSalidaRequest) returns (RespuestaExito)
+  rpc registrarSalida (RegistrarSalidaRequest) returns (RespuestaExito);
   
    // Kafka - Solicitudes
   rpc solicitarDonaciones (SolicitarDonacionesRequest) returns (SolicitarDonacionesResponse);
