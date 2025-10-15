@@ -2,6 +2,7 @@ package com.grupog.configs;
 
 import com.grupog.events.EventoSolidarioEvent;
 import com.grupog.events.BajaEventoSolidarioEvent;
+import com.grupog.events.AdhesionEventoEvent;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,5 +50,14 @@ public class KafkaProducerConfig {
     public KafkaTemplate<String, BajaEventoSolidarioEvent> bajaEventoKafkaTemplate() {
         return new KafkaTemplate<>(bajaEventoProducerFactory());
     }
-}
 
+    @Bean
+    public ProducerFactory<String, AdhesionEventoEvent> adhesionEventoProducerFactory() {
+        return new DefaultKafkaProducerFactory<>(baseProducerProps());
+    }
+
+    @Bean
+    public KafkaTemplate<String, AdhesionEventoEvent> kafkaTemplate() {
+        return new KafkaTemplate<>(adhesionEventoProducerFactory());
+    }
+}
