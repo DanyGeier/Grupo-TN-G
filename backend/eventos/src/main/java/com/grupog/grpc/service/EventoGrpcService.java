@@ -8,6 +8,10 @@ import com.grupog.service.UsuarioGrpcClient;
 import com.grupog.service.InventarioGrpcClient;
 import com.grupog.mappers.EventoMapper;
 import com.grupog.configs.ContextKeys;
+import com.grupog.events.EventoSolidarioEvent;
+import com.grupog.events.BajaEventoSolidarioEvent;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 
 import io.grpc.Context;
 import io.grpc.Status;
@@ -39,6 +43,15 @@ public class EventoGrpcService extends EventoServiceGrpc.EventoServiceImplBase {
 
     @Autowired
     private EventoMapper eventoMapper;
+
+    @Autowired
+    private KafkaTemplate<String, EventoSolidarioEvent> eventoSolidarioKafkaTemplate;
+
+    @Autowired
+    private KafkaTemplate<String, BajaEventoSolidarioEvent> bajaEventoKafkaTemplate;
+
+    @Value("${organizacion.id}")
+    private Long idOrganizacion;
 
     // Usar la clave compartida del contexto gRPC
 
@@ -80,6 +93,19 @@ public class EventoGrpcService extends EventoServiceGrpc.EventoServiceImplBase {
             // Crear evento
             EventoDocument evento = eventoMapper.toDocument(request, usuario.getId());
             EventoDocument eventoGuardado = eventoRepository.save(evento);
+
+            // Publicar evento solidario propio en Kafka
+            try {
+                EventoSolidarioEvent evt = new EventoSolidarioEvent(
+                        idOrganizacion,
+                        eventoGuardado.getId(),
+                        eventoGuardado.getNombreEvento(),
+                        eventoGuardado.getDescripcion(),
+                        eventoGuardado.getFechaHoraEvento());
+                eventoSolidarioKafkaTemplate.send("eventos-solidarios", evt.getIdEvento(), evt);
+            } catch (Exception exPub) {
+                System.out.println("[EVENTO SERVICE] WARN: Error publicando evento en Kafka: " + exPub.getMessage());
+            }
 
             // Convertir a proto y responder
             Evento eventoProto = eventoMapper.toProto(eventoGuardado);
@@ -450,6 +476,14 @@ public class EventoGrpcService extends EventoServiceGrpc.EventoServiceImplBase {
                         .withDescription("Solo se pueden eliminar eventos futuros")
                         .asRuntimeException());
                 return;
+            }
+
+            // Publicar baja de evento solidario propio en Kafka
+            try {
+                BajaEventoSolidarioEvent baja = new BajaEventoSolidarioEvent(idOrganizacion, request.getId());
+                bajaEventoKafkaTemplate.send("baja-evento-solidario", baja.getIdEvento(), baja);
+            } catch (Exception exPub) {
+                System.out.println("[EVENTO SERVICE] WARN: Error publicando baja en Kafka: " + exPub.getMessage());
             }
 
             // Eliminación física
