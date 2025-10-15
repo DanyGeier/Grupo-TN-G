@@ -20,6 +20,7 @@ services:
       - INVENTARIO_BASE_URL=http://inventario:8083
       - INVENTARIO_GRPC_HOST=inventario
       - INVENTARIO_GRPC_PORT=9097
+      - EVENTOS_BASE_URL=http://eventos:8082
       - JWT_SECRET=MNaqsShS5O6DvPeEW1Vm5e0iSu1JsJOZExWgqsf3gXw
     ports:
       - 5000:5000
@@ -95,6 +96,7 @@ services:
       SPRING_DATA_MONGODB_DATABASE: eventos_db
       SPRING_DATA_MONGODB_USERNAME: admin
       SPRING_DATA_MONGODB_PASSWORD: admin123
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     depends_on:
       mongodb:
         condition: service_healthy
@@ -102,6 +104,8 @@ services:
         condition: service_healthy
       inventario:
         condition: service_started
+      kafka:
+        condition: service_healthy
   mongodb:
     image: mongo:7.0
     container_name: mongodb

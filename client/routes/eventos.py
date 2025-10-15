@@ -5,6 +5,8 @@ from service.inventarioGrpcClient import InventarioClient
 from service.jwt_utils import require_role
 import grpc
 import time
+import os
+import requests
 
 # Crear blueprint para eventos
 eventos_bp = Blueprint("eventos", __name__, url_prefix="/eventos")
@@ -13,6 +15,9 @@ eventos_bp = Blueprint("eventos", __name__, url_prefix="/eventos")
 evento_client = EventoClient()
 usuario_client = UsuarioClient()
 inventario_client = InventarioClient()
+
+# Base URL del servicio de eventos (REST)
+EVENTOS_BASE_URL = os.getenv("EVENTOS_BASE_URL", "http://localhost:8082")
 
 
 def extract_token():
@@ -50,6 +55,36 @@ def _resolver_participantes_map(ids: set[int]) -> dict[int, dict]:
         return mapa
     except grpc.RpcError:
         return {}
+
+
+@eventos_bp.route("/externos", methods=["GET"])
+def listar_eventos_externos():
+    """Listar eventos externos (activos o solo futuros) desde el servicio de eventos (REST)."""
+    try:
+        # Token opcional (por ahora el backend REST no lo requiere)
+        token = extract_token()
+        solo_futuros = request.args.get("soloFuturos", "false").lower() == "true"
+        url = f"{EVENTOS_BASE_URL}/externos"
+        params = {"soloFuturos": str(solo_futuros).lower()}
+        headers = {"Content-Type": "application/json"}
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
+        resp = requests.get(url, params=params, headers=headers, timeout=5)
+        if resp.status_code >= 400:
+            try:
+                return jsonify(resp.json()), resp.status_code
+            except Exception:
+                return jsonify({"error": f"Error {resp.status_code} del servicio de eventos"}), resp.status_code
+        data = resp.json() or {}
+        # Normalizar salida: asegurar clave "eventos" sea lista
+        eventos = data.get("eventos", [])
+        # Alinear nombres de campos con frontend si hace falta
+        # Devolvemos tal cual por ahora: [{idOrganizacion, idEvento, nombreEvento, descripcion, fechaHora, activo}]
+        return jsonify({"eventos": eventos})
+    except requests.RequestException as e:
+        return jsonify({"error": f"Falló la comunicación con eventos-service: {str(e)}"}), 502
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @eventos_bp.route("", methods=["GET"])
