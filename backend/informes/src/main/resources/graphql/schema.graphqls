@@ -1,0 +1,21 @@
+scalar DateTime
+
+type Query {
+    informeDonaciones(
+        categoria: String
+        fechaDesde: DateTime
+        fechaHasta: DateTime
+        eliminado: Boolean
+    ): InformeDonacionesResponse!
+}
+
+type InformeDonacionesResponse {
+    donaciones: [DonacionAgrupada!]!
+}
+
+type DonacionAgrupada {
+    categoria: String!
+    eliminado: Boolean!
+    totalCantidad: Int!
+}
+

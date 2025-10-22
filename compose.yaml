@@ -210,6 +210,20 @@ services:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
       DYNAMIC_CONFIG_ENABLED: "true"
+
+  informes:
+    build:
+      context: ./backend/informes
+      dockerfile: Dockerfile
+    ports:
+      - 8084:8084
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/bd_empuje_comunitario?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: grupog
+      SPRING_DATASOURCE_PASSWORD: grupog123
+    depends_on:
+      db:
+        condition: service_healthy
 #     user: postgres
 #     secrets:
 #       - db-password
