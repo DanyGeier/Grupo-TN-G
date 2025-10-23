@@ -1,64 +1,59 @@
 import { useState } from "react";
-import type {  OfertaDonacionPost } from "../../models/donaciones/ofertaDonacion";
 import { Header } from "../Header";
-import type { Donacion } from "../../models/donaciones/donacion";
 import { ofrecerDonacion } from "../../services/donacionApi";
+import type { OfertaDonacionDto, DetalleOferta } from "../../models/donaciones/ofertaDonacion";
 
 export const FormOfrecerDonaciones = () => {
-
-  const [donaciones, setDonaciones] = useState<Donacion[]>([]);
+  // Estado: un solo objeto OfertaDonacionDto
+  const [oferta, setOferta] = useState<OfertaDonacionDto>({ donacionesOfrecidas: [] });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const categorias = ["ROPA", "ALIMENTOS", "JUGUETES", "UTILES_ESCOLARES"] as const;
   type CategoriaString = typeof categorias[number];
 
-
+  // Agregar una nueva donación
   const agregarDonacion = () => {
-    setDonaciones([
-      ...donaciones,
-      { id: 0, categoria: "ROPA", descripcion: "", cantidad: 1 },
-    ]);
+    setOferta({
+      donacionesOfrecidas: [
+        ...oferta.donacionesOfrecidas,
+        { categoria: "ROPA", descripcion: "", cantidad: 1 },
+      ],
+    });
   };
 
-  // Actualiza una propiedad específica de una donación
-const actualizarDonacion = (index: number, field: keyof Donacion, value: string | number) => {
-  const copiaLista: Donacion[] = [...donaciones]; 
-  if (field === "cantidad") {
-    copiaLista[index].cantidad = Number(value);
-  } else {
-    // Forzamos que value sea string para las demás propiedades
-    (copiaLista[index][field] as string) = String(value);
-  }
-  setDonaciones(copiaLista);
+const actualizarDonacion = (index: number, field: keyof DetalleOferta, value: string | number) => {
+  setOferta({
+    donacionesOfrecidas: oferta.donacionesOfrecidas.map((d, i) =>
+      i === index
+        ? { ...d, [field]: field === "cantidad" ? Number(value) : value }
+        : d
+    ),
+  });
 };
-
-
-
+  // Eliminar donación
   const eliminarDonacion = (index: number) => {
-    setDonaciones(donaciones.filter((_, i) => i !== index));
+    const copia = oferta.donacionesOfrecidas.filter((_, i) => i !== index);
+    setOferta({ donacionesOfrecidas: copia });
   };
 
-  // Envía la oferta
+  // Enviar oferta
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    const oferta: OfertaDonacionPost = {
-      donaciones: donaciones,
-    };
-
     try {
       const respuesta = await ofrecerDonacion(oferta);
       console.log("Oferta enviada con éxito:", respuesta);
       alert("Oferta enviada correctamente ✅");
+      // Limpiar formulario
+      setOferta({ donacionesOfrecidas: [] });
     } catch (err: any) {
       setError(err.message || "Error al enviar la oferta");
     } finally {
       setLoading(false);
     }
- 
   };
 
   return (
@@ -79,23 +74,17 @@ const actualizarDonacion = (index: number, field: keyof Donacion, value: string 
           onSubmit={handleSubmit}
           className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md w-full max-w-xl space-y-4"
         >
-
-
           {/* DONACIONES */}
           <div>
-            <h4 className="text-gray-800 dark:text-gray-100 font-medium mb-2">
-              Donaciones
-            </h4>
+            <h4 className="text-gray-800 dark:text-gray-100 font-medium mb-2">Donaciones</h4>
 
-            {donaciones.map((d, i) => (
+            {oferta.donacionesOfrecidas.map((d, i) => (
               <div
                 key={i}
                 className="border border-gray-300 dark:border-gray-700 rounded-xl p-4 mb-4 space-y-2"
               >
                 {/* CATEGORÍA */}
-                <label className="text-gray-700 dark:text-gray-200 mb-1 font-medium">
-                  Categoría
-                </label>
+                <label className="text-gray-700 dark:text-gray-200 mb-1 font-medium">Categoría</label>
                 <select
                   value={d.categoria}
                   onChange={(e) =>
@@ -111,9 +100,7 @@ const actualizarDonacion = (index: number, field: keyof Donacion, value: string 
                 </select>
 
                 {/* DESCRIPCIÓN */}
-                <label className="text-gray-700 dark:text-gray-200 mb-1 font-medium">
-                  Descripción
-                </label>
+                <label className="text-gray-700 dark:text-gray-200 mb-1 font-medium">Descripción</label>
                 <input
                   type="text"
                   placeholder="Ej: Remeras, pantalones, etc."
@@ -123,9 +110,7 @@ const actualizarDonacion = (index: number, field: keyof Donacion, value: string 
                 />
 
                 {/* CANTIDAD */}
-                <label className="text-gray-700 dark:text-gray-200 mb-1 font-medium">
-                  Cantidad
-                </label>
+                <label className="text-gray-700 dark:text-gray-200 mb-1 font-medium">Cantidad</label>
                 <input
                   type="number"
                   min={1}
@@ -134,7 +119,6 @@ const actualizarDonacion = (index: number, field: keyof Donacion, value: string 
                   className="w-full border-2 border-gray-200 dark:border-gray-700 rounded-xl p-2 outline-none focus:border-blue-500 dark:bg-gray-900 dark:text-gray-100"
                 />
 
-      
                 <button
                   type="button"
                   onClick={() => eliminarDonacion(i)}
@@ -145,7 +129,6 @@ const actualizarDonacion = (index: number, field: keyof Donacion, value: string 
               </div>
             ))}
 
-     
             <button
               type="button"
               onClick={agregarDonacion}
@@ -155,7 +138,6 @@ const actualizarDonacion = (index: number, field: keyof Donacion, value: string 
             </button>
           </div>
 
-     
           <button
             type="submit"
             disabled={loading}

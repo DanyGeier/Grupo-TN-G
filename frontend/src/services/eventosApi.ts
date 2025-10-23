@@ -1,5 +1,7 @@
 import type { EventoResponse } from "../models/eventoResponse";
 import type { CrearEventoRequest } from "../models/crearEventoRequest";
+import type { EventoExternoResponse } from "../models/eventoExterno";
+import type { AdhesionEvento, Voluntario } from "../models/adhesionEvento";
 
 const API_BASE_URL = "http://localhost:5000";
 
@@ -44,7 +46,9 @@ interface InventarioActivoItemApi {
 }
 
 class EventosApiService {
+    
     private getAuthHeaders(): HeadersInit {
+        
         const token = localStorage.getItem("token");
         return {
             "Content-Type": "application/json",
@@ -202,6 +206,50 @@ class EventosApiService {
                 : []
         };
     }
+
+
+    //--------------------------------
+    //Eventos Externos
+    //------------------------------
+async listarEventosExternos(soloFuturos: boolean = false): Promise<EventoExternoResponse[]> {
+    let url = `${API_BASE_URL}/eventos/externos`;
+
+    if (soloFuturos) {
+        url += '?soloFuturos=true';
+    }
+
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        throw new Error(data?.error || `Error ${response.status}`);
+    }
+
+    const data: { eventos: EventoExternoResponse[] } = await response.json();
+    return data.eventos;
+}
+
+
+
+async enviarAdhesionEvento(adhesion: AdhesionEvento): Promise<void> {
+  const url = `${API_BASE_URL}/eventos/adherirse/${adhesion.idEvento}`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: this.getAuthHeaders(),
+    body: JSON.stringify(adhesion),
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => null);
+    throw new Error(data?.error || `Error ${response.status}`);
+  }
+}
+
+    
 }
 
 export type { InventarioActivoItemApi };

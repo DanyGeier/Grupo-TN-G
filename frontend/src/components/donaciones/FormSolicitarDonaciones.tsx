@@ -1,34 +1,34 @@
 import { useState } from "react";
-import type { Donacion } from "../../models/donaciones/donacion";
-import type { SolicitudDonacionPost } from "../../models/donaciones/solicitudDonacion";
 import { Header } from "../Header";
 import { publicarSolicitudDonacion } from "../../services/donacionApi";
+import type { SolicitudDonacionDto } from "../../models/donaciones/solicitudDonacion";
+import type { ItemDonacion } from "../../models/donaciones/itemDonacion";
 
 export const FormSolicitarDonaciones = () => {
-  const [formData, setFormData] = useState<SolicitudDonacionPost>({
-    donaciones: [{ categoria: "ROPA", descripcion: ""}],
+  const [formData, setFormData] = useState<SolicitudDonacionDto>({
+    donaciones: [{ categoria: "", descripcion: ""}],
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const categorias = ["ROPA", "ALIMENTOS", "JUGUETES", "UTILES_ESCOLARES"] as const;
-  type CategoriaString = typeof categorias[number];
+  //const categorias = ["ROPA", "ALIMENTOS", "JUGUETES", "UTILES_ESCOLARES"] as const;
+ //1 type CategoriaString = typeof categorias[number];
 
-  const handleDonacionChange = (index: number, field: keyof Donacion, value: string | number) => {
-    setFormData((prev) => {
-      const nuevasDonaciones = [...prev.donaciones];
-      nuevasDonaciones[index] = {
-        ...nuevasDonaciones[index],
-        [field]: field === "cantidad" ? Number(value) : String(value),
-      };
-      return { ...prev, donaciones: nuevasDonaciones };
-    });
-  };
+const handleDonacionChange = (index: number, field: keyof ItemDonacion, value: string) => {
+  setFormData(prev => {
+    const nuevasDonaciones = [...prev.donaciones];
+    nuevasDonaciones[index] = {
+      ...nuevasDonaciones[index],
+      [field]: value, 
+    };
+    return { ...prev, donaciones: nuevasDonaciones };
+  });
+};
 
   const agregarDonacion = () => {
     setFormData((prev) => ({
       ...prev,
-      donaciones: [...prev.donaciones, { categoria: "ROPA", descripcion: "" }],
+      donaciones: [...prev.donaciones, { categoria: "", descripcion: "" }],
     }));
   };
 
@@ -51,13 +51,14 @@ export const FormSolicitarDonaciones = () => {
     setError(null);
 
     try {
-            console.log("Solicitud enviada:", formData);
+    
+
 
       const respuesta = await publicarSolicitudDonacion(formData);
       
       console.log("Solicitud enviada:", respuesta);
       alert("Solicitud enviada correctamente ✅");
-      setFormData({ donaciones: [{ categoria: "ROPA", descripcion: ""}] });
+      setFormData({ donaciones: [{ categoria: "", descripcion: ""}] });
     } catch (err: any) {
       console.error(err);
       setError(err.message || "Ocurrió un error al enviar la solicitud");
@@ -92,7 +93,7 @@ export const FormSolicitarDonaciones = () => {
             </h4>
             {formData.donaciones.map((donacion, index) => (
               <div key={index} className="border border-gray-300 dark:border-gray-700 rounded-xl p-4 mb-4 space-y-2">
-                <label className="text-gray-700 dark:text-gray-200 mb-1 font-medium">Categoría</label>
+                {/* <label className="text-gray-700 dark:text-gray-200 mb-1 font-medium">Categoría</label>
                 <select
                   value={donacion.categoria}
                   onChange={(e) => handleDonacionChange(index, "categoria", e.target.value as CategoriaString)}
@@ -101,7 +102,16 @@ export const FormSolicitarDonaciones = () => {
                   {categorias.map((c) => (
                     <option key={c} value={c}>{c}</option>
                   ))}
-                </select>
+                </select> */}
+                     <label className="text-gray-700 dark:text-gray-200 mb-1 font-medium">Categoria</label>
+                <input
+                  type="text"
+                  value={donacion.categoria}
+                  onChange={(e) => handleDonacionChange(index, "categoria", e.target.value)}
+                  placeholder="Ej: ROPA,ETC"
+                  className="w-full border-2 border-gray-200 dark:border-gray-700 rounded-xl p-2 outline-none focus:border-blue-500 dark:bg-gray-900 dark:text-gray-100"
+                  required
+                />
 
                 <label className="text-gray-700 dark:text-gray-200 mb-1 font-medium">Descripción</label>
                 <input

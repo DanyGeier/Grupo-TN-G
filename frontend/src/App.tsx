@@ -16,6 +16,7 @@ import { FormOfrecerDonaciones } from "./components/donaciones/FormOfrecerDonaci
 import { ListaSolicitudesExternas } from "./components/donaciones/ListaSolicitudesExternas";
 import { ListaSolicitudesPropias } from "./components/donaciones/ListaSolicitudesPropias";
 import { ListaEventosExternos } from "./components/eventos/eventosExternos/ListaEventosExternos";
+// import { ListaEventosExternos } from "./components/eventos/eventosExternos/ListaEventosExternos";
 
 function App() {
   const { usuario } = useUser();

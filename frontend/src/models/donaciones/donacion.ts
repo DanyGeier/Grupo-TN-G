@@ -5,14 +5,12 @@ export interface Donacion {
   cantidad?: number;
 }
 
-export interface DonacionSolicitada {
+export interface DonacionPost{
   categoria: string;
   descripcion: string;
-};
+}
 
-export interface DonacionPost {
-
+export interface DonacionPost{
   categoria: string;
   descripcion: string;
-  cantidad?: number;
 }

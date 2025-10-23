@@ -1,4 +1,4 @@
-import type { Donacion, DonacionPost } from "./donacion";
+import type { Donacion,  } from "./donacion";
 
 
 export interface OfertaDonacion {
@@ -8,8 +8,17 @@ export interface OfertaDonacion {
 
 }
 
-export interface OfertaDonacionPost {
+export interface OfertaDonacionDto{
 
-  donaciones: DonacionPost[];
+  donacionesOfrecidas: DetalleOferta[];
+
+}
+
+export interface DetalleOferta{
+  categoria: string,      
+  descripcion: string,
+      cantidad: number
+
+
 
 }

@@ -1,4 +1,4 @@
-import type { Donacion, DonacionPost } from "./donacion";
+import type { Donacion } from "./donacion";
 
 export interface TransferenciaDonacion {
   idOrganizacion: number;
@@ -9,6 +9,5 @@ export interface TransferenciaDonacion {
 
 export interface TransferenciaDonacionPost {
 
-  donaciones: DonacionPost[];
 
 }

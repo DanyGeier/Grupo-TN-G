@@ -1,6 +1,6 @@
 // services/donacionesService.ts
-import type { OfertaDonacionPost } from "../models/donaciones/ofertaDonacion";
-import type {  SolicitudDonacion, SolicitudDonacionPost } from "../models/donaciones/solicitudDonacion";
+import type { OfertaDonacionDto } from "../models/donaciones/ofertaDonacion";
+import type {  SolicitudDonacion, SolicitudDonacionDto } from "../models/donaciones/solicitudDonacion";
 import type { TransferenciaDonacionPost } from "../models/donaciones/transferenciaDonacion";
 
 const API_URL = "http://localhost:5000/inventario";
@@ -17,7 +17,7 @@ const authHeaders = (): HeadersInit => {
 /**
  * Publicar una solicitud de donaciones
  */
-export const publicarSolicitudDonacion = async (solicitud: SolicitudDonacionPost) => {
+export const publicarSolicitudDonacion = async (solicitud: SolicitudDonacionDto) => {
   try {
     const response = await fetch(`${API_URL}/solicitar-donaciones`, {
       method: "POST",
@@ -38,9 +38,9 @@ export const publicarSolicitudDonacion = async (solicitud: SolicitudDonacionPost
   }
 };
 
-export const obtenerSolicitudesDonacion = async (): Promise<SolicitudDonacion[]> => {
+export const listarSolicitudesExternas = async (soloActivas = true): Promise<SolicitudDonacion[]> => {
   try {
-    const response = await fetch(`${API_URL}/solicitudes`, {
+    const response = await fetch(`${API_URL}/solicitudes-externas?soloActivas=${soloActivas}`, {
       method: "GET",
       headers: authHeaders(),
     });
@@ -50,20 +50,17 @@ export const obtenerSolicitudesDonacion = async (): Promise<SolicitudDonacion[]>
     }
 
     const data = await response.json();
-    return data.solicitudes || [];
+    return data.solicitudes;
   } catch (error) {
-    console.error("Error obteniendo solicitudes de donación:", error);
+    console.error("Error listando solicitudes externas:", error);
     throw error;
   }
 };
 
 
-/**
- * Ofrecer donaciones
- */
-export const ofrecerDonacion = async (oferta: OfertaDonacionPost) => {
+export const ofrecerDonacion = async (oferta: OfertaDonacionDto) => {
   try {
-    const response = await fetch(`${API_URL}/oferta`, {
+    const response = await fetch(`${API_URL}/oferta-donacion`, {
       method: "POST",
       headers: authHeaders(),
       body: JSON.stringify(oferta),

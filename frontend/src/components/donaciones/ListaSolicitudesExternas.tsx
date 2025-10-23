@@ -3,24 +3,8 @@ import { ModalTransferirDonaciones } from "../modales/ModalTransferirDonaciones"
 import { Header } from "../Header";
 import { CardSolicitudDonacion } from "./CardSolicitudDonacion";
 import type { SolicitudDonacion } from "../../models/donaciones/solicitudDonacion";
-import type { Donacion } from "../../models/donaciones/donacion";
+import { listarSolicitudesExternas } from "../../services/donacionApi";
 
-// Datos de prueba
-const generarDatosDePrueba = (): SolicitudDonacion[] => {
-  const categorias: Donacion["categoria"][] = ["ALIMENTOS", "ROPA", "MEDICAMENTOS", "JUGUETES", "HIGIENE"];
-  const descripciones = ["Puré de tomates", "Camisas", "Ibuprofeno", "Pelota de futbol", "Jabón"];
-
-  return Array.from({ length: 10 }, (_, i) => ({
-    idOrganizacion: i + 1,
-    idSolicitud: 100 + i,
-    donaciones: Array.from({ length: 3 }, (_, j) => ({
-      id: j + 1,
-      categoria: categorias[Math.floor(Math.random() * categorias.length)],
-      descripcion: descripciones[Math.floor(Math.random() * descripciones.length)],
-      cantidad: Math.floor(Math.random() * 5) + 1, // cantidad aleatoria entre 1 y 5
-    })),
-  }));
-};
 
 export const ListaSolicitudesExternas: React.FC = () => {
   const [solicitudes, setSolicitudes] = useState<SolicitudDonacion[]>([]);
@@ -28,8 +12,19 @@ export const ListaSolicitudesExternas: React.FC = () => {
   const [solicitudSeleccionada, setSolicitudSeleccionada] = useState<SolicitudDonacion | null>(null);
 
   useEffect(() => {
-    setSolicitudes(generarDatosDePrueba());
+    const fetchSolicitudes = async () => {
+      try {
+        const datos = await listarSolicitudesExternas(true); 
+        console.log("Solicitudes externas reales:", datos); 
+        setSolicitudes(datos);
+      } catch (error) {
+        console.error("Error al listar solicitudes externas:", error);
+      }
+    };
+
+    fetchSolicitudes();
   }, []);
+
 
   const abrirModal = (solicitud: SolicitudDonacion) => {
     setSolicitudSeleccionada(solicitud);
