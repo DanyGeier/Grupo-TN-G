@@ -49,7 +49,7 @@ public class SolicitudDonacionEvent {
     public static class DonacionItem {
         private String categoria;
         private String descripcion;
-        private Integer cantidad;
+        private int cantidad;
 
         public DonacionItem() {
         }
@@ -70,11 +70,11 @@ public class SolicitudDonacionEvent {
             this.descripcion = descripcion;
         }
 
-        public Integer getCantidad() {
+        public int getCantidad() {
             return cantidad;
         }
 
-        public void setCantidad(Integer cantidad) {
+        public void setCantidad(int cantidad) {
             this.cantidad = cantidad;
         }
 

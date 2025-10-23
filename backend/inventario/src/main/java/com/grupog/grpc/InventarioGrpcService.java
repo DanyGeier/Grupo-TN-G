@@ -3,11 +3,15 @@ package com.grupog.grpc;
 import com.grupog.inventario.*;
 import com.grupog.producers.SolicitudDonacionProducer;
 import com.grupog.producers.TransferenciaDonacionProducer;
+import com.grupog.producers.OfertaDonacionProducer;
+import com.grupog.producers.BajaSolicitudDonacionProducer;
 import com.grupog.entities.SolicitudExternaEntity;
 import com.grupog.repositories.SolicitudExternaRepository;
 import com.grupog.service.ItemInventarioService;
 import com.grupog.events.SolicitudDonacionEvent;
 import com.grupog.events.TransferirDonacionEvent;
+import com.grupog.events.OfertaDonacionEvent;
+import com.grupog.events.BajaSolicitudDonacionEvent;
 import org.springframework.beans.factory.annotation.Value;
 import java.time.ZoneOffset;
 import com.grupog.entities.ItemInventarioEntity;
@@ -20,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @GrpcService
@@ -41,6 +46,12 @@ public class InventarioGrpcService extends InventarioServiceGrpc.InventarioServi
 
     @Value("${organizacion.id}")
     private Long idOrganizacion;
+
+    @Autowired
+    private OfertaDonacionProducer ofertaProducer;
+
+    @Autowired
+    private BajaSolicitudDonacionProducer bajaSolicitudProducer;
 
     @Autowired
     public InventarioGrpcService(ItemInventarioRepository repository) {
@@ -367,4 +378,94 @@ public class InventarioGrpcService extends InventarioServiceGrpc.InventarioServi
                     .asRuntimeException());
         }
     }
+
+    /**
+     *  Ofrecer donaciones a la red de ONGs (Punto 3)
+     */
+
+    @Override
+    public void ofrecerDonacion(OfertaDonacionRequest request, StreamObserver<RespuestaExito> responseObserver) {
+        try {
+            //Crea el DTO de Java para Kafka
+            OfertaDonacionEvent oferta = new OfertaDonacionEvent();
+            oferta.setIdOferta(UUID.randomUUID().toString()); //ID único
+            oferta.setIdOrganizacionDonante(idOrganizacion);
+
+            //Mapea la lista de items del Protobuf al DTO de Java
+            List<OfertaDonacionEvent.DetalleOfertaDonacion> items = request.getDonacionesOfrecidasList()
+                    .stream()
+                    .map(protoItem -> {
+                        OfertaDonacionEvent.DetalleOfertaDonacion item = new OfertaDonacionEvent.DetalleOfertaDonacion();
+                        item.setCategoria(protoItem.getCategoria());
+                        item.setDescripcion(protoItem.getDescripcion());
+                        item.setCantidad(protoItem.getCantidad());
+                        return item;
+                    })
+                    .collect(Collectors.toList());
+            oferta.setDonacionesOfrecidas(items);
+            
+            List<SolicitudDonacionEvent.DonacionItem> donacionItems = items.stream()
+                    .map(d -> {
+                        SolicitudDonacionEvent.DonacionItem item = new SolicitudDonacionEvent.DonacionItem();
+                        item.setCategoria(d.getCategoria());
+                        item.setDescripcion(d.getDescripcion());
+                        item.setCantidad(d.getCantidad());
+                        return item;
+                    })
+                    .collect(Collectors.toList());
+
+            //Descuenta el stock que estamos ofreciendo
+            inventarioService.descontarStock(donacionItems);
+
+            //Envia el mensaje a Kafka
+            ofertaProducer.enviarOferta(oferta);
+
+            //Responde al cliente gRPC
+            RespuestaExito response = RespuestaExito.newBuilder()
+                    .setExito(true)
+                    .setMensaje("Oferta de donación enviada a la red de ONGs con ID: " + oferta.getIdOferta())
+                    .build();
+
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+
+        } catch (Exception ex) {
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription("Error al ofrecer donación: " + ex.getMessage())
+                    .asRuntimeException());
+        }
+    }
+
+    /**
+     * Dar de baja una solicitud de donación (Punto 4)
+     */
+
+    @Override
+    public void bajaSolicitudDonacion(BajaSolicitudRequest request, StreamObserver<RespuestaExito> responseObserver) {
+        try {
+            // Crear el DTO de Java para Kafka
+            //El ID de la solicitud viene del request gRPC
+            BajaSolicitudDonacionEvent bajaEvent = new BajaSolicitudDonacionEvent(
+                idOrganizacion, //ID de nuestra organizacion que deje en el applications.properties
+                request.getIdSolicitud()
+                );
+
+                //Llamar al productor para que envie el mensaje a Kafka
+                bajaSolicitudProducer.enviarBajaSolicitud(bajaEvent);
+
+                //Responder al cliente gRPC con éxito
+                RespuestaExito response = RespuestaExito.newBuilder()
+                    .setExito(true) 
+                    .setMensaje("Solicitud " + request.getIdSolicitud() + " cancelada y notificada a la red.")
+                    .build();
+
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+
+        } catch (Exception ex) {
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription("Error al dar de baja la solicitud: " + ex.getMessage())
+                    .asRuntimeException());
+        }
+     }
 }
