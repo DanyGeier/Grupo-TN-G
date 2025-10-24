@@ -14,7 +14,6 @@ import { InventarioLista } from "./components/inventario/InventarioLista";
 import { FormSolicitarDonaciones } from "./components/donaciones/FormSolicitarDonaciones";
 import { FormOfrecerDonaciones } from "./components/donaciones/FormOfrecerDonaciones";
 import { ListaSolicitudesExternas } from "./components/donaciones/ListaSolicitudesExternas";
-import { ListaSolicitudesPropias } from "./components/donaciones/ListaSolicitudesPropias";
 import { ListaEventosExternos } from "./components/eventos/eventosExternos/ListaEventosExternos";
 // import { ListaEventosExternos } from "./components/eventos/eventosExternos/ListaEventosExternos";
 
@@ -52,10 +51,10 @@ function App() {
             path="/donaciones/ofrecer"
             element={<FormOfrecerDonaciones />}
           />
-          <Route
+          {/* <Route
             path="/donaciones/lista-solicitudes"
             element={<ListaSolicitudesPropias />}
-          />
+          /> */}
           <Route
             path="/eventos-externos/solicitudes"
             element={<ListaSolicitudesExternas />}

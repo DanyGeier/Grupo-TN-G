@@ -121,6 +121,5 @@ service InventarioService {
   rpc solicitarDonaciones (SolicitarDonacionesRequest) returns (SolicitarDonacionesResponse);
   rpc listarSolicitudesExternas (ListarSolicitudesExternasRequest) returns (ListarSolicitudesExternasResponse);
   
-  // Kafka - Transferencias
-  rpc transferirDonacion (TransferirDonacionRequest) returns (RespuestaExito);
+
 }

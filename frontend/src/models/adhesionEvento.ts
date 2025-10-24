@@ -1,10 +1,7 @@
-export interface AdhesionEvento {
-  idEvento: number;
-  voluntario: Voluntario;
-}
+
 
 export interface Voluntario {
-  idOrganizacion: number;
+  idOrganizacionVoluntario: number;
   idVoluntario: number;
   nombre: string;
   apellido: string;

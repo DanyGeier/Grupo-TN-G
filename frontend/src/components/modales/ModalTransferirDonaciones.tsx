@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import type { SolicitudDonacion } from "../../models/donaciones/solicitudDonacion";
-import type {
-
-  TransferenciaDonacionPost,
-} from "../../models/donaciones/transferenciaDonacion";
-
+import type { TransferenciaDonacionPost } from "../../models/donaciones/transferenciaDonacion";
+import { transferirDonacion } from "../../services/donacionApi";
 
 interface Props {
   solicitud: SolicitudDonacion;
@@ -18,6 +15,7 @@ export const ModalTransferirDonaciones: React.FC<Props> = ({
   const [cantidades, setCantidades] = useState<number[]>(
     solicitud.donaciones.map(() => 0)
   );
+  const [loading, setLoading] = useState(false);
 
   const handleCantidadChange = (index: number, value: number) => {
     const nuevasCantidades = [...cantidades];
@@ -25,8 +23,9 @@ export const ModalTransferirDonaciones: React.FC<Props> = ({
     setCantidades(nuevasCantidades);
   };
 
-  const handleTransferir = () => {
+  const handleTransferir = async () => {
     const transferencia: TransferenciaDonacionPost = {
+      idSolicitud: solicitud.idSolicitud, 
       donaciones: solicitud.donaciones.map((donacion, index) => ({
         categoria: donacion.categoria,
         descripcion: donacion.descripcion,
@@ -34,9 +33,19 @@ export const ModalTransferirDonaciones: React.FC<Props> = ({
       })),
     };
 
-    console.log("Transferencia generada:", transferencia);
-    // Producir el mensaje
-    cerrarModal();
+    try {
+      setLoading(true);
+      console.log("Enviando transferencia:", transferencia);
+      const response = await transferirDonacion(transferencia);
+      console.log("Respuesta del backend:", response);
+      alert("Transferencia realizada con éxito ✅");
+      cerrarModal();
+    } catch (error) {
+      console.error("Error al transferir:", error);
+      alert("Ocurrió un error al transferir la donación ❌");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -76,15 +85,17 @@ export const ModalTransferirDonaciones: React.FC<Props> = ({
         <div className="flex justify-end space-x-3 mt-6">
           <button
             onClick={cerrarModal}
+            disabled={loading}
             className="px-4 py-2 rounded-xl bg-gray-400 hover:bg-gray-500 text-white"
           >
             Cancelar
           </button>
           <button
             onClick={handleTransferir}
+            disabled={loading}
             className="px-4 py-2 rounded-xl bg-green-500 hover:bg-green-600 text-white font-semibold"
           >
-            Confirmar Transferencia
+            {loading ? "Transfiriendo..." : "Confirmar Transferencia"}
           </button>
         </div>
       </div>
