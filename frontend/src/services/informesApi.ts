@@ -25,6 +25,17 @@ export interface FiltrosDonaciones {
   eliminado?: boolean | null;
 }
 
+export interface FiltroDonacion {
+  id: string;
+  nombreFiltro: string;
+  usuarioId: string;
+  categoria?: string;
+  fechaDesde?: string;
+  fechaHasta?: string;
+  eliminado?: boolean;
+  fechaCreacion: string;
+}
+
 export const obtenerInformeDonaciones = async (
   filtros?: FiltrosDonaciones
 ): Promise<DonacionAgrupada[]> => {
@@ -123,4 +134,180 @@ export const descargarExcelDonaciones = async (filtros?: FiltrosDonaciones) => {
   a.click();
   a.remove();
   window.URL.revokeObjectURL(downloadUrl);
+};
+
+// ==================== FILTROS PERSONALIZADOS (GRAPHQL) ====================
+
+export const listarFiltrosDonacion = async (usuarioId: number): Promise<FiltroDonacion[]> => {
+  // Convertir usuarioId a string para GraphQL
+  const usuarioIdStr = String(usuarioId);
+  const query = `
+    query ListarFiltrosDonacion($usuarioId: ID!) {
+      listarFiltrosDonacion(usuarioId: $usuarioId) {
+        id
+        nombreFiltro
+        usuarioId
+        categoria
+        fechaDesde
+        fechaHasta
+        eliminado
+        fechaCreacion
+      }
+    }
+  `;
+
+  const response = await fetch(`${BASE_URL}/graphql`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ query, variables: { usuarioId: usuarioIdStr } }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Error al listar filtros de donaciones");
+  }
+
+  const result = await response.json();
+
+  if (result.errors && result.errors.length > 0) {
+    throw new Error(`Error de GraphQL: ${result.errors[0].message}`);
+  }
+
+  return result.data.listarFiltrosDonacion || [];
+};
+
+export const guardarFiltroDonacion = async (
+  usuarioId: number,
+  nombreFiltro: string,
+  filtros: FiltrosDonaciones
+): Promise<FiltroDonacion> => {
+  const mutation = `
+    mutation GuardarFiltroDonacion($input: FiltroDonacionInput!) {
+      guardarFiltroDonacion(input: $input) {
+        id
+        nombreFiltro
+        usuarioId
+        categoria
+        fechaDesde
+        fechaHasta
+        eliminado
+        fechaCreacion
+      }
+    }
+  `;
+
+  const input: any = {
+    nombreFiltro,
+    usuarioId: String(usuarioId),
+  };
+
+  if (filtros.categoria) input.categoria = filtros.categoria;
+  if (filtros.fechaDesde) input.fechaDesde = filtros.fechaDesde;
+  if (filtros.fechaHasta) input.fechaHasta = filtros.fechaHasta;
+  if (filtros.eliminado !== undefined && filtros.eliminado !== null) {
+    input.eliminado = filtros.eliminado;
+  }
+
+  const response = await fetch(`${BASE_URL}/graphql`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ query: mutation, variables: { input } }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Error al guardar filtro de donaciones");
+  }
+
+  const result = await response.json();
+
+  if (result.errors && result.errors.length > 0) {
+    throw new Error(`Error de GraphQL: ${result.errors[0].message}`);
+  }
+
+  return result.data.guardarFiltroDonacion;
+};
+
+export const actualizarFiltroDonacion = async (
+  id: string,
+  usuarioId: number,
+  nombreFiltro: string,
+  filtros: FiltrosDonaciones
+): Promise<FiltroDonacion> => {
+  const mutation = `
+    mutation ActualizarFiltroDonacion($id: ID!, $input: FiltroDonacionInput!) {
+      actualizarFiltroDonacion(id: $id, input: $input) {
+        id
+        nombreFiltro
+        usuarioId
+        categoria
+        fechaDesde
+        fechaHasta
+        eliminado
+        fechaCreacion
+      }
+    }
+  `;
+
+  const input: any = {
+    nombreFiltro,
+    usuarioId: String(usuarioId),
+  };
+
+  if (filtros.categoria) input.categoria = filtros.categoria;
+  if (filtros.fechaDesde) input.fechaDesde = filtros.fechaDesde;
+  if (filtros.fechaHasta) input.fechaHasta = filtros.fechaHasta;
+  if (filtros.eliminado !== undefined && filtros.eliminado !== null) {
+    input.eliminado = filtros.eliminado;
+  }
+
+  const response = await fetch(`${BASE_URL}/graphql`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ query: mutation, variables: { id, input } }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Error al actualizar filtro de donaciones");
+  }
+
+  const result = await response.json();
+
+  if (result.errors && result.errors.length > 0) {
+    throw new Error(`Error de GraphQL: ${result.errors[0].message}`);
+  }
+
+  return result.data.actualizarFiltroDonacion;
+};
+
+export const eliminarFiltroDonacion = async (id: string, usuarioId: number): Promise<boolean> => {
+  const mutation = `
+    mutation EliminarFiltroDonacion($id: ID!, $usuarioId: ID!) {
+      eliminarFiltroDonacion(id: $id, usuarioId: $usuarioId)
+    }
+  `;
+
+  const response = await fetch(`${BASE_URL}/graphql`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ query: mutation, variables: { id, usuarioId: String(usuarioId) } }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Error al eliminar filtro de donaciones");
+  }
+
+  const result = await response.json();
+
+  if (result.errors && result.errors.length > 0) {
+    throw new Error(`Error de GraphQL: ${result.errors[0].message}`);
+  }
+
+  return result.data.eliminarFiltroDonacion;
 };

@@ -7,6 +7,14 @@ type Query {
         fechaHasta: DateTime
         eliminado: Boolean
     ): InformeDonacionesResponse!
+    
+    listarFiltrosDonacion(usuarioId: ID!): [FiltroDonacion!]!
+}
+
+type Mutation {
+    guardarFiltroDonacion(input: FiltroDonacionInput!): FiltroDonacion!
+    actualizarFiltroDonacion(id: ID!, input: FiltroDonacionInput!): FiltroDonacion!
+    eliminarFiltroDonacion(id: ID!, usuarioId: ID!): Boolean!
 }
 
 type InformeDonacionesResponse {
@@ -17,5 +25,25 @@ type DonacionAgrupada {
     categoria: String!
     eliminado: Boolean!
     totalCantidad: Int!
+}
+
+type FiltroDonacion {
+    id: ID!
+    nombreFiltro: String!
+    usuarioId: ID!
+    categoria: String
+    fechaDesde: DateTime
+    fechaHasta: DateTime
+    eliminado: Boolean
+    fechaCreacion: DateTime!
+}
+
+input FiltroDonacionInput {
+    nombreFiltro: String!
+    usuarioId: ID!
+    categoria: String
+    fechaDesde: DateTime
+    fechaHasta: DateTime
+    eliminado: Boolean
 }
 
