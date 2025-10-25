@@ -16,6 +16,8 @@ import { FormOfrecerDonaciones } from "./components/donaciones/FormOfrecerDonaci
 import { ListaSolicitudesExternas } from "./components/donaciones/ListaSolicitudesExternas";
 import { ListaEventosExternos } from "./components/eventos/eventosExternos/ListaEventosExternos";
 // import { ListaEventosExternos } from "./components/eventos/eventosExternos/ListaEventosExternos";
+import { InformeDonaciones } from "./components/informes/InformeDonaciones";
+import { InformePage } from "./components/informes/soap/InformePage";
 
 function App() {
   const { usuario } = useUser();
@@ -27,6 +29,8 @@ function App() {
   const puedeVerInventario = !!usuario && (esPresidente || esVocal);
   const puedeVerEventos =
     !!usuario && (esPresidente || esCoordinador || esVoluntario);
+  const puedeVerInformes = !!usuario && (esPresidente || esVocal);
+
   return (
     <>
       <ToastContainer position="bottom-right" autoClose={2000} />
@@ -78,6 +82,7 @@ function App() {
           <Route path="/usuarios" element={<ListaUsuarios />} />
           <Route path="/registro" element={<FormularioUsuario />} />
           <Route path="/usuarios/:id/editar" element={<FormularioUsuario />} />
+          <Route path="/informes/presidentes-ongs" element={<InformePage />} />
         </Route>
 
         {/* Inventario: PRESIDENTE o VOCAL */}
@@ -90,6 +95,18 @@ function App() {
           }
         >
           <Route path="/inventario" element={<InventarioLista />} />
+        </Route>
+
+        {/* Informes: PRESIDENTE o VOCAL */}
+        <Route
+          element={
+            <ProtectedRoute
+              isAllowed={puedeVerInformes}
+              redirectTo="/acceso-denegado"
+            />
+          }
+        >
+          <Route path="/informes/donaciones" element={<InformeDonaciones />} />
         </Route>
 
         {/* Eventos: PRESIDENTE, COORDINADOR o VOLUNTARIO */}

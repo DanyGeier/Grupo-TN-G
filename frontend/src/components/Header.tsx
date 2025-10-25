@@ -96,6 +96,9 @@ export const Header = () => {
               </Link>
             </div>
           </div>
+               <Link to="/informes/presidentes-ongs" className="hover:underline">
+            Informe Presidente
+          </Link>
         </nav>
         <div className="flex items-center gap-3">
           <button
