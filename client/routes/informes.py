@@ -87,3 +87,23 @@ def descargar_excel_donaciones():
         return jsonify({"error": f"Error al conectar con el servicio de informes: {str(e)}"}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+  # INFORMES SOAP
+@informes_bp.route('/soap/informe/presidentes-ongs', methods=['POST', 'OPTIONS'])
+def soap_informe_completo():
+    if request.method == 'OPTIONS':
+        return '', 200
+
+    try:
+        data = request.get_json() or {}
+        org_ids = data.get("orgIds", [])
+
+        # Llamar a Spring Boot
+        url = f"{INFORMES_BASE_URL}/soap/informe/presidentes-ongs"
+        response = requests.post(url, json=org_ids, timeout=10)
+        response.raise_for_status()
+
+        return jsonify(response.json()), 200
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": str(e)}), 500

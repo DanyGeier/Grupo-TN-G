@@ -35,6 +35,9 @@ export const Header = () => {
           <Link to="/inventario" className="hover:underline">
             Inventarios
           </Link>
+               <Link to="/informes/presidentes-ongs" className="hover:underline">
+            Informe Presidente
+          </Link>
         </nav>
 
         <div className="flex items-center gap-3">
