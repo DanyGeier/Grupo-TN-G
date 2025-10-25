@@ -108,6 +108,24 @@ message ListarSolicitudesExternasResponse {
   repeated SolicitudExterna solicitudes = 1;
 }
 
+// ========== KAFKA - Ofrecer donaciones (Punto 3) ==========
+message DetalleOferta {
+  string categoria = 1;
+  string descripcion = 2;
+  int32 cantidad = 3;
+}
+
+message OfertaDonacionRequest {
+  string id_oferta = 1;
+  int64 id_organizacion_donante = 2;
+  repeated DetalleOferta donaciones_ofrecidas = 3;
+}
+
+// ========== KAFKA - Baja Solicitud de Donacion (Punto 4) ==========
+message BajaSolicitudRequest {
+  string id_solicitud = 1;
+  int64 id_organizacion_solicitante = 2;
+}
 
 service InventarioService {
   rpc crearItem (CrearItemRequest) returns (InventarioItem);
@@ -123,4 +141,10 @@ service InventarioService {
   
   // Kafka - Transferencias
   rpc transferirDonacion (TransferirDonacionRequest) returns (RespuestaExito);
+
+  // Kafka - Ofrecer donaciones
+  rpc ofrecerDonacion (OfertaDonacionRequest) returns (RespuestaExito);
+
+  // Kafka - Baja Solicitud de Donacion
+  rpc bajaSolicitudDonacion (BajaSolicitudRequest) returns (RespuestaExito);
 }

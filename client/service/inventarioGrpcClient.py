@@ -82,3 +82,25 @@ class InventarioClient(object):
             idSolicitud=id_solicitud, donaciones=donaciones_proto
         )
         return self.stub.transferirDonacion(req)
+    
+    def ofrecer_donacion(self, donaciones: list):
+        """Ofrecer donaciones a la red de ONGs"""
+        detalles_proto = [
+            inventario_pb2.DetalleOferta(
+                categoria=item.get("categoria", ""),
+                descripcion=item.get("descripcion", ""),
+                cantidad=item.get("cantidad", 0)
+            )
+            for item in donaciones
+        ]
+
+        grpc_request = inventario_pb2.OfertaDonacionRequest(donaciones_ofrecidas=detalles_proto)
+
+        return self.stub.ofrecerDonacion(grpc_request)
+        
+    def baja_solicitud_donacion(self, id_solicitud: str):
+        """Dar de baja una solicitud de donación"""
+        grpc_request = inventario_pb2.BajaSolicitudRequest(id_solicitud=id_solicitud)
+
+        return self.stub.bajaSolicitudDonacion(grpc_request)
+    

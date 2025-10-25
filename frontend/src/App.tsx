@@ -12,6 +12,7 @@ import { EventoForm } from "./components/eventos/EventoForm";
 import { FormularioUsuario } from "./components/usuarios/FormularioUsuario";
 import { InventarioLista } from "./components/inventario/InventarioLista";
 import { InformeDonaciones } from "./components/informes/InformeDonaciones";
+import { InformePage } from "./components/informes/soap/InformePage";
 
 function App() {
   const { usuario } = useUser();
@@ -52,6 +53,7 @@ function App() {
           <Route path="/usuarios" element={<ListaUsuarios />} />
           <Route path="/registro" element={<FormularioUsuario />} />
           <Route path="/usuarios/:id/editar" element={<FormularioUsuario />} />
+          <Route path="/informes/presidentes-ongs" element={<InformePage />} />
         </Route>
 
         {/* Inventario: PRESIDENTE o VOCAL */}
