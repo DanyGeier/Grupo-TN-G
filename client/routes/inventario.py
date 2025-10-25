@@ -207,3 +207,50 @@ def transferir_donacion():
         if code == "FAILED_PRECONDITION":
             return jsonify({"error": e.details()}), 400
         return jsonify({"error": e.details() or "Error gRPC"}), 500
+    
+
+@inventario_bp.route("/ofrecer-donacion", methods=["POST"])
+def ofrecer_donacion():
+    """POST /inventario/ofrecer-donacion - Ofrecer donaciones a la red de ONGs"""
+    data = request.get_json(force=True) 
+    donaciones_list = data.get("donacionesOfrecidas", [])
+
+    if not donaciones_list:
+        return jsonify({"error": "Falta donacionesOfrecidas"}), 400
+
+    try: 
+        response = client.ofrecer_donacion(donaciones_list)
+
+        if response is None:
+            return jsonify({"error": "Error interno al contactar servicio de inventario (gRPC)"}), 503
+        
+        return jsonify({"mensaje": response.mensaje, "exito": response.exito}), 200
+
+    except grpc.RpcError as e:
+        return jsonify({"error": f"Error gRPC: {e.details()}"}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@inventario_bp.route("/solicitud/baja", methods=["POST"])
+def baja_solicitud_donacion():
+    """POST /inventario/solicitud/baja - Dar de baja una solicitud de donacion"""
+    data = request.get_json(force=True)
+    id_solicitud = data.get("idSolicitud", None)
+
+    if not id_solicitud:
+        return jsonify({"error": "Falta idSolicitud"}), 400
+    
+    try: 
+        response = client.baja_solicitud_donacion(id_solicitud)
+
+        if response is None:
+            return jsonify({"error": "Error interno al contactar servicio de inventario (gRPC)"}), 503
+        
+        return jsonify({"mensaje": response.mensaje, "exito": response.exito}), 200
+
+    except grpc.RpcError as e:
+        return jsonify({"error": f"Error gRPC: {e.details()}"}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
