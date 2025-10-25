@@ -2,7 +2,7 @@ import type { ItemDonacion } from "./itemDonacion";
 
 export interface SolicitudDonacion {
   idSolicitud: string;                  
-  idOrganizacion: number;  
+  idOrganizacionSolicitante: number;  
   donaciones:  ItemDonacion[];              
   //activa: boolean;                    
   //fechaRecepcion: Date;             

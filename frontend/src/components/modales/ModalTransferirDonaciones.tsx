@@ -42,7 +42,7 @@ export const ModalTransferirDonaciones: React.FC<Props> = ({
       cerrarModal();
     } catch (error) {
       console.error("Error al transferir:", error);
-      alert("Ocurrió un error al transferir la donación ❌");
+      alert("Ocurrió un error al transferir la donación ❌. Chequear que los elementos a transferir esten en el inventario y cuenten con el stock necesario.");
     } finally {
       setLoading(false);
     }

@@ -11,8 +11,8 @@ export const FormSolicitarDonaciones = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  //const categorias = ["ROPA", "ALIMENTOS", "JUGUETES", "UTILES_ESCOLARES"] as const;
- //1 type CategoriaString = typeof categorias[number];
+  const categorias = ["ROPA", "ALIMENTOS", "JUGUETES", "UTILES_ESCOLARES"] as const;
+ type CategoriaString = typeof categorias[number];
 
 const handleDonacionChange = (index: number, field: keyof ItemDonacion, value: string) => {
   setFormData(prev => {
@@ -93,7 +93,7 @@ const handleDonacionChange = (index: number, field: keyof ItemDonacion, value: s
             </h4>
             {formData.donaciones.map((donacion, index) => (
               <div key={index} className="border border-gray-300 dark:border-gray-700 rounded-xl p-4 mb-4 space-y-2">
-                {/* <label className="text-gray-700 dark:text-gray-200 mb-1 font-medium">Categoría</label>
+                <label className="text-gray-700 dark:text-gray-200 mb-1 font-medium">Categoría</label>
                 <select
                   value={donacion.categoria}
                   onChange={(e) => handleDonacionChange(index, "categoria", e.target.value as CategoriaString)}
@@ -102,16 +102,16 @@ const handleDonacionChange = (index: number, field: keyof ItemDonacion, value: s
                   {categorias.map((c) => (
                     <option key={c} value={c}>{c}</option>
                   ))}
-                </select> */}
-                     <label className="text-gray-700 dark:text-gray-200 mb-1 font-medium">Categoria</label>
-                <input
+                </select>
+                     {/* <label className="text-gray-700 dark:text-gray-200 mb-1 font-medium">Categoria</label> */}
+                {/* <input
                   type="text"
                   value={donacion.categoria}
                   onChange={(e) => handleDonacionChange(index, "categoria", e.target.value)}
                   placeholder="Ej: ROPA,ETC"
                   className="w-full border-2 border-gray-200 dark:border-gray-700 rounded-xl p-2 outline-none focus:border-blue-500 dark:bg-gray-900 dark:text-gray-100"
                   required
-                />
+                /> */}
 
                 <label className="text-gray-700 dark:text-gray-200 mb-1 font-medium">Descripción</label>
                 <input

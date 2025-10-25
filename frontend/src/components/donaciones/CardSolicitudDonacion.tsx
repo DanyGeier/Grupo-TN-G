@@ -24,12 +24,11 @@ export const CardSolicitudDonacion: React.FC<Props> = ({
 
   return (
 
-    // Estos ID quiza ni habria que mostralo, para que quede mejor despues se le puede agregar un nomnre ficticio a las
-    //Organizaciones Externas
+    
      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 space-y-4 hover:shadow-lg transition-all duration-200">
       {esExterna && (
         <p className="text-gray-700 dark:text-gray-200">
-          <strong>ID Organización:</strong> {solicitud.idOrganizacion}
+          <strong>ID Organización:</strong> {solicitud.idOrganizacionSolicitante}
         </p>
       )}
    
