@@ -9,48 +9,54 @@ from google.protobuf import descriptor_pool as _descriptor_pool
 from google.protobuf import runtime_version as _runtime_version
 from google.protobuf import symbol_database as _symbol_database
 from google.protobuf.internal import builder as _builder
-
 _runtime_version.ValidateProtobufRuntimeVersion(
-    _runtime_version.Domain.PUBLIC, 6, 31, 1, "", "evento.proto"
+    _runtime_version.Domain.PUBLIC,
+    6,
+    31,
+    1,
+    '',
+    'evento.proto'
 )
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
 
 
-from . import usuario_pb2 as usuario__pb2
+import usuario_pb2 as usuario__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(
-    b'\n\x0c\x65vento.proto\x12\ncom.grupog\x1a\rusuario.proto"\xef\x01\n\x06\x45vento\x12\n\n\x02id\x18\x01 \x01(\t\x12\x14\n\x0cnombreEvento\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scripcion\x18\x03 \x01(\t\x12\x17\n\x0f\x66\x65\x63haHoraEvento\x18\x04 \x01(\x03\x12\x18\n\x10participantesIds\x18\x05 \x03(\x03\x12;\n\x14\x64onacionesRepartidas\x18\x06 \x03(\x0b\x32\x1d.com.grupog.DonacionRepartida\x12\x15\n\rfechaCreacion\x18\x07 \x01(\x03\x12\x17\n\x0fusuarioCreacion\x18\x08 \x01(\x03\x12\x0e\n\x06\x61\x63tivo\x18\t \x01(\x08"\xa8\x01\n\x11\x44onacionRepartida\x12\x11\n\tcategoria\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scripcion\x18\x02 \x01(\t\x12\x19\n\x11\x63\x61ntidadRepartida\x18\x03 \x01(\x05\x12\x16\n\x0e\x66\x65\x63haRepartida\x18\x04 \x01(\x03\x12\x18\n\x10usuarioRepartida\x18\x05 \x01(\x03\x12\x1e\n\x16nombreUsuarioRepartida\x18\x06 \x01(\t"X\n\x12\x43rearEventoRequest\x12\x14\n\x0cnombreEvento\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scripcion\x18\x02 \x01(\t\x12\x17\n\x0f\x66\x65\x63haHoraEvento\x18\x03 \x01(\x03"&\n\x18\x42uscarEventoPorIdRequest\x12\n\n\x02id\x18\x01 \x01(\t"A\n\x1a\x41signarParticipanteRequest\x12\x10\n\x08\x65ventoId\x18\x01 \x01(\t\x12\x11\n\tusuarioId\x18\x02 \x01(\x03"@\n\x19QuitarParticipanteRequest\x12\x10\n\x08\x65ventoId\x18\x01 \x01(\t\x12\x11\n\tusuarioId\x18\x02 \x01(\x03"\x85\x01\n\x18RegistrarDonacionRequest\x12\x10\n\x08\x65ventoId\x18\x01 \x01(\t\x12\x30\n\tcategoria\x18\x02 \x01(\x0e\x32\x1d.com.grupog.CategoriaDonacion\x12\x13\n\x0b\x64\x65scripcion\x18\x03 \x01(\t\x12\x10\n\x08\x63\x61ntidad\x18\x04 \x01(\x05";\n\x14ListaEventosResponse\x12#\n\x07\x65ventos\x18\x01 \x03(\x0b\x32\x12.com.grupog.Evento"+\n\x14ListarEventosRequest\x12\x13\n\x0bsoloFuturos\x18\x01 \x01(\x08*P\n\x11\x43\x61tegoriaDonacion\x12\x08\n\x04ROPA\x10\x00\x12\r\n\tALIMENTOS\x10\x01\x12\x0c\n\x08JUGUETES\x10\x02\x12\x14\n\x10UTILES_ESCOLARES\x10\x03\x32\x99\x05\n\rEventoService\x12\x41\n\x0b\x63rearEvento\x12\x1e.com.grupog.CrearEventoRequest\x1a\x12.com.grupog.Evento\x12\x39\n\x0fmodificarEvento\x12\x12.com.grupog.Evento\x1a\x12.com.grupog.Evento\x12R\n\x0e\x65liminarEvento\x12$.com.grupog.BuscarEventoPorIdRequest\x1a\x1a.com.grupog.RespuestaExito\x12S\n\rlistarEventos\x12 .com.grupog.ListarEventosRequest\x1a .com.grupog.ListaEventosResponse\x12M\n\x11\x62uscarEventoPorId\x12$.com.grupog.BuscarEventoPorIdRequest\x1a\x12.com.grupog.Evento\x12Y\n\x13\x61signarParticipante\x12&.com.grupog.AsignarParticipanteRequest\x1a\x1a.com.grupog.RespuestaExito\x12W\n\x12quitarParticipante\x12%.com.grupog.QuitarParticipanteRequest\x1a\x1a.com.grupog.RespuestaExito\x12^\n\x1aregistrarDonacionRepartida\x12$.com.grupog.RegistrarDonacionRequest\x1a\x1a.com.grupog.RespuestaExitoB\x0e\n\ncom.grupogP\x01\x62\x06proto3'
-)
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0c\x65vento.proto\x12\ncom.grupog\x1a\rusuario.proto\"\xef\x01\n\x06\x45vento\x12\n\n\x02id\x18\x01 \x01(\t\x12\x14\n\x0cnombreEvento\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scripcion\x18\x03 \x01(\t\x12\x17\n\x0f\x66\x65\x63haHoraEvento\x18\x04 \x01(\x03\x12\x18\n\x10participantesIds\x18\x05 \x03(\x03\x12;\n\x14\x64onacionesRepartidas\x18\x06 \x03(\x0b\x32\x1d.com.grupog.DonacionRepartida\x12\x15\n\rfechaCreacion\x18\x07 \x01(\x03\x12\x17\n\x0fusuarioCreacion\x18\x08 \x01(\x03\x12\x0e\n\x06\x61\x63tivo\x18\t \x01(\x08\"\xa8\x01\n\x11\x44onacionRepartida\x12\x11\n\tcategoria\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scripcion\x18\x02 \x01(\t\x12\x19\n\x11\x63\x61ntidadRepartida\x18\x03 \x01(\x05\x12\x16\n\x0e\x66\x65\x63haRepartida\x18\x04 \x01(\x03\x12\x18\n\x10usuarioRepartida\x18\x05 \x01(\x03\x12\x1e\n\x16nombreUsuarioRepartida\x18\x06 \x01(\t\"X\n\x12\x43rearEventoRequest\x12\x14\n\x0cnombreEvento\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scripcion\x18\x02 \x01(\t\x12\x17\n\x0f\x66\x65\x63haHoraEvento\x18\x03 \x01(\x03\"&\n\x18\x42uscarEventoPorIdRequest\x12\n\n\x02id\x18\x01 \x01(\t\"A\n\x1a\x41signarParticipanteRequest\x12\x10\n\x08\x65ventoId\x18\x01 \x01(\t\x12\x11\n\tusuarioId\x18\x02 \x01(\x03\"@\n\x19QuitarParticipanteRequest\x12\x10\n\x08\x65ventoId\x18\x01 \x01(\t\x12\x11\n\tusuarioId\x18\x02 \x01(\x03\"\x85\x01\n\x18RegistrarDonacionRequest\x12\x10\n\x08\x65ventoId\x18\x01 \x01(\t\x12\x30\n\tcategoria\x18\x02 \x01(\x0e\x32\x1d.com.grupog.CategoriaDonacion\x12\x13\n\x0b\x64\x65scripcion\x18\x03 \x01(\t\x12\x10\n\x08\x63\x61ntidad\x18\x04 \x01(\x05\";\n\x14ListaEventosResponse\x12#\n\x07\x65ventos\x18\x01 \x03(\x0b\x32\x12.com.grupog.Evento\"+\n\x14ListarEventosRequest\x12\x13\n\x0bsoloFuturos\x18\x01 \x01(\x08\"B\n\x18VerificarAdhesionRequest\x12\x10\n\x08idEvento\x18\x01 \x01(\t\x12\x14\n\x0cidVoluntario\x18\x02 \x01(\x03\"-\n\x19VerificarAdhesionResponse\x12\x10\n\x08\x61\x64herido\x18\x01 \x01(\x08*P\n\x11\x43\x61tegoriaDonacion\x12\x08\n\x04ROPA\x10\x00\x12\r\n\tALIMENTOS\x10\x01\x12\x0c\n\x08JUGUETES\x10\x02\x12\x14\n\x10UTILES_ESCOLARES\x10\x03\x32\xfb\x05\n\rEventoService\x12\x41\n\x0b\x63rearEvento\x12\x1e.com.grupog.CrearEventoRequest\x1a\x12.com.grupog.Evento\x12\x39\n\x0fmodificarEvento\x12\x12.com.grupog.Evento\x1a\x12.com.grupog.Evento\x12R\n\x0e\x65liminarEvento\x12$.com.grupog.BuscarEventoPorIdRequest\x1a\x1a.com.grupog.RespuestaExito\x12S\n\rlistarEventos\x12 .com.grupog.ListarEventosRequest\x1a .com.grupog.ListaEventosResponse\x12M\n\x11\x62uscarEventoPorId\x12$.com.grupog.BuscarEventoPorIdRequest\x1a\x12.com.grupog.Evento\x12Y\n\x13\x61signarParticipante\x12&.com.grupog.AsignarParticipanteRequest\x1a\x1a.com.grupog.RespuestaExito\x12W\n\x12quitarParticipante\x12%.com.grupog.QuitarParticipanteRequest\x1a\x1a.com.grupog.RespuestaExito\x12^\n\x1aregistrarDonacionRepartida\x12$.com.grupog.RegistrarDonacionRequest\x1a\x1a.com.grupog.RespuestaExito\x12`\n\x11VerificarAdhesion\x12$.com.grupog.VerificarAdhesionRequest\x1a%.com.grupog.VerificarAdhesionResponseB\x0e\n\ncom.grupogP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
-_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, "evento_pb2", _globals)
+_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'evento_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
-    _globals["DESCRIPTOR"]._loaded_options = None
-    _globals["DESCRIPTOR"]._serialized_options = b"\n\ncom.grupogP\001"
-    _globals["_CATEGORIADONACION"]._serialized_start = 961
-    _globals["_CATEGORIADONACION"]._serialized_end = 1041
-    _globals["_EVENTO"]._serialized_start = 44
-    _globals["_EVENTO"]._serialized_end = 283
-    _globals["_DONACIONREPARTIDA"]._serialized_start = 286
-    _globals["_DONACIONREPARTIDA"]._serialized_end = 454
-    _globals["_CREAREVENTOREQUEST"]._serialized_start = 456
-    _globals["_CREAREVENTOREQUEST"]._serialized_end = 544
-    _globals["_BUSCAREVENTOPORIDREQUEST"]._serialized_start = 546
-    _globals["_BUSCAREVENTOPORIDREQUEST"]._serialized_end = 584
-    _globals["_ASIGNARPARTICIPANTEREQUEST"]._serialized_start = 586
-    _globals["_ASIGNARPARTICIPANTEREQUEST"]._serialized_end = 651
-    _globals["_QUITARPARTICIPANTEREQUEST"]._serialized_start = 653
-    _globals["_QUITARPARTICIPANTEREQUEST"]._serialized_end = 717
-    _globals["_REGISTRARDONACIONREQUEST"]._serialized_start = 720
-    _globals["_REGISTRARDONACIONREQUEST"]._serialized_end = 853
-    _globals["_LISTAEVENTOSRESPONSE"]._serialized_start = 855
-    _globals["_LISTAEVENTOSRESPONSE"]._serialized_end = 914
-    _globals["_LISTAREVENTOSREQUEST"]._serialized_start = 916
-    _globals["_LISTAREVENTOSREQUEST"]._serialized_end = 959
-    _globals["_EVENTOSERVICE"]._serialized_start = 1044
-    _globals["_EVENTOSERVICE"]._serialized_end = 1709
+  _globals['DESCRIPTOR']._loaded_options = None
+  _globals['DESCRIPTOR']._serialized_options = b'\n\ncom.grupogP\001'
+  _globals['_CATEGORIADONACION']._serialized_start=1076
+  _globals['_CATEGORIADONACION']._serialized_end=1156
+  _globals['_EVENTO']._serialized_start=44
+  _globals['_EVENTO']._serialized_end=283
+  _globals['_DONACIONREPARTIDA']._serialized_start=286
+  _globals['_DONACIONREPARTIDA']._serialized_end=454
+  _globals['_CREAREVENTOREQUEST']._serialized_start=456
+  _globals['_CREAREVENTOREQUEST']._serialized_end=544
+  _globals['_BUSCAREVENTOPORIDREQUEST']._serialized_start=546
+  _globals['_BUSCAREVENTOPORIDREQUEST']._serialized_end=584
+  _globals['_ASIGNARPARTICIPANTEREQUEST']._serialized_start=586
+  _globals['_ASIGNARPARTICIPANTEREQUEST']._serialized_end=651
+  _globals['_QUITARPARTICIPANTEREQUEST']._serialized_start=653
+  _globals['_QUITARPARTICIPANTEREQUEST']._serialized_end=717
+  _globals['_REGISTRARDONACIONREQUEST']._serialized_start=720
+  _globals['_REGISTRARDONACIONREQUEST']._serialized_end=853
+  _globals['_LISTAEVENTOSRESPONSE']._serialized_start=855
+  _globals['_LISTAEVENTOSRESPONSE']._serialized_end=914
+  _globals['_LISTAREVENTOSREQUEST']._serialized_start=916
+  _globals['_LISTAREVENTOSREQUEST']._serialized_end=959
+  _globals['_VERIFICARADHESIONREQUEST']._serialized_start=961
+  _globals['_VERIFICARADHESIONREQUEST']._serialized_end=1027
+  _globals['_VERIFICARADHESIONRESPONSE']._serialized_start=1029
+  _globals['_VERIFICARADHESIONRESPONSE']._serialized_end=1074
+  _globals['_EVENTOSERVICE']._serialized_start=1159
+  _globals['_EVENTOSERVICE']._serialized_end=1922
 # @@protoc_insertion_point(module_scope)

@@ -194,6 +194,24 @@ class EventoClient(object):
                 f"[gRPC ERROR] Error al modificar evento ID {evento_data.get('id')}: {e.code()} - {e.details()}"
             )
             raise
+    def verificar_adhesion(self, id_evento: str, id_voluntario: int, token: str):
+        logger.info(
+            f"[gRPC CLIENT] Verificando adhesión - Evento: {id_evento}, Voluntario: {id_voluntario}"
+        )
+        md = _auth_metadata(token)
+        request = evento_pb2.VerificarAdhesionRequest(
+            idEvento=id_evento,
+            idVoluntario=id_voluntario
+        )
+        try:
+            response, _ = self.stub.VerificarAdhesion.with_call(request, metadata=md)
+            logger.info(f"[gRPC RESPONSE] Adhesión verificada - Adherido: {response.adherido}")
+            return response
+        except grpc.RpcError as e:
+            logger.error(
+                f"[gRPC ERROR] Error al verificar adhesión Evento {id_evento}, Voluntario {id_voluntario}: {e.code()} - {e.details()}"
+            )
+            raise
 
 
 if __name__ == "__main__":

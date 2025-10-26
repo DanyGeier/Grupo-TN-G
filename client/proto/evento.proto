@@ -69,7 +69,14 @@ message ListaEventosResponse {
 message ListarEventosRequest {
     bool soloFuturos = 1;
 }
+message VerificarAdhesionRequest {
+    string idEvento = 1;
+    int64 idVoluntario = 2;
+}
 
+message VerificarAdhesionResponse {
+    bool adherido = 1;
+}
 
 service EventoService {
     rpc crearEvento(CrearEventoRequest) returns (Evento);
@@ -80,4 +87,6 @@ service EventoService {
     rpc asignarParticipante(AsignarParticipanteRequest) returns (RespuestaExito);
     rpc quitarParticipante(QuitarParticipanteRequest) returns (RespuestaExito);
     rpc registrarDonacionRepartida(RegistrarDonacionRequest) returns (RespuestaExito);
+    rpc VerificarAdhesion(VerificarAdhesionRequest) returns (VerificarAdhesionResponse);
+
 }

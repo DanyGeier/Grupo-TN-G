@@ -480,6 +480,27 @@ def listar_adhesiones():
         return jsonify({"error": str(e)}), 500
 
 
+@eventos_bp.route("/<string:evento_id>/adherido", methods=["GET"])
+def verificar_adhesion(evento_id):
+    """Verificar si un voluntario está adherido a un evento"""
+    try:
+        token = extract_token()
+        if not token:
+            return jsonify({"error": "Token de autorización requerido"}), 401
+
+        user_id = request.args.get("userId", type=int)
+        if not user_id:
+            return jsonify({"error": "Falta userId"}), 400
+
+        # Llamar al cliente gRPC (igual que el resto de los métodos)
+        response = evento_client.verificar_adhesion(evento_id, user_id, token)
+        return jsonify({"adherido": response.adherido})
+
+    except grpc.RpcError as e:
+        return jsonify({"error": e.details() or "Error gRPC"}), _map_grpc_status(e)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @eventos_bp.route("/adhesiones", methods=["POST"])
 def adherirse_a_evento():
     """Adherirse a un evento externo (publica mensaje en Kafka)"""

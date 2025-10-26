@@ -3,29 +3,26 @@
 import grpc
 import warnings
 
-from . import evento_pb2 as evento__pb2
-from . import usuario_pb2 as usuario__pb2
+import evento_pb2 as evento__pb2
+import usuario_pb2 as usuario__pb2
 
-GRPC_GENERATED_VERSION = "1.75.0"
+GRPC_GENERATED_VERSION = '1.75.0'
 GRPC_VERSION = grpc.__version__
 _version_not_supported = False
 
 try:
     from grpc._utilities import first_version_is_lower
-
-    _version_not_supported = first_version_is_lower(
-        GRPC_VERSION, GRPC_GENERATED_VERSION
-    )
+    _version_not_supported = first_version_is_lower(GRPC_VERSION, GRPC_GENERATED_VERSION)
 except ImportError:
     _version_not_supported = True
 
 if _version_not_supported:
     raise RuntimeError(
-        f"The grpc package installed is at version {GRPC_VERSION},"
-        + f" but the generated code in evento_pb2_grpc.py depends on"
-        + f" grpcio>={GRPC_GENERATED_VERSION}."
-        + f" Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}"
-        + f" or downgrade your generated code using grpcio-tools<={GRPC_VERSION}."
+        f'The grpc package installed is at version {GRPC_VERSION},'
+        + f' but the generated code in evento_pb2_grpc.py depends on'
+        + f' grpcio>={GRPC_GENERATED_VERSION}.'
+        + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
+        + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
     )
 
 
@@ -39,53 +36,50 @@ class EventoServiceStub(object):
             channel: A grpc.Channel.
         """
         self.crearEvento = channel.unary_unary(
-            "/com.grupog.EventoService/crearEvento",
-            request_serializer=evento__pb2.CrearEventoRequest.SerializeToString,
-            response_deserializer=evento__pb2.Evento.FromString,
-            _registered_method=True,
-        )
+                '/com.grupog.EventoService/crearEvento',
+                request_serializer=evento__pb2.CrearEventoRequest.SerializeToString,
+                response_deserializer=evento__pb2.Evento.FromString,
+                _registered_method=True)
         self.modificarEvento = channel.unary_unary(
-            "/com.grupog.EventoService/modificarEvento",
-            request_serializer=evento__pb2.Evento.SerializeToString,
-            response_deserializer=evento__pb2.Evento.FromString,
-            _registered_method=True,
-        )
+                '/com.grupog.EventoService/modificarEvento',
+                request_serializer=evento__pb2.Evento.SerializeToString,
+                response_deserializer=evento__pb2.Evento.FromString,
+                _registered_method=True)
         self.eliminarEvento = channel.unary_unary(
-            "/com.grupog.EventoService/eliminarEvento",
-            request_serializer=evento__pb2.BuscarEventoPorIdRequest.SerializeToString,
-            response_deserializer=usuario__pb2.RespuestaExito.FromString,
-            _registered_method=True,
-        )
+                '/com.grupog.EventoService/eliminarEvento',
+                request_serializer=evento__pb2.BuscarEventoPorIdRequest.SerializeToString,
+                response_deserializer=usuario__pb2.RespuestaExito.FromString,
+                _registered_method=True)
         self.listarEventos = channel.unary_unary(
-            "/com.grupog.EventoService/listarEventos",
-            request_serializer=evento__pb2.ListarEventosRequest.SerializeToString,
-            response_deserializer=evento__pb2.ListaEventosResponse.FromString,
-            _registered_method=True,
-        )
+                '/com.grupog.EventoService/listarEventos',
+                request_serializer=evento__pb2.ListarEventosRequest.SerializeToString,
+                response_deserializer=evento__pb2.ListaEventosResponse.FromString,
+                _registered_method=True)
         self.buscarEventoPorId = channel.unary_unary(
-            "/com.grupog.EventoService/buscarEventoPorId",
-            request_serializer=evento__pb2.BuscarEventoPorIdRequest.SerializeToString,
-            response_deserializer=evento__pb2.Evento.FromString,
-            _registered_method=True,
-        )
+                '/com.grupog.EventoService/buscarEventoPorId',
+                request_serializer=evento__pb2.BuscarEventoPorIdRequest.SerializeToString,
+                response_deserializer=evento__pb2.Evento.FromString,
+                _registered_method=True)
         self.asignarParticipante = channel.unary_unary(
-            "/com.grupog.EventoService/asignarParticipante",
-            request_serializer=evento__pb2.AsignarParticipanteRequest.SerializeToString,
-            response_deserializer=usuario__pb2.RespuestaExito.FromString,
-            _registered_method=True,
-        )
+                '/com.grupog.EventoService/asignarParticipante',
+                request_serializer=evento__pb2.AsignarParticipanteRequest.SerializeToString,
+                response_deserializer=usuario__pb2.RespuestaExito.FromString,
+                _registered_method=True)
         self.quitarParticipante = channel.unary_unary(
-            "/com.grupog.EventoService/quitarParticipante",
-            request_serializer=evento__pb2.QuitarParticipanteRequest.SerializeToString,
-            response_deserializer=usuario__pb2.RespuestaExito.FromString,
-            _registered_method=True,
-        )
+                '/com.grupog.EventoService/quitarParticipante',
+                request_serializer=evento__pb2.QuitarParticipanteRequest.SerializeToString,
+                response_deserializer=usuario__pb2.RespuestaExito.FromString,
+                _registered_method=True)
         self.registrarDonacionRepartida = channel.unary_unary(
-            "/com.grupog.EventoService/registrarDonacionRepartida",
-            request_serializer=evento__pb2.RegistrarDonacionRequest.SerializeToString,
-            response_deserializer=usuario__pb2.RespuestaExito.FromString,
-            _registered_method=True,
-        )
+                '/com.grupog.EventoService/registrarDonacionRepartida',
+                request_serializer=evento__pb2.RegistrarDonacionRequest.SerializeToString,
+                response_deserializer=usuario__pb2.RespuestaExito.FromString,
+                _registered_method=True)
+        self.VerificarAdhesion = channel.unary_unary(
+                '/com.grupog.EventoService/VerificarAdhesion',
+                request_serializer=evento__pb2.VerificarAdhesionRequest.SerializeToString,
+                response_deserializer=evento__pb2.VerificarAdhesionResponse.FromString,
+                _registered_method=True)
 
 
 class EventoServiceServicer(object):
@@ -94,125 +88,131 @@ class EventoServiceServicer(object):
     def crearEvento(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def modificarEvento(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def eliminarEvento(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def listarEventos(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def buscarEventoPorId(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def asignarParticipante(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def quitarParticipante(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def registrarDonacionRepartida(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def VerificarAdhesion(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
 
 def add_EventoServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-        "crearEvento": grpc.unary_unary_rpc_method_handler(
-            servicer.crearEvento,
-            request_deserializer=evento__pb2.CrearEventoRequest.FromString,
-            response_serializer=evento__pb2.Evento.SerializeToString,
-        ),
-        "modificarEvento": grpc.unary_unary_rpc_method_handler(
-            servicer.modificarEvento,
-            request_deserializer=evento__pb2.Evento.FromString,
-            response_serializer=evento__pb2.Evento.SerializeToString,
-        ),
-        "eliminarEvento": grpc.unary_unary_rpc_method_handler(
-            servicer.eliminarEvento,
-            request_deserializer=evento__pb2.BuscarEventoPorIdRequest.FromString,
-            response_serializer=usuario__pb2.RespuestaExito.SerializeToString,
-        ),
-        "listarEventos": grpc.unary_unary_rpc_method_handler(
-            servicer.listarEventos,
-            request_deserializer=evento__pb2.ListarEventosRequest.FromString,
-            response_serializer=evento__pb2.ListaEventosResponse.SerializeToString,
-        ),
-        "buscarEventoPorId": grpc.unary_unary_rpc_method_handler(
-            servicer.buscarEventoPorId,
-            request_deserializer=evento__pb2.BuscarEventoPorIdRequest.FromString,
-            response_serializer=evento__pb2.Evento.SerializeToString,
-        ),
-        "asignarParticipante": grpc.unary_unary_rpc_method_handler(
-            servicer.asignarParticipante,
-            request_deserializer=evento__pb2.AsignarParticipanteRequest.FromString,
-            response_serializer=usuario__pb2.RespuestaExito.SerializeToString,
-        ),
-        "quitarParticipante": grpc.unary_unary_rpc_method_handler(
-            servicer.quitarParticipante,
-            request_deserializer=evento__pb2.QuitarParticipanteRequest.FromString,
-            response_serializer=usuario__pb2.RespuestaExito.SerializeToString,
-        ),
-        "registrarDonacionRepartida": grpc.unary_unary_rpc_method_handler(
-            servicer.registrarDonacionRepartida,
-            request_deserializer=evento__pb2.RegistrarDonacionRequest.FromString,
-            response_serializer=usuario__pb2.RespuestaExito.SerializeToString,
-        ),
+            'crearEvento': grpc.unary_unary_rpc_method_handler(
+                    servicer.crearEvento,
+                    request_deserializer=evento__pb2.CrearEventoRequest.FromString,
+                    response_serializer=evento__pb2.Evento.SerializeToString,
+            ),
+            'modificarEvento': grpc.unary_unary_rpc_method_handler(
+                    servicer.modificarEvento,
+                    request_deserializer=evento__pb2.Evento.FromString,
+                    response_serializer=evento__pb2.Evento.SerializeToString,
+            ),
+            'eliminarEvento': grpc.unary_unary_rpc_method_handler(
+                    servicer.eliminarEvento,
+                    request_deserializer=evento__pb2.BuscarEventoPorIdRequest.FromString,
+                    response_serializer=usuario__pb2.RespuestaExito.SerializeToString,
+            ),
+            'listarEventos': grpc.unary_unary_rpc_method_handler(
+                    servicer.listarEventos,
+                    request_deserializer=evento__pb2.ListarEventosRequest.FromString,
+                    response_serializer=evento__pb2.ListaEventosResponse.SerializeToString,
+            ),
+            'buscarEventoPorId': grpc.unary_unary_rpc_method_handler(
+                    servicer.buscarEventoPorId,
+                    request_deserializer=evento__pb2.BuscarEventoPorIdRequest.FromString,
+                    response_serializer=evento__pb2.Evento.SerializeToString,
+            ),
+            'asignarParticipante': grpc.unary_unary_rpc_method_handler(
+                    servicer.asignarParticipante,
+                    request_deserializer=evento__pb2.AsignarParticipanteRequest.FromString,
+                    response_serializer=usuario__pb2.RespuestaExito.SerializeToString,
+            ),
+            'quitarParticipante': grpc.unary_unary_rpc_method_handler(
+                    servicer.quitarParticipante,
+                    request_deserializer=evento__pb2.QuitarParticipanteRequest.FromString,
+                    response_serializer=usuario__pb2.RespuestaExito.SerializeToString,
+            ),
+            'registrarDonacionRepartida': grpc.unary_unary_rpc_method_handler(
+                    servicer.registrarDonacionRepartida,
+                    request_deserializer=evento__pb2.RegistrarDonacionRequest.FromString,
+                    response_serializer=usuario__pb2.RespuestaExito.SerializeToString,
+            ),
+            'VerificarAdhesion': grpc.unary_unary_rpc_method_handler(
+                    servicer.VerificarAdhesion,
+                    request_deserializer=evento__pb2.VerificarAdhesionRequest.FromString,
+                    response_serializer=evento__pb2.VerificarAdhesionResponse.SerializeToString,
+            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-        "com.grupog.EventoService", rpc_method_handlers
-    )
+            'com.grupog.EventoService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers(
-        "com.grupog.EventoService", rpc_method_handlers
-    )
+    server.add_registered_method_handlers('com.grupog.EventoService', rpc_method_handlers)
 
 
-# This class is part of an EXPERIMENTAL API.
+ # This class is part of an EXPERIMENTAL API.
 class EventoService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def crearEvento(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
+    def crearEvento(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/com.grupog.EventoService/crearEvento",
+            '/com.grupog.EventoService/crearEvento',
             evento__pb2.CrearEventoRequest.SerializeToString,
             evento__pb2.Evento.FromString,
             options,
@@ -223,26 +223,23 @@ class EventoService(object):
             wait_for_ready,
             timeout,
             metadata,
-            _registered_method=True,
-        )
+            _registered_method=True)
 
     @staticmethod
-    def modificarEvento(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
+    def modificarEvento(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/com.grupog.EventoService/modificarEvento",
+            '/com.grupog.EventoService/modificarEvento',
             evento__pb2.Evento.SerializeToString,
             evento__pb2.Evento.FromString,
             options,
@@ -253,26 +250,23 @@ class EventoService(object):
             wait_for_ready,
             timeout,
             metadata,
-            _registered_method=True,
-        )
+            _registered_method=True)
 
     @staticmethod
-    def eliminarEvento(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
+    def eliminarEvento(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/com.grupog.EventoService/eliminarEvento",
+            '/com.grupog.EventoService/eliminarEvento',
             evento__pb2.BuscarEventoPorIdRequest.SerializeToString,
             usuario__pb2.RespuestaExito.FromString,
             options,
@@ -283,26 +277,23 @@ class EventoService(object):
             wait_for_ready,
             timeout,
             metadata,
-            _registered_method=True,
-        )
+            _registered_method=True)
 
     @staticmethod
-    def listarEventos(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
+    def listarEventos(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/com.grupog.EventoService/listarEventos",
+            '/com.grupog.EventoService/listarEventos',
             evento__pb2.ListarEventosRequest.SerializeToString,
             evento__pb2.ListaEventosResponse.FromString,
             options,
@@ -313,26 +304,23 @@ class EventoService(object):
             wait_for_ready,
             timeout,
             metadata,
-            _registered_method=True,
-        )
+            _registered_method=True)
 
     @staticmethod
-    def buscarEventoPorId(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
+    def buscarEventoPorId(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/com.grupog.EventoService/buscarEventoPorId",
+            '/com.grupog.EventoService/buscarEventoPorId',
             evento__pb2.BuscarEventoPorIdRequest.SerializeToString,
             evento__pb2.Evento.FromString,
             options,
@@ -343,26 +331,23 @@ class EventoService(object):
             wait_for_ready,
             timeout,
             metadata,
-            _registered_method=True,
-        )
+            _registered_method=True)
 
     @staticmethod
-    def asignarParticipante(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
+    def asignarParticipante(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/com.grupog.EventoService/asignarParticipante",
+            '/com.grupog.EventoService/asignarParticipante',
             evento__pb2.AsignarParticipanteRequest.SerializeToString,
             usuario__pb2.RespuestaExito.FromString,
             options,
@@ -373,26 +358,23 @@ class EventoService(object):
             wait_for_ready,
             timeout,
             metadata,
-            _registered_method=True,
-        )
+            _registered_method=True)
 
     @staticmethod
-    def quitarParticipante(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
+    def quitarParticipante(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/com.grupog.EventoService/quitarParticipante",
+            '/com.grupog.EventoService/quitarParticipante',
             evento__pb2.QuitarParticipanteRequest.SerializeToString,
             usuario__pb2.RespuestaExito.FromString,
             options,
@@ -403,26 +385,23 @@ class EventoService(object):
             wait_for_ready,
             timeout,
             metadata,
-            _registered_method=True,
-        )
+            _registered_method=True)
 
     @staticmethod
-    def registrarDonacionRepartida(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
+    def registrarDonacionRepartida(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/com.grupog.EventoService/registrarDonacionRepartida",
+            '/com.grupog.EventoService/registrarDonacionRepartida',
             evento__pb2.RegistrarDonacionRequest.SerializeToString,
             usuario__pb2.RespuestaExito.FromString,
             options,
@@ -433,5 +412,31 @@ class EventoService(object):
             wait_for_ready,
             timeout,
             metadata,
-            _registered_method=True,
-        )
+            _registered_method=True)
+
+    @staticmethod
+    def VerificarAdhesion(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/com.grupog.EventoService/VerificarAdhesion',
+            evento__pb2.VerificarAdhesionRequest.SerializeToString,
+            evento__pb2.VerificarAdhesionResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)

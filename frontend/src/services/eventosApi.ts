@@ -280,6 +280,22 @@ async adherirseAEvento(
 }
 
 
+async verificarAdhesion(eventoId: string, usuarioId: number, organizacionId: string): Promise<{ adherido: boolean }> {
+    const url = `${API_BASE_URL}/eventos/${eventoId}/adherido?userId=${usuarioId}&organizacionId=${organizacionId}`;
+    const response = await fetch(url, {
+        method: "GET",
+        headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        throw new Error(data?.error || `Error ${response.status}: ${response.statusText}`);
+    }
+
+    return await response.json();
+}
+
+
 
 
 
