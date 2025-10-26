@@ -4,9 +4,9 @@ import { ofrecerDonacion } from "../../services/donacionApi";
 import type { OfertaDonacionDto, DetalleOferta } from "../../models/donaciones/ofertaDonacion";
 
 export const FormOfrecerDonaciones = () => {
-  // Estado: un solo objeto OfertaDonacionDto
-  const [oferta, setOferta] = useState<OfertaDonacionDto>({ donacionesOfrecidas: [] });
-  const [loading, setLoading] = useState(false);
+const [oferta, setOferta] = useState<OfertaDonacionDto>({
+  donacionesOfrecidas: [{ categoria: "ROPA", descripcion: "", cantidad: 1 }]
+});  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const categorias = ["ROPA", "ALIMENTOS", "JUGUETES", "UTILES_ESCOLARES"] as const;
@@ -22,19 +22,50 @@ export const FormOfrecerDonaciones = () => {
     });
   };
 
-const actualizarDonacion = (index: number, field: keyof DetalleOferta, value: string | number) => {
-  setOferta({
-    donacionesOfrecidas: oferta.donacionesOfrecidas.map((d, i) =>
-      i === index
-        ? { ...d, [field]: field === "cantidad" ? Number(value) : value }
-        : d
-    ),
-  });
-};
+  // Actualizar un campo de la donación
+  const actualizarDonacion = (index: number, field: keyof DetalleOferta, value: string | number) => {
+    setOferta({
+      donacionesOfrecidas: oferta.donacionesOfrecidas.map((d, i) =>
+        i === index
+          ? { ...d, [field]: field === "cantidad" ? Number(value) : value }
+          : d
+      ),
+    });
+  };
+
   // Eliminar donación
   const eliminarDonacion = (index: number) => {
     const copia = oferta.donacionesOfrecidas.filter((_, i) => i !== index);
     setOferta({ donacionesOfrecidas: copia });
+    
+  };
+
+  // Validar formulario antes de enviar
+  const validarFormulario = () => {
+    if (oferta.donacionesOfrecidas.length === 0) {
+      throw new Error("Debe agregar al menos una donación");
+    }
+
+    // Validar cada donación
+    oferta.donacionesOfrecidas.forEach((d, i) => {
+      if (!d.descripcion.trim()) {
+        throw new Error(`La descripción de la donación ${i + 1} no puede estar vacía`);
+      }
+      if (d.cantidad < 1) {
+        throw new Error(`La cantidad de la donación ${i + 1} debe ser mayor que 0`);
+      }
+      if (!categorias.includes(d.categoria as CategoriaString)) {
+        throw new Error(`Categoría inválida en la donación ${i + 1}`);
+      }
+    });
+
+    // Validar duplicados (misma descripción + categoría)
+    const duplicados = oferta.donacionesOfrecidas.some((item, idx, arr) =>
+      arr.findIndex(i => i.descripcion === item.descripcion && i.categoria === item.categoria) !== idx
+    );
+    if (duplicados) {
+      throw new Error("No se pueden repetir items en la oferta");
+    }
   };
 
   // Enviar oferta
@@ -44,11 +75,11 @@ const actualizarDonacion = (index: number, field: keyof DetalleOferta, value: st
     setError(null);
 
     try {
+      validarFormulario();
       const respuesta = await ofrecerDonacion(oferta);
       console.log("Oferta enviada con éxito:", respuesta);
       alert("Oferta enviada correctamente ✅");
-      // Limpiar formulario
-      setOferta({ donacionesOfrecidas: [] });
+      setOferta({ donacionesOfrecidas: [] }); // limpiar formulario
     } catch (err: any) {
       setError(err.message || "Error al enviar la oferta");
     } finally {
@@ -122,20 +153,27 @@ const actualizarDonacion = (index: number, field: keyof DetalleOferta, value: st
                 <button
                   type="button"
                   onClick={() => eliminarDonacion(i)}
-                  className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded mt-2"
+               className={`px-3 py-1 rounded mt-2 text-white 
+    ${oferta.donacionesOfrecidas.length === 1 
+      ? "bg-gray-400 cursor-not-allowed" // apariencia cuando está deshabilitado
+      : "bg-red-500 hover:bg-red-600"}`
+  }
+                   disabled={oferta.donacionesOfrecidas.length === 1} // no permite eliminar si solo queda 1
                 >
                   Eliminar
                 </button>
               </div>
             ))}
 
-            <button
-              type="button"
-              onClick={agregarDonacion}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-            >
-              Agregar Donación
-            </button>
+           {oferta.donacionesOfrecidas.length > 0 && (
+  <button
+    type="button"
+    onClick={agregarDonacion}
+    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+  >
+    Agregar Donación
+  </button>
+)}
           </div>
 
           <button

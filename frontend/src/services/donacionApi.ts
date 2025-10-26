@@ -60,7 +60,7 @@ export const listarSolicitudesExternas = async (soloActivas = true): Promise<Sol
 
 export const ofrecerDonacion = async (oferta: OfertaDonacionDto) => {
   try {
-    const response = await fetch(`${API_URL}/oferta-donacion`, {
+    const response = await fetch(`${API_URL}/ofrecer-donacion`, {
       method: "POST",
       headers: authHeaders(),
       body: JSON.stringify(oferta),
@@ -102,6 +102,30 @@ export const transferirDonacion = async (oferta: TransferenciaDonacionPost) => {
   }
 };
 
-///PENDIENTE: 
-//- darBajaSolicitud
+export const bajaSolicitudDonacion = async (idSolicitud: string) => {
+  try {
+    const response = await fetch(`${API_URL}/solicitud/baja`, {
+      method: "POST",
+      headers: {
+        ...authHeaders(),         
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ idSolicitud }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null);
+      throw new Error(errorData?.error || `Error ${response.status}: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log("Solicitud dada de baja:", data);
+    return data;
+  } catch (error) {
+    console.error("Error al dar de baja la solicitud:", error);
+    throw error;
+  }
+};
+
+
 
