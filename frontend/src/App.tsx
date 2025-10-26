@@ -15,8 +15,8 @@ import { FormSolicitarDonaciones } from "./components/donaciones/FormSolicitarDo
 import { FormOfrecerDonaciones } from "./components/donaciones/FormOfrecerDonaciones";
 import { ListaSolicitudesExternas } from "./components/donaciones/ListaSolicitudesExternas";
 import { ListaEventosExternos } from "./components/eventos/eventosExternos/ListaEventosExternos";
-// import { ListaEventosExternos } from "./components/eventos/eventosExternos/ListaEventosExternos";
 import { InformeDonaciones } from "./components/informes/InformeDonaciones";
+import InformeEventos from "./components/informes/InformeEventos";
 import { InformePage } from "./components/informes/soap/InformePage";
 
 function App() {
@@ -107,6 +107,18 @@ function App() {
           }
         >
           <Route path="/informes/donaciones" element={<InformeDonaciones />} />
+        </Route>
+
+        {/* Informe Eventos: TODOS los usuarios autenticados */}
+        <Route
+          element={
+            <ProtectedRoute
+              isAllowed={!!usuario}
+              redirectTo="/acceso-denegado"
+            />
+          }
+        >
+          <Route path="/informes/eventos" element={<InformeEventos />} />
         </Route>
 
         {/* Eventos: PRESIDENTE, COORDINADOR o VOLUNTARIO */}

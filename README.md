@@ -170,15 +170,15 @@ Este proyecto corresponde al Trabajo Práctico de la materia "Desarrollo de Soft
 
 ### Características Implementadas
 
-✅ Sistema distribuido con múltiples servicios  
-✅ Comunicación gRPC entre servicios  
-✅ Diferentes tecnologías (Java, Python, TypeScript)  
-✅ Gestión de usuarios con roles y permisos  
-✅ Sistema de eventos solidarios  
-✅ Inventario de donaciones  
-✅ Autenticación JWT  
-✅ Notificaciones por email  
-✅ Interfaz web moderna con React  
+Sistema distribuido con múltiples servicios  
+Comunicación gRPC entre servicios  
+Diferentes tecnologías (Java, Python, TypeScript)  
+Gestión de usuarios con roles y permisos  
+Sistema de eventos solidarios  
+Inventario de donaciones  
+Autenticación JWT  
+Notificaciones por email  
+ Interfaz web moderna con React  
 
 ---
 
