@@ -9,6 +9,8 @@ type Query {
     ): InformeDonacionesResponse!
     
     listarFiltrosDonacion(usuarioId: ID!): [FiltroDonacion!]!
+
+    informeEventosPropios(filtro: FiltroEventosInput!): [EventoAgrupadoPorMes!]!
 }
 
 type Mutation {
@@ -45,5 +47,24 @@ input FiltroDonacionInput {
     fechaDesde: DateTime
     fechaHasta: DateTime
     eliminado: Boolean
+}
+
+type EventoInforme {
+    dia: Int!
+    nombreEvento: String!
+    descripcion: String
+    donaciones: Boolean!
+}
+
+type EventoAgrupadoPorMes {
+    mes: String!
+    eventos: [EventoInforme!]!
+}
+
+input FiltroEventosInput {
+    fechaDesde: DateTime
+    fechaHasta: DateTime
+    usuarioId: ID!
+    InformeDonaciones: String
 }
 
