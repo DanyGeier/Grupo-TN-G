@@ -3,6 +3,7 @@ package com.grupog.grpc.service;
 import com.grupog.*;
 import com.grupog.documents.EventoDocument;
 import com.grupog.repositories.EventoRepository;
+import com.grupog.service.AdhesionEventoService;
 import com.grupog.service.JwtService;
 import com.grupog.service.UsuarioGrpcClient;
 import com.grupog.service.InventarioGrpcClient;
@@ -43,6 +44,10 @@ public class EventoGrpcService extends EventoServiceGrpc.EventoServiceImplBase {
 
     @Autowired
     private EventoMapper eventoMapper;
+
+
+    @Autowired
+    private AdhesionEventoService adhesionEventoService;
 
     @Autowired
     private KafkaTemplate<String, EventoSolidarioEvent> eventoSolidarioKafkaTemplate;
@@ -500,6 +505,22 @@ public class EventoGrpcService extends EventoServiceGrpc.EventoServiceImplBase {
                     .withDescription("Error al eliminar evento: " + e.getMessage())
                     .asRuntimeException());
         }
+    }
+
+    @Override
+    public void verificarAdhesion(VerificarAdhesionRequest request,
+                                  StreamObserver<VerificarAdhesionResponse> responseObserver) {
+        boolean adherido = adhesionEventoService.estaAdherido(
+                request.getIdEvento(),
+                request.getIdVoluntario()
+        );
+
+        VerificarAdhesionResponse response = VerificarAdhesionResponse.newBuilder()
+                .setAdherido(adherido)
+                .build();
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
     }
 
     // Métodos auxiliares

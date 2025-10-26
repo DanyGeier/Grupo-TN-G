@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { EventoExternoResponse } from "../../../models/eventoExterno";
 import { useUser } from "../../../context/UserContext";
 import { eventosApiService } from "../../../services/eventosApi";
@@ -6,7 +6,6 @@ import type { Voluntario } from "../../../models/adhesionEvento";
 
 interface Props {
   evento: EventoExternoResponse;
-
   eventosAdheridos?: string[];
 }
 
@@ -18,6 +17,27 @@ export const EventoExternoCard: React.FC<Props> = ({ evento, eventosAdheridos = 
     eventosAdheridos.includes(evento.idEvento)
   );
 
+  // ✅ Verificación inicial: consultar al gateway si ya está adherido
+  useEffect(() => {
+    const checkAdhesion = async () => {
+      if (!usuario) return; // si no hay usuario logueado, no verificar
+
+      try {
+        const data = await eventosApiService.verificarAdhesion(
+          evento.idEvento,
+          usuario.id,
+          "ORG-001"
+        );
+        setAdherido(data.adherido);
+      } catch (error) {
+        console.error("Error verificando adhesión:", error);
+      }
+    };
+
+    checkAdhesion();
+  }, [usuario, evento.idEvento]);
+
+  // ✅ Maneja la adhesión al evento
   const handleAdherirse = async () => {
     if (!usuario) {
       setMensaje("Debes iniciar sesión para adherirte al evento.");
@@ -30,7 +50,7 @@ export const EventoExternoCard: React.FC<Props> = ({ evento, eventosAdheridos = 
     }
 
     const voluntario: Voluntario = {
-      idOrganizacionVoluntario: 123, //Meter en una variable de entorno o algo por el estilo
+      idOrganizacionVoluntario: 123, // Ajustar según tu lógica
       idVoluntario: usuario.id,
       nombre: usuario.nombre,
       apellido: usuario.apellido,
@@ -40,14 +60,13 @@ export const EventoExternoCard: React.FC<Props> = ({ evento, eventosAdheridos = 
 
     try {
       setLoading(true);
+      console.log("📤 Enviando adhesión:", { idEvento: evento.idEvento, voluntario });
 
-      console.log("📤 Datos que se enviarán al backend:", { idEvento: evento.idEvento, voluntario });
+      await eventosApiService.enviarAdhesionEvento(evento.idEvento, voluntario);
 
-      const response = await eventosApiService.enviarAdhesionEvento(evento.idEvento, voluntario);
-      console.log("📥 Respuesta del backend:", response);
-
+      console.log("📥 Adhesión registrada correctamente");
       setMensaje(`✅ Te has adherido al evento: ${evento.nombreEvento}`);
-      setAdherido(true); 
+      setAdherido(true);
     } catch (error) {
       console.error("Error al adherirse al evento:", error);
       setMensaje("Ocurrió un error al adherirte al evento.");
@@ -77,7 +96,11 @@ export const EventoExternoCard: React.FC<Props> = ({ evento, eventosAdheridos = 
       </button>
 
       {mensaje && (
-        <p className={`mt-2 text-sm ${mensaje.startsWith("✅") ? "text-green-600" : "text-red-600"}`}>
+        <p
+          className={`mt-2 text-sm ${
+            mensaje.startsWith("✅") ? "text-green-600" : "text-red-600"
+          }`}
+        >
           {mensaje}
         </p>
       )}
