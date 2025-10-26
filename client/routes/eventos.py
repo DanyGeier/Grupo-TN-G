@@ -443,3 +443,87 @@ def inventario_activo():
         return jsonify({"error": e.details() or "Error gRPC"}), 502
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+
+@eventos_bp.route("/adhesiones", methods=["GET"])
+def listar_adhesiones():
+    """Listar adhesiones de voluntarios externos a eventos propios"""
+    try:
+        token = extract_token()
+        id_evento = request.args.get("idEvento", None)
+
+        url = f"{EVENTOS_BASE_URL}/adhesiones"
+        params = {}
+        if id_evento:
+            params["idEvento"] = id_evento
+
+        headers = {"Content-Type": "application/json"}
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
+
+        resp = requests.get(url, params=params, headers=headers, timeout=5)
+
+        if resp.status_code >= 400:
+            try:
+                return jsonify(resp.json()), resp.status_code
+            except Exception:
+                return jsonify({"error": f"Error {resp.status_code} del servicio de eventos"}), resp.status_code
+
+        data = resp.json() or {}
+        adhesiones = data.get("adhesiones", [])
+        return jsonify({"adhesiones": adhesiones})
+
+    except requests.RequestException as e:
+        return jsonify({"error": f"Falló la comunicación con eventos-service: {str(e)}"}), 502
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@eventos_bp.route("/adhesiones", methods=["POST"])
+def adherirse_a_evento():
+    """Adherirse a un evento externo (publica mensaje en Kafka)"""
+    try:
+        token = extract_token()
+        if not token:
+            return jsonify({"error": "Token de autorización requerido"}), 401
+
+        data = request.get_json()
+
+        # Validaciones básicas
+        if not data.get("idEvento"):
+            return jsonify({"error": "idEvento es requerido"}), 400
+        if not data.get("idOrganizacionVoluntario") or not data.get("idVoluntario"):
+            return jsonify({"error": "Datos del voluntario incompletos"}), 400
+
+        url = f"{EVENTOS_BASE_URL}/adhesiones"
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {token}"
+        }
+
+        payload = {
+            "idEvento": str(data["idEvento"]),
+            "idOrganizacionVoluntario": int(data["idOrganizacionVoluntario"]),
+            "idVoluntario": int(data["idVoluntario"]),
+            "nombre": str(data.get("nombre", "")),
+            "apellido": str(data.get("apellido", "")),
+            "telefono": str(data.get("telefono", "")),
+            "email": str(data.get("email", ""))
+        }
+
+        resp = requests.post(url, json=payload, headers=headers, timeout=5)
+
+        if resp.status_code >= 400:
+            try:
+                return jsonify(resp.json()), resp.status_code
+            except Exception:
+                return jsonify({"error": f"Error {resp.status_code} del servicio de eventos"}), resp.status_code
+
+        return jsonify(resp.json()), resp.status_code
+
+    except requests.RequestException as e:
+        return jsonify({"error": f"Falló la comunicación con eventos-service: {str(e)}"}), 502
+    except Exception as e:
+        return jsonify({"error":str(e)}),500
+1

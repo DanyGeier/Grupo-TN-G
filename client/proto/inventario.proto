@@ -147,4 +147,5 @@ service InventarioService {
 
   // Kafka - Baja Solicitud de Donacion
   rpc bajaSolicitudDonacion (BajaSolicitudRequest) returns (RespuestaExito);
+
 }
