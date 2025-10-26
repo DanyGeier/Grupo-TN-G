@@ -10,10 +10,10 @@ export const HomePage = () => {
   //  Significa que card puede ver cada rol. Ej: El presidente ´puede ver todas ya que tiene todos los permisos,
   //   El vocal solo va a poder ver la card de inventario, ya que su rol solo le permite eso
   const cardsPorRol: Record<number, string[]> = {
-    0: ["Usuarios", "Eventos", "Inventario", "Informes", "Configuración"], // PRESIDENTE
-    1: ["Inventario", "Informes"], // VOCAL
-    2: ["Eventos"], // COORDINADOR
-    3: ["Eventos"], // VOLUNTARIO
+    0: ["Usuarios", "Eventos", "Inventario", "Informes", "Informe Eventos", "Configuración"], // PRESIDENTE
+    1: ["Inventario", "Informes", "Informe Eventos"], // VOCAL
+    2: ["Eventos", "Informe Eventos"], // COORDINADOR
+    3: ["Eventos", "Informe Eventos"], // VOLUNTARIO
   };
 
   const cards = [
@@ -32,6 +32,11 @@ export const HomePage = () => {
       title: "Informes",
       description: "Reportes y estadísticas",
       route: "/informes/donaciones",
+    },
+    {
+      title: "Informe Eventos",
+      description: "Participación en eventos",
+      route: "/informes/eventos",
     },
     {
       title: "Configuración",

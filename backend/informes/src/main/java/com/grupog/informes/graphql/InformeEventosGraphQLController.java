@@ -1,55 +1,41 @@
-/** 
-package com.grupog.informes.graphql;
-
-import java.nio.file.AccessDeniedException;
+﻿package com.grupog.informes.graphql;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.ContextValue;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestHeader;
-
 import com.grupog.informes.model.EventoAgrupadoPorMes;
 import com.grupog.informes.model.FiltroEventosInput;
-import com.grupog.informes.model.Usuario;
-//import com.grupog.informes.service.AuthService;
 import com.grupog.informes.service.InformeEventoService;
-
+import com.grupog.informes.service.JwtService;
 @Controller
 public class InformeEventosGraphQLController {
-    
     @Autowired
     private InformeEventoService informeService;
-/** 
     @Autowired
-    private AuthService authService;
-
+    private JwtService jwtService;
     private static final String ROL_PRESIDENTE = "PRESIDENTE";
     private static final String ROL_COORDINADOR = "COORDINADOR";
-
-    
-     * Responde a la query "informeEventosPropios" de GraphQL
-     
     @QueryMapping
     public List<EventoAgrupadoPorMes> informeEventosPropios(
-        @Argument FiltroEventosInput filtro,
-        @RequestHeader("Authorization") String token) {
-            
-            Usuario usuarioActual = authService.validarTokenYObtenerUsuario(token);
-            
-            boolean esAdmin = usuarioActual.getRol().equals(ROL_PRESIDENTE) ||
-                              usuarioActual.getRol().equals(ROL_COORDINADOR);
-
-            if (filtro.getUsuarioId() == null) {
-                throw new IllegalArgumentException("El filtro de usuario es obligatorio");
+            @Argument FiltroEventosInput filtro,
+            @ContextValue(required = false) String token) {
+        if (filtro == null || filtro.getUsuarioId() == null) {
+            throw new IllegalArgumentException("El filtro de usuario es obligatorio");
+        }
+        // Validar token si está presente
+        if (token != null && !token.isEmpty()) {
+            String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+            if (jwtService.validarToken(jwtToken)) {
+                String rol = jwtService.extraerRol(jwtToken);
+                Long usuarioIdToken = jwtService.extraerUsuarioId(jwtToken);
+                boolean esAdmin = ROL_PRESIDENTE.equals(rol) || ROL_COORDINADOR.equals(rol);
+                if (!esAdmin && !filtro.getUsuarioId().equals(usuarioIdToken)) {
+                    throw new IllegalArgumentException("Solo puedes consultar tus propios eventos");
+                }
             }
-
-            if (!esAdmin) {
-                throw new AccessDeniedException("Acceso denegado: Solo se pueden consultar tus propios informes ");
-            }
+        }
         return informeService.generarInforme(filtro);
     }
 }
-
-*/

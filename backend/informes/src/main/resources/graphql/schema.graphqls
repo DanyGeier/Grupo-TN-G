@@ -65,6 +65,5 @@ input FiltroEventosInput {
     fechaDesde: DateTime
     fechaHasta: DateTime
     usuarioId: ID!
-    InformeDonaciones: String
+    repartoDonaciones: String
 }
-
