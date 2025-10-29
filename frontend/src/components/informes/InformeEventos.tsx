@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { obtenerInformeEventos } from '../../services/informeEventosApi';
-import { EventoAgrupadoPorMes, FiltroEventosInput } from '../../models/informeEventos';
-import { obtenerUsuarios } from '../../services/usuariosApi';
-import { Usuario } from '../../models/usuario';
+import type { EventoAgrupadoPorMes, FiltroEventosInput } from '../../models/informeEventos';
+import { obtenerUsuarios } from "../usuarios/api/usuarios";
+import type { Usuario } from '../../models/usuario';
 import './InformeEventos.css';
 
 export default function InformeEventos() {

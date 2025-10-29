@@ -20,4 +20,3 @@ export interface EventoAgrupadoPorMes {
 export interface InformeEventosResponse {
   informeEventosPropios: EventoAgrupadoPorMes[];
 }
-

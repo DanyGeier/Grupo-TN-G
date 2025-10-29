@@ -1,4 +1,4 @@
-import { FiltroEventosInput, InformeEventosResponse } from '../models/informeEventos';
+import type { FiltroEventosInput, InformeEventosResponse } from '../models/informeEventos';
 
 const API_BASE_URL = 'http://localhost:5000';
 
@@ -46,4 +46,3 @@ export const obtenerInformeEventos = async (
 
   return result.data;
 };
-
