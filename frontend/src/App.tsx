@@ -13,6 +13,7 @@ import { FormularioUsuario } from "./components/usuarios/FormularioUsuario";
 import { InventarioLista } from "./components/inventario/InventarioLista";
 import { FormSolicitarDonaciones } from "./components/donaciones/FormSolicitarDonaciones";
 import { FormOfrecerDonaciones } from "./components/donaciones/FormOfrecerDonaciones";
+import { ListaSolicitudesPropias } from "./components/donaciones/ListaSolicitudesPropias";
 import { ListaSolicitudesExternas } from "./components/donaciones/ListaSolicitudesExternas";
 import { ListaEventosExternos } from "./components/eventos/eventosExternos/ListaEventosExternos";
 import { InformeDonaciones } from "./components/informes/InformeDonaciones";
@@ -55,10 +56,10 @@ function App() {
             path="/donaciones/ofrecer"
             element={<FormOfrecerDonaciones />}
           />
-          {/* <Route
+          <Route
             path="/donaciones/lista-solicitudes"
             element={<ListaSolicitudesPropias />}
-          /> */}
+          />
           <Route
             path="/eventos-externos/solicitudes"
             element={<ListaSolicitudesExternas />}
