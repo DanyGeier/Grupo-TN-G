@@ -1,6 +1,6 @@
 # Grupo-TN-G — Guía de Setup con Docker
 
-Esta guía permite levantar el backend de usuarios (Spring Boot + gRPC) y la base de datos MySQL con un solo comando usando Docker. Está pensada para cualquiera que quiera poner el entorno en marcha rápidamente.
+Esta guía permite levantar el backend de usuarios (Spring Boot + gRPC) y la base de datos MySQL con un solo comando usando Docker.
 
 ## Requisitos
 - Docker Desktop (o Docker Engine + docker compose)
@@ -219,7 +219,5 @@ docker compose down -v && docker compose up --build
 # Entrar al contenedor MySQL
 docker compose exec -it db sh
 ```
-
-Listo. Con esto tus colegas pueden clonar y levantar el proyecto en minutos.
 
 
